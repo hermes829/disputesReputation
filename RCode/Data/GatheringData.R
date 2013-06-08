@@ -12,20 +12,21 @@ list.files()
 setwd(paste(pathData, '/Components', '/Controls', sep=''))
 list.files()
 
-WBgdp <- read.csv(list.files()[1])
-WBgdpCap <- read.csv(list.files()[3])
-WBdeflator <- read.csv(list.files()[5])
-kaopen <- read.csv(list.files()[7])
-polity <- read.csv(list.files()[9])
+WBinflDeflator <- read.csv('NY.GDP.DEFL.KD.ZG_Indicator_MetaData_en_EXCEL.csv')
+WBgdpDeflator <- read.csv('NY.GDP.DEFL.ZS_Indicator_MetaData_en_EXCEL.csv')
+WBgdp <- read.csv('NY.GDP.MKTP.CD_Indicator_MetaData_en_EXCEL.csv')
+WBgdpCap <- read.csv('NY.GDP.PCAP.CD_Indicator_MetaData_en_EXCEL.csv')
+kaopen <- read.csv('kaopen_2011.csv')
+polity <- read.csv('p4v2011.csv')
 
 setwd(paste(pathData, '/Components', '/Disputes', sep=''))
 list.files()
-disputes <- read.csv(list.files()[1])
+disputes <- read.csv('Dispute_Data.csv')
 
 setwd(paste(pathData, '/Components', '/FDI', sep=''))
 list.files()
-WBfdi <- read.csv(list.files()[1])
-WBfdiGdp <- read.csv(list.files()[3])
+WBfdi <- read.csv('BX.KLT.DINV.CD.WD_Indicator_MetaData_en_EXCEL.csv')
+WBfdiGdp <- read.csv('BX.KLT.DINV.WD.GD.ZS_Indicator_MetaData_en_EXCEL.csv')
 
 setwd(paste(pathData, '/Components', '/ReputationalMeasures/Fraser', sep=''))
 list.files()
@@ -37,17 +38,17 @@ names(fraser) <- snames[1:17]
 
 setwd(paste(pathData, '/Components', '/ReputationalMeasures/Heritage', sep=''))
 list.files()
-heritage <- read.csv(list.files()[1])
+heritage <- read.csv('data.csv')
 
 setwd(paste(pathData, '/Components', '/ReputationalMeasures/ICRG', sep=''))
 list.files()
-icrg <- read.csv(list.files()[2])
+icrg <- read.csv('PRS_Melted_Format.csv')
 
 setwd(paste(pathData, '/Components', '/ReputationalMeasures/WGI', sep=''))
 list.files()
-WGIregQual <- read.csv(list.files()[1])
+WGIregQual <- read.csv('wgi_regQual.csv')
 
 setwd(pathData)
-save(WBgdp, WBgdpCap, WBdeflator, kaopen, polity,
-	disputes, WBfdi, WBfdiGdp, fraser, heritage, icrg, 
+save(WBgdp, WBgdpCap, WBinflDeflator, WBgdpDeflator, kaopen, 
+	polity, disputes, WBfdi, WBfdiGdp, fraser, heritage, icrg, 
 	WGIregQual, file='allData.rda')
