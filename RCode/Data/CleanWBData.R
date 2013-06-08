@@ -14,10 +14,8 @@ write.csv(na.omit(cbind(
 	countrycode(1:999,'cown','country.name'))),
 	file='cowcodes_countrynames.csv')
 
-data <- WBfdi
-variable <- 'fdi'
 ### Fx for Melting/Cleaning WB Data for Merge
-# cleanWbData <- function(data, variable){
+cleanWbData <- function(data, variable){
 	var <- variable
 	mdata <- melt(data, id=c('Country.Name', 'Country.Code'))
 	names(mdata)[4] <- var
@@ -87,18 +85,10 @@ variable <- 'fdi'
 	mdata2[mdata2$Country.Name=='Turks and Caicos Islands','ccode'] <- 1018
 	mdata2[mdata2$Country.Name=='Virgin Islands (U.S.)','ccode'] <- 1019
 	mdata2[mdata2$Country.Name=='West Bank and Gaza','ccode'] <- 1020
-	# mdata2 }
+	mdata2 }
 
-write.csv(unique(mdata2[,1:4]), file='temp.csv')
-
-WBdeflator2 <- cleanWbData(WBdeflator)
-WBfdi2 <- cleanWbData(WBfdi)
-WBfdiGdp2 <- cleanWbData(WBfdiGdp)
-WBgdp2 <- cleanWbData(WBgdp)
-WBgdpCap2 <- cleanWbData(WBgdpCap)
-
-colnames(WBdeflator)
-colnames(WBfdi)
-colnames(WBfdiGdp)
-colnames(WBgdp)
-colnames(WBgdpCap)
+WBdeflatorClean <- cleanWbData(WBdeflator, 'deflator')
+WBfdiClean <- cleanWbData(WBfdi, 'fdi')
+WBfdiGdpClean <- cleanWbData(WBfdiGdp, 'fdiGDP')
+WBgdpClean <- cleanWbData(WBgdp, 'gdp')
+WBgdpCapClean <- cleanWbData(WBgdpCap, 'gdpCAP')
