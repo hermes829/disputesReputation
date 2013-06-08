@@ -15,6 +15,7 @@ require(countrycode)
 setwd(pathFunctions)
 require(xlsx)
 require(gdata)
+require(reshape)
 
 # Setting seed
 set.seed(6886)
