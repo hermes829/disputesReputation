@@ -16,7 +16,10 @@ setwd(pathFunctions)
 require(xlsx)
 require(gdata)
 require(reshape)
+require(plyr)
 require(WDI)
+
+require(lmer)
 
 # Setting seed
 set.seed(6886)
