@@ -63,7 +63,6 @@ cleanWbData <- function(data, variable){
 
 	# Manually adding ccodes for select countries
 	mdata2[mdata2$Country.Name=='Korea, Dem. Rep.','ccode'] <- 731
-	mdata2[mdata2$Country.Name=='American Samoa','ccode'] <- 990
 	mdata2[mdata2$Country.Name=='Aruba','ccode'] <- 1000
 	mdata2[mdata2$Country.Name=='Bermuda','ccode'] <- 1001
 	mdata2[mdata2$Country.Name=='Cayman Islands','ccode'] <- 1002
@@ -87,6 +86,7 @@ cleanWbData <- function(data, variable){
 	mdata2[mdata2$Country.Name=='Turks and Caicos Islands','ccode'] <- 1018
 	mdata2[mdata2$Country.Name=='Virgin Islands (U.S.)','ccode'] <- 1019
 	mdata2[mdata2$Country.Name=='West Bank and Gaza','ccode'] <- 1020
+	mdata2[mdata2$Country.Name=='American Samoa','ccode'] <- 1021
 	mdata2 }
 
 WBinflDeflatorClean <- cleanWbData(WBinflDeflator, 'inflDeflator')
@@ -119,6 +119,14 @@ WBgdpCapClean$cyear <-
 	as.numeric(as.character(
 		paste(WBgdpCapClean$ccode, WBgdpCapClean$year, sep='')))
 
+colnames(WGIregQual)[1:2] <- c('Country.Name','Country.Code')
+data <- WGIregQual; variable <- 'regQual'
+WGIregQualClean <- cleanWbData(WGIregQual, 'regQual')
+WGIregQualClean$cyear <- 
+	as.numeric(as.character(
+		paste(WGIregQualClean$ccode, WGIregQualClean$year, sep='')))
+unique(WGIregQualClean[is.na(WGIregQualClean$ccode),1:4])
+
 # Make sure order matches
 sum(WBinflDeflatorClean$cyear!=WBgdpDeflatorClean$cyear)
 sum(WBinflDeflatorClean$cyear!=WBfdiClean$cyear)
@@ -148,5 +156,51 @@ kaopen$cyear <- paste(kaopen$ccode, kaopen$year, sep='')
 
 ###############################################################
 # Polity
+polity2 <- polity[polity$year>=1960,3:ncol(polity)]
+polity2$ccode <- countrycode(polity2$country, 'country.name', 'cown') 
+
+# Manual Corrections
+# unique(polity2[which(is.na(polity2$ccode)),1:3])
+polity2[polity2$country=="Korea North", 'ccode'] <- 731
+polity2[polity2$country=="Serbia", 'ccode'] <- 1015
+polity2[polity2$country=="UAE", 'ccode'] <- 696
+polity2[polity2$country=="Serbia and Montenegro", 'ccode'] <- 345
+polity2[polity2$country=="Germany East", 'ccode'] <- 265
+
+polity2$cyear <- paste(polity2$ccode, polity2$year, sep='')
+###############################################################
+
+###############################################################
+# ICRG data from PRS group
+icrg$ccode <- countrycode(icrg$Country, 'country.name', 'cown')
+
+# Manual corrections
+# unique(icrg[is.na(icrg$ccode),1:3])
+icrg[icrg$Country=='Hong Kong', 'ccode'] <- 1009
+icrg[icrg$Country=='Korea, North', 'ccode'] <- 731
+icrg[icrg$Country=='New Caledonia', 'ccode'] <- 1012
+icrg[icrg$Country=='Serbia and Montenegro', 'ccode'] <- 345
+icrg <- icrg[which(!icrg$Country %in% 'Serbia'),] # Drop Serbia
+icrg <- icrg[which(!is.na(icrg$ccode)),] # Dropping extra NA cases
+
+icrg$cyear <- paste(icrg$ccode, icrg$Year, sep='')
+###############################################################
+
+###############################################################
+# heritage
+heritage$ccode <- countrycode(heritage$name, 'country.name', 'cown')
+
+# Manual corrections
+# temp <- unique(heritage[,c(1,ncol(heritage))]); temp[is.na(temp$ccode),]
+heritage[heritage$name=='Hong Kong','ccode'] <- 1009
+heritage[heritage$name=='Macau','ccode'] <- 1011
+heritage[heritage$name=='North Korea','ccode'] <- 731
+heritage[heritage$name=='Serbia ','ccode'] <- 345
+heritage[heritage$name=='Serbia','ccode'] <- 345
+
+heritage$cyear <- paste(heritage$ccode, heritage$index.year, sep='')
+###############################################################
+
+###############################################################
 
 ###############################################################
