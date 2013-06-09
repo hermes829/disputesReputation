@@ -119,14 +119,6 @@ WBgdpCapClean$cyear <-
 	as.numeric(as.character(
 		paste(WBgdpCapClean$ccode, WBgdpCapClean$year, sep='')))
 
-colnames(WGIregQual)[1:2] <- c('Country.Name','Country.Code')
-data <- WGIregQual; variable <- 'regQual'
-WGIregQualClean <- cleanWbData(WGIregQual, 'regQual')
-WGIregQualClean$cyear <- 
-	as.numeric(as.character(
-		paste(WGIregQualClean$ccode, WGIregQualClean$year, sep='')))
-unique(WGIregQualClean[is.na(WGIregQualClean$ccode),1:4])
-
 # Make sure order matches
 sum(WBinflDeflatorClean$cyear!=WBgdpDeflatorClean$cyear)
 sum(WBinflDeflatorClean$cyear!=WBfdiClean$cyear)
@@ -151,7 +143,8 @@ kaopen[kaopen$cn==314,'ccode'] <- 1000 # Aruba
 kaopen <- kaopen[which(!kaopen$cn %in% 353),] # Drop Netherland Antilles
 kaopen[kaopen$cn==532,'ccode'] <- 1009 # Hong Kong
 kaopen[kaopen$cn==728,'ccode'] <- 565 # Namibia
-kaopen$cyear <- paste(kaopen$ccode, kaopen$year, sep='')
+kaopen$cyear <- as.numeric(as.character(
+	paste(kaopen$ccode, kaopen$year, sep='')))
 ###############################################################
 
 ###############################################################
@@ -167,7 +160,8 @@ polity2[polity2$country=="UAE", 'ccode'] <- 696
 polity2[polity2$country=="Serbia and Montenegro", 'ccode'] <- 345
 polity2[polity2$country=="Germany East", 'ccode'] <- 265
 
-polity2$cyear <- paste(polity2$ccode, polity2$year, sep='')
+polity2$cyear <- as.numeric(as.character(
+	paste(polity2$ccode, polity2$year, sep='')))
 ###############################################################
 
 ###############################################################
@@ -183,7 +177,8 @@ icrg[icrg$Country=='Serbia and Montenegro', 'ccode'] <- 345
 icrg <- icrg[which(!icrg$Country %in% 'Serbia'),] # Drop Serbia
 icrg <- icrg[which(!is.na(icrg$ccode)),] # Dropping extra NA cases
 
-icrg$cyear <- paste(icrg$ccode, icrg$Year, sep='')
+icrg$cyear <- as.numeric(as.character(
+	paste(icrg$ccode, icrg$Year, sep='')))
 ###############################################################
 
 ###############################################################
@@ -198,9 +193,76 @@ heritage[heritage$name=='North Korea','ccode'] <- 731
 heritage[heritage$name=='Serbia ','ccode'] <- 345
 heritage[heritage$name=='Serbia','ccode'] <- 345
 
-heritage$cyear <- paste(heritage$ccode, heritage$index.year, sep='')
+heritage$cyear <- as.numeric(as.character(
+	paste(heritage$ccode, heritage$index.year, sep='')))
 ###############################################################
 
 ###############################################################
+# WGI
+colnames(WGIregQual)[1:2] <- c('Country.Name','Country.Code')
+data <- WGIregQual; variable <- 'regQual'
+WGIregQualClean <- cleanWbData(WGIregQual, 'regQual')
 
+# Manual corrections
+# temp <- WGIregQualClean[is.na(WGIregQualClean$ccode),3:4];unique(temp)
+WGIregQualClean[WGIregQualClean$cname=='AMERICAN SAMOA','ccode'] <- 1021
+WGIregQualClean[WGIregQualClean$cname=='ANGUILLA','ccode'] <- 1022
+WGIregQualClean[WGIregQualClean$cname=='ARUBA','ccode'] <- 1000
+WGIregQualClean[WGIregQualClean$cname=='BERMUDA','ccode'] <- 1001
+WGIregQualClean[WGIregQualClean$cname=='CAYMAN ISLANDS','ccode'] <- 1002
+WGIregQualClean[WGIregQualClean$cname=='COOK ISLANDS','ccode'] <- 1023
+WGIregQualClean[WGIregQualClean$cname=='FRENCH GUIANA','ccode'] <- 1024
+WGIregQualClean[WGIregQualClean$cname=='GREENLAND','ccode'] <- 1007
+WGIregQualClean[WGIregQualClean$cname=='GUAM','ccode'] <- 1008
+WGIregQualClean[WGIregQualClean$cname=='HONG KONG','ccode'] <- 1009
+WGIregQualClean[WGIregQualClean$cname=='JERSEY','ccode'] <- 1025
+WGIregQualClean[WGIregQualClean$cname=="KOREA, DEMOCRATIC PEOPLE'S REPUBLIC OF",'ccode'] <- 731
+WGIregQualClean[WGIregQualClean$cname=='MACAO','ccode'] <- 1011
+WGIregQualClean[WGIregQualClean$cname=='MARTINIQUE','ccode'] <- 1026
+WGIregQualClean <- WGIregQualClean[which(WGIregQualClean$cname!='NETHERLANDS ANTILLES'),]
+WGIregQualClean[WGIregQualClean$cname=='NEW CALEDONIA','ccode'] <- 1012
+WGIregQualClean <- WGIregQualClean[which(WGIregQualClean$cname!='NIUE'),]
+WGIregQualClean[WGIregQualClean$cname=='PUERTO RICO','ccode'] <- 1014
+WGIregQualClean <- WGIregQualClean[which(WGIregQualClean$cname!='REUNION'),]
+WGIregQualClean[WGIregQualClean$cname=='SERBIA','ccode'] <- 345
+WGIregQualClean[WGIregQualClean$cname=='VIRGIN ISLANDS, U.S.','ccode'] <- 1019
+WGIregQualClean[WGIregQualClean$cname=='PALESTINIAN TERRITORY, OCCUPIED','ccode'] <- 1020
+# temp <- WGIregQualClean[is.na(WGIregQualClean$ccode),3:4];unique(temp)
+
+WGIregQualClean$cyear <- 
+	as.numeric(as.character(
+		paste(WGIregQualClean$ccode, WGIregQualClean$year, sep='')))
+###############################################################
+
+###############################################################
+# Fraser, starts annually at 2000
+fraser2 <- fraser[7:length(fraser)]
+fraser3 <- NULL
+# for(ii in 1:length(fraser2)){
+# 	slice <- fraser2[[ii]]
+# 	slice$year <- names(fraser2)[ii]
+# 	fraser3 <- rbind(fraser3, slice)
+# }
+
+###############################################################
+
+###############################################################
+# Disputes
+disputes$cname <- countrycode(disputes$Country, 'country.name', 'country.name')
+disputes$ccode <- countrycode(disputes$cname, 'country.name', 'cown')
+
+# Manual corrections
+disputes[disputes$Country=='Korea, North','ccode'] <- 731
+disputes[disputes$Country=='Serbia','ccode'] <- 345
+disputes[disputes$Country=='Aruba','ccode'] <- 1000
+disputes[disputes$Country=='Bermuda','ccode'] <- 1001
+disputes[disputes$Country=='Cayman Islands','ccode'] <- 1002
+disputes[disputes$Country=='Czechoslovachia','ccode'] <- 315
+disputes[disputes$Country=='Faeroe Islands','ccode'] <- 1005
+disputes[disputes$Country=='Greenland','ccode'] <- 1007
+disputes[disputes$Country=='Hong Kong','ccode'] <- 1009
+disputes[disputes$Country=='Macao, China','ccode'] <- 1011
+disputes <- disputes[disputes$Country!='Netherlands Antilles',]
+disputes[disputes$Country=='New Caledonia','ccode'] <- 1012
+unique(disputes[is.na(disputes$ccode),c(2,ncol(disputes))])
 ###############################################################
