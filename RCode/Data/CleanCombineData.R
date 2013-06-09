@@ -159,9 +159,27 @@ polity2[polity2$country=="Serbia", 'ccode'] <- 1015
 polity2[polity2$country=="UAE", 'ccode'] <- 696
 polity2[polity2$country=="Serbia and Montenegro", 'ccode'] <- 345
 polity2[polity2$country=="Germany East", 'ccode'] <- 265
+polity2[polity2$country=="Congo Kinshasa", 'ccode'] <- 490
 
 polity2$cyear <- as.numeric(as.character(
 	paste(polity2$ccode, polity2$year, sep='')))
+
+# Need to remove duplicate cases
+polity2$temp <- 1:nrow(polity2)
+# N. Vietnam 1976 and Vietnam repeat 1976
+# Ethiopia repeat 1993
+# W Germany and Germany repeat 1990
+# Drop S. Vietnam between 1960 to 1975
+# Drop Sudan repeat 2011
+# Drop South Yemen
+multiples <- names(table(polity2$cyear)[table(polity2$cyear)>1])
+temp <- unique(polity2[which(polity2$cyear %in% multiples), c(1:4,10,ncol(polity2))])
+rownames(temp) <- 1:nrow(temp)
+# temp
+# Choose cases to drop
+drop <- temp[c(17,18,20,22:37,38,64,66,67:90),'temp']
+polity2 <- polity2[which(!polity2$temp %in% drop),]
+polity2 <- polity2[,1:36]
 ###############################################################
 
 ###############################################################
@@ -174,11 +192,20 @@ icrg[icrg$Country=='Hong Kong', 'ccode'] <- 1009
 icrg[icrg$Country=='Korea, North', 'ccode'] <- 731
 icrg[icrg$Country=='New Caledonia', 'ccode'] <- 1012
 icrg[icrg$Country=='Serbia and Montenegro', 'ccode'] <- 345
+icrg[icrg$Country=='Congo-Brazzaville', 'ccode'] <- 484
+icrg[icrg$Country=='Congo-Kinshasa', 'ccode'] <- 490
 icrg <- icrg[which(!icrg$Country %in% 'Serbia'),] # Drop Serbia
 icrg <- icrg[which(!is.na(icrg$ccode)),] # Dropping extra NA cases
 
 icrg$cyear <- as.numeric(as.character(
 	paste(icrg$ccode, icrg$Year, sep='')))
+
+# Remove duplicate cases
+# icrg$temp <- 1:nrow(icrg)
+# multiples <- names(table(icrg$cyear)[table(icrg$cyear)>1])
+# temp <- unique(icrg[which(icrg$cyear %in% multiples), c(2,4,17,18,19)])
+# rownames(temp) <- 1:nrow(temp)
+# temp[order(temp$ccode),]
 ###############################################################
 
 ###############################################################
@@ -325,13 +352,11 @@ combData <- merge(combData, kaopen[,c(3,7)],by='cyear',all.x=T,all.y=F)
 unique(combData[is.na(combData$ccode), 1:5]); dim(combData)
 combData <- merge(combData, fraser3[,c(2:56,59)],by='cyear',all.x=T,all.y=F)
 unique(combData[is.na(combData$ccode), 1:5]); dim(combData)
-
+combData <- merge(combData, polity2[,c(7:36)],by='cyear',all.x=T,all.y=F)
+unique(combData[is.na(combData$ccode), 1:5]); dim(combData)
 combData <- merge(combData, icrg[,c(5:16,18)],by='cyear',all.x=T,all.y=F)
 unique(combData[is.na(combData$ccode), 1:5]); dim(combData)
 
-combData <- merge(combData, polity2[,c(7:36)],by='cyear',all.x=T,all.y=F)
-unique(combData[is.na(combData$ccode), 1:5]); dim(combData)
-
 save(combData, file='combinedData.rda')
-write.csv(combData, file'combinedData.csv')
+write.csv(combData, file='combinedData.csv')
 ###############################################################

@@ -31,10 +31,12 @@ WBfdiGdp <- read.csv('BX.KLT.DINV.WD.GD.ZS_Indicator_MetaData_en_EXCEL.csv')
 setwd(paste(pathData, '/Components', '/ReputationalMeasures/Fraser', sep=''))
 list.files()
 # snum <- sheetCount(list.files()[2])
-snames <- sheetNames(list.files()[2])
-fraser <- list()
-for(ii in 1:17){ fraser[[ii]] <- read.xls(list.files()[2],ii) }
-names(fraser) <- snames[1:17]
+# snames <- sheetNames(list.files()[2])
+# fraser <- list()
+# for(ii in 1:17){ fraser[[ii]] <- read.xls(list.files()[2],ii) }
+# names(fraser) <- snames[1:17]
+# save(fraser, file='fraser.rda')
+load('fraser.rda')
 
 setwd(paste(pathData, '/Components', '/ReputationalMeasures/Heritage', sep=''))
 list.files()
