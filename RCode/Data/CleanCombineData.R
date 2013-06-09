@@ -237,13 +237,33 @@ WGIregQualClean$cyear <-
 ###############################################################
 # Fraser, starts annually at 2000
 fraser2 <- fraser[7:length(fraser)]
-fraser3 <- NULL
-# for(ii in 1:length(fraser2)){
-# 	slice <- fraser2[[ii]]
-# 	slice$year <- names(fraser2)[ii]
-# 	fraser3 <- rbind(fraser3, slice)
-# }
+allVars <- lapply(fraser2, function(x) FUN=colnames(x))
+vars <- allVars[[1]]
+for(ii in 2:length(allVars)){ vars <- intersect(vars, allVars[[ii]]) }
+finVars <- vars[which(!vars %in% append('X', paste('X', 1:11, sep='.')))]
 
+fraser3 <- NULL
+for(ii in 1:length(fraser2)){
+	slice <- fraser2[[ii]]
+	slice <- slice[,finVars]
+	fraser3 <- rbind(fraser3,slice) }
+
+fraser3$cname <- countrycode(fraser3$Countries, 'country.name', 'country.name')
+fraser3$ccode <- countrycode(fraser3$cname, 'country.name', 'cown')
+
+# Manual corrections
+fraser3[fraser3$Countries=='Pap. New Guinea','cname'] <- 'PAPUA NEW GUINEA'
+fraser3[fraser3$Countries=='Pap. New Guinea','ccode'] <- 910
+fraser3[fraser3$Countries=='Unit. Arab Em.','cname'] <- 'UNITED ARAB EMIRATES'
+fraser3[fraser3$Countries=='Unit. Arab Em.','ccode'] <- 696
+fraser3[fraser3$Countries=='Hong Kong','ccode'] <- 1009
+fraser3[fraser3$Countries=='Serbia','ccode'] <- 345
+fraser3[fraser3$cname=='SERBIA','ccode'] <- 345
+# unique(fraser3[is.na(fraser3$ccode), c('Countries', 'cname', 'ccode')])
+
+fraser$cyear <- 
+	as.numeric(as.character(
+		paste(fraser3$ccode, fraser3$cyear, sep='')))
 ###############################################################
 
 ###############################################################
@@ -264,5 +284,14 @@ disputes[disputes$Country=='Hong Kong','ccode'] <- 1009
 disputes[disputes$Country=='Macao, China','ccode'] <- 1011
 disputes <- disputes[disputes$Country!='Netherlands Antilles',]
 disputes[disputes$Country=='New Caledonia','ccode'] <- 1012
-unique(disputes[is.na(disputes$ccode),c(2,ncol(disputes))])
+# unique(disputes[is.na(disputes$ccode),c(2,ncol(disputes))])
+
+disputes$cyear <- 
+	as.numeric(as.character(
+		paste(disputes$ccode, disputes$year, sep='')))
+###############################################################
+
+###############################################################
+# Combining data
+
 ###############################################################
