@@ -311,11 +311,17 @@ disputes[disputes$Country=='Hong Kong','ccode'] <- 1009
 disputes[disputes$Country=='Macao, China','ccode'] <- 1011
 disputes <- disputes[disputes$Country!='Netherlands Antilles',]
 disputes[disputes$Country=='New Caledonia','ccode'] <- 1012
+disputes[disputes$Country=='Congo-Brazzaville','ccode'] <- 484
+disputes[disputes$Country=='Congo-Kinshasa','ccode'] <- 490
+disputes <- disputes[disputes$Country!='Zaire',]
 # unique(disputes[is.na(disputes$ccode),c(2,ncol(disputes))])
 
 disputes$cyear <- 
 	as.numeric(as.character(
-		paste(disputes$ccode, disputes$year, sep='')))
+		paste(disputes$ccode, disputes$Year, sep='')))
+
+# Correcting duplicates
+multiples <- names(table(disputes$cyear)[table(disputes$cyear)>1])
 ###############################################################
 
 ###############################################################
