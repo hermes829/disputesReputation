@@ -261,7 +261,7 @@ fraser3[fraser3$Countries=='Serbia','ccode'] <- 345
 fraser3[fraser3$cname=='SERBIA','ccode'] <- 345
 # unique(fraser3[is.na(fraser3$ccode), c('Countries', 'cname', 'ccode')])
 
-fraser$cyear <- 
+fraser3$cyear <- 
 	as.numeric(as.character(
 		paste(fraser3$ccode, fraser3$cyear, sep='')))
 ###############################################################
@@ -293,5 +293,45 @@ disputes$cyear <-
 
 ###############################################################
 # Combining data
+setwd(pathData)
+save(disputes,fraser3, WGIregQualClean, heritage,icrg,
+	polity2, wbData, kaopen, file='cleanedData.rda')
 
+### Load setup
+source('/Users/janus829/Desktop/Research/RemmerProjects/disputesReputation/RCode/setup.R')
+setwd(pathData)
+load('cleanedData.rda')
+
+frame <- na.omit(cbind(1:999, countrycode(1:999,'cown','country.name')))
+frame <- rbind(frame, matrix(c('731', 'NORTH KOREA'),nrow=1,ncol=2,byrow=T))
+frame <- data.frame(frame)
+frame$X1 <- as.numeric(as.character(frame$X1))
+colnames(frame) <- c('ccode', 'cname')
+
+dframe <- NULL; frame$year <- NA; years <- seq(1960,2012,1)
+for(ii in 1:length(years)){
+	frame$year <- years[ii]; dframe <- rbind(dframe, frame) }
+dframe$cyear <- paste(dframe$ccode, dframe$year, sep='')
+
+combData <- merge(dframe, wbData[,c(7,6,8:12)],by='cyear',all.x=T,all.y=F)
+unique(combData[is.na(combData$ccode), 1:5]); dim(combData)
+combData <- merge(combData, WGIregQualClean[,6:7],by='cyear',all.x=T,all.y=F)
+unique(combData[is.na(combData$ccode), 1:5]); dim(combData)
+combData <- merge(combData, disputes[,c(4:9,12)],by='cyear',all.x=T,all.y=F)
+unique(combData[is.na(combData$ccode), 1:5]); dim(combData)
+combData <- merge(combData, heritage[,c(3:13,15)],by='cyear',all.x=T,all.y=F)
+unique(combData[is.na(combData$ccode), 1:5]); dim(combData)
+combData <- merge(combData, kaopen[,c(3,7)],by='cyear',all.x=T,all.y=F)
+unique(combData[is.na(combData$ccode), 1:5]); dim(combData)
+combData <- merge(combData, fraser3[,c(2:56,59)],by='cyear',all.x=T,all.y=F)
+unique(combData[is.na(combData$ccode), 1:5]); dim(combData)
+
+combData <- merge(combData, icrg[,c(5:16,18)],by='cyear',all.x=T,all.y=F)
+unique(combData[is.na(combData$ccode), 1:5]); dim(combData)
+
+combData <- merge(combData, polity2[,c(7:36)],by='cyear',all.x=T,all.y=F)
+unique(combData[is.na(combData$ccode), 1:5]); dim(combData)
+
+save(combData, file='combinedData.rda')
+write.csv(combData, file'combinedData.csv')
 ###############################################################
