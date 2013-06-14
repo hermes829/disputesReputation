@@ -1,0 +1,43 @@
+June 11 2013
+===============
+
+### To Dos
+	+ How does ICSID define concluded cases as a separate check [ wins minus losses ]
+	+ Also make sure you're not counting settlements...these should be an actual positive 
+	+ Karen will look into whether or not countries refuse to pay based upon settlements
+	+ Magnitude of case
+	+ Time of case
+	+ Sector of economy
+	+ We can also use UNCTAD cases as a separate check
+	+ Also check out what is going on with net FDI inflows
+	+ Add in sovereign ratings
+	+ Control for whether you're a member of the ICSID
+	+ IMF programs cancelled
+		- Across different domains this so called reputational anchor is not working, cancelled your IMF program
+		- Other international commitments...international transparency literature, guidelines on standardization of national accounts
+
+### Model Covariates (long and short term, so lagged variable and change)
+	+ GDP
+	+ GDP growth
+	+ Polity / Polity^2 / Change in polity / Years in democracy
+	+ Banks conflict index
+	+ Trade balance
+	+ BITs
+	+ Settlement of concluded cases [[ would be fun if there was a positive relationship ]]
+	+ Inflation
+	+ Dummy for upper income (World Bank Classification)
+	+ ICSID disputes
+	+ Spatial disputes [ distance ]
+	+ FDI
+	+ Natural resource
+		- Possible interaction between this and ICSID disputes
+
+### Backup Robustness Checks
+	+ Banking, currency, or economic crisis
+
+### Types of modeling strategies
+	+ One stage error correction model with prop rights as DV
+	+ Two stage error correction model
+		- first stage look at what predicts disputes
+		- second stage those that have disputes what is effect on proprights
+	+ Split population approach
