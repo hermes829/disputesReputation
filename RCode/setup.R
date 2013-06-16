@@ -11,15 +11,16 @@ Sys.info()["user"]=="janus829"
   pathFunctions="~/Desktop/Prog Notes/R Functions"}
 
 # Loading libraries and functions
+require(foreign)
 require(countrycode)
-setwd(pathFunctions)
 require(xlsx)
 require(gdata)
 require(reshape)
 require(plyr)
 require(WDI)
+require(lme4)
 
-require(lmer)
+setwd(pathFunctions)
 
 # Setting seed
 set.seed(6886)

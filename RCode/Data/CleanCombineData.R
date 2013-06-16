@@ -2,7 +2,7 @@
 ## datasets being used in this analysis
 
 ### Load setup
-source('/Users/janus829/Desktop/Research/ButheProjects/ForeignAid/RCode/setup.R')
+source('/Users/janus829/Desktop/Research/RemmerProjects/disputesReputation/RCode/setup.R')
 
 ### Load data
 setwd(pathData)
@@ -99,28 +99,52 @@ WBgdpDeflatorClean$cyear <-
 	as.numeric(as.character(
 		paste(WBgdpDeflatorClean$ccode, WBgdpDeflatorClean$year, sep='')))
 
+WBfdiClean <- cleanWbData(WBfdi, 'fdi')
+WBfdiClean$cyear <- 
+	as.numeric(as.character(
+		paste(WBfdiClean$ccode, WBfdiClean$year, sep='')))
+
+WBfdiGdpClean <- cleanWbData(WBfdiGdp, 'fdiGDP')
+WBfdiGdpClean$cyear <- 
+	as.numeric(as.character(
+		paste(WBfdiGdpClean$ccode, WBfdiGdpClean$year, sep='')))
+
+WBgdpClean <- cleanWbData(WBgdp, 'gdp')
+WBgdpClean$cyear <- 
+	as.numeric(as.character(
+		paste(WBgdpClean$ccode, WBgdpClean$year, sep='')))
+
 WBgdpCapClean <- cleanWbData(WBgdpCap, 'gdpCAP')
 WBgdpCapClean$cyear <- 
 	as.numeric(as.character(
 		paste(WBgdpCapClean$ccode, WBgdpCapClean$year, sep='')))
 
-WBpopClean <- cleanWbData(WBpop, 'population')
-WBpopClean$cyear <- 
-	as.numeric(as.character(
-		paste(WBpopClean$ccode, WBpopClean$year, sep='')))	
-
 # Make sure order matches
 sum(WBinflDeflatorClean$cyear!=WBgdpDeflatorClean$cyear)
+sum(WBinflDeflatorClean$cyear!=WBfdiClean$cyear)
+sum(WBinflDeflatorClean$cyear!=WBfdiGdpClean$cyear)
+sum(WBinflDeflatorClean$cyear!=WBgdpClean$cyear)
 sum(WBinflDeflatorClean$cyear!=WBgdpCapClean$cyear)
-sum(WBinflDeflatorClean$cyear!=WBpopClean$cyear)
 
 # combine data
 setwd(pathData)
 wbData <- data.frame(cbind(WBinflDeflatorClean,
-	gdpDeflator=WBgdpDeflatorClean[,6], 
-	gdpCAP=WBgdpCapClean[,6],
-	population=WBpopClean[,6]))
+	gdpDeflator=WBgdpDeflatorClean[,6], fdi=WBfdiClean[,6],
+	fdiGdp=WBfdiGdpClean[,6], gdp=WBgdpClean[,6],
+	gdpCAP=WBgdpCapClean[,6]))
 save(wbData, file='wbData.rda')
+###############################################################
+
+###############################################################
+# kaopen (uses imf numeric codes, cn)
+kaopen$stabb <- kaopen$ccode
+kaopen$ccode <- countrycode(kaopen$cn, 'imf', 'cown')
+kaopen[kaopen$cn==314,'ccode'] <- 1000 # Aruba
+kaopen <- kaopen[which(!kaopen$cn %in% 353),] # Drop Netherland Antilles
+kaopen[kaopen$cn==532,'ccode'] <- 1009 # Hong Kong
+kaopen[kaopen$cn==728,'ccode'] <- 565 # Namibia
+kaopen$cyear <- as.numeric(as.character(
+	paste(kaopen$ccode, kaopen$year, sep='')))
 ###############################################################
 
 ###############################################################
@@ -185,40 +209,26 @@ icrg$cyear <- as.numeric(as.character(
 ###############################################################
 
 ###############################################################
+# heritage
+heritage$ccode <- countrycode(heritage$name, 'country.name', 'cown')
+
+# Manual corrections
+# temp <- unique(heritage[,c(1,ncol(heritage))]); temp[is.na(temp$ccode),]
+heritage[heritage$name=='Hong Kong','ccode'] <- 1009
+heritage[heritage$name=='Macau','ccode'] <- 1011
+heritage[heritage$name=='North Korea','ccode'] <- 731
+heritage[heritage$name=='Serbia ','ccode'] <- 345
+heritage[heritage$name=='Serbia','ccode'] <- 345
+
+heritage$cyear <- as.numeric(as.character(
+	paste(heritage$ccode, heritage$index.year, sep='')))
+###############################################################
+
+###############################################################
 # WGI
+colnames(WGIregQual)[1:2] <- c('Country.Name','Country.Code')
 data <- WGIregQual; variable <- 'regQual'
-# cleanWgData <- function(data, variable){
-	colnames(data)[1:2] <- c('Country.Name','Country.Code')
-	data2 <- cleanWbData(data, variable)	
-
-	data2[data2$cname=='AMERICAN SAMOA','ccode'] <- 1021
-	data2[data2$cname=='ANGUILLA','ccode'] <- 1022
-	data2[data2$cname=='ARUBA','ccode'] <- 1000
-	data2[data2$cname=='BERMUDA','ccode'] <- 1001
-	data2[data2$cname=='CAYMAN ISLANDS','ccode'] <- 1002
-	data2[data2$cname=='COOK ISLANDS','ccode'] <- 1023
-	data2[data2$cname=='FRENCH GUIANA','ccode'] <- 1024
-	data2[data2$cname=='GREENLAND','ccode'] <- 1007
-	data2[data2$cname=='GUAM','ccode'] <- 1008
-	data2[data2$cname=='HONG KONG','ccode'] <- 1009
-	data2[data2$cname=='JERSEY','ccode'] <- 1025
-	data2[data2$cname=="KOREA, DEMOCRATIC PEOPLE'S REPUBLIC OF",'ccode'] <- 731
-	data2[data2$cname=='MACAO','ccode'] <- 1011
-	data2[data2$cname=='MARTINIQUE','ccode'] <- 1026
-	data2 <- data2[which(data2$cname!='NETHERLANDS ANTILLES'),]
-	data2[data2$cname=='NEW CALEDONIA','ccode'] <- 1012
-	data2 <- data2[which(data2$cname!='NIUE'),]
-	data2[data2$cname=='PUERTO RICO','ccode'] <- 1014
-	data2 <- data2[which(data2$cname!='REUNION'),]
-	data2[data2$cname=='SERBIA','ccode'] <- 345
-	data2[data2$cname=='VIRGIN ISLANDS, U.S.','ccode'] <- 1019
-	data2[data2$cname=='PALESTINIAN TERRITORY, OCCUPIED','ccode'] <- 1020
-	# temp <- data2[is.na(data2$ccode),3:4];unique(temp)
-
-	data2$cyear <- 
-		as.numeric(as.character(
-			paste(data2$ccode, data2$year, sep='')))
-# }
+WGIregQualClean <- cleanWbData(WGIregQual, 'regQual')
 
 # Manual corrections
 # temp <- WGIregQualClean[is.na(WGIregQualClean$ccode),3:4];unique(temp)
@@ -249,6 +259,69 @@ WGIregQualClean[WGIregQualClean$cname=='PALESTINIAN TERRITORY, OCCUPIED','ccode'
 WGIregQualClean$cyear <- 
 	as.numeric(as.character(
 		paste(WGIregQualClean$ccode, WGIregQualClean$year, sep='')))
+###############################################################
+
+###############################################################
+# Fraser, starts annually at 2000
+fraser2 <- fraser[7:length(fraser)]
+allVars <- lapply(fraser2, function(x) FUN=colnames(x))
+vars <- allVars[[1]]
+for(ii in 2:length(allVars)){ vars <- intersect(vars, allVars[[ii]]) }
+finVars <- vars[which(!vars %in% append('X', paste('X', 1:11, sep='.')))]
+
+fraser3 <- NULL
+for(ii in 1:length(fraser2)){
+	slice <- fraser2[[ii]]
+	slice <- slice[,finVars]
+	fraser3 <- rbind(fraser3,slice) }
+
+fraser3$cname <- countrycode(fraser3$Countries, 'country.name', 'country.name')
+fraser3$ccode <- countrycode(fraser3$cname, 'country.name', 'cown')
+
+# Manual corrections
+fraser3[fraser3$Countries=='Pap. New Guinea','cname'] <- 'PAPUA NEW GUINEA'
+fraser3[fraser3$Countries=='Pap. New Guinea','ccode'] <- 910
+fraser3[fraser3$Countries=='Unit. Arab Em.','cname'] <- 'UNITED ARAB EMIRATES'
+fraser3[fraser3$Countries=='Unit. Arab Em.','ccode'] <- 696
+fraser3[fraser3$Countries=='Hong Kong','ccode'] <- 1009
+fraser3[fraser3$Countries=='Serbia','ccode'] <- 345
+fraser3[fraser3$cname=='SERBIA','ccode'] <- 345
+# unique(fraser3[is.na(fraser3$ccode), c('Countries', 'cname', 'ccode')])
+
+fraser3$cyear <- 
+	as.numeric(as.character(
+		paste(fraser3$ccode, fraser3$cyear, sep='')))
+###############################################################
+
+###############################################################
+# Disputes
+disputes$cname <- countrycode(disputes$Country, 'country.name', 'country.name')
+disputes$ccode <- countrycode(disputes$cname, 'country.name', 'cown')
+
+# Manual corrections
+disputes[disputes$Country=='Korea, North','ccode'] <- 731
+disputes[disputes$Country=='Serbia','ccode'] <- 345
+disputes[disputes$Country=='Aruba','ccode'] <- 1000
+disputes[disputes$Country=='Bermuda','ccode'] <- 1001
+disputes[disputes$Country=='Cayman Islands','ccode'] <- 1002
+disputes[disputes$Country=='Czechoslovachia','ccode'] <- 315
+disputes[disputes$Country=='Faeroe Islands','ccode'] <- 1005
+disputes[disputes$Country=='Greenland','ccode'] <- 1007
+disputes[disputes$Country=='Hong Kong','ccode'] <- 1009
+disputes[disputes$Country=='Macao, China','ccode'] <- 1011
+disputes <- disputes[disputes$Country!='Netherlands Antilles',]
+disputes[disputes$Country=='New Caledonia','ccode'] <- 1012
+disputes[disputes$Country=='Congo-Brazzaville','ccode'] <- 484
+disputes[disputes$Country=='Congo-Kinshasa','ccode'] <- 490
+disputes <- disputes[disputes$Country!='Zaire',]
+# unique(disputes[is.na(disputes$ccode),c(2,ncol(disputes))])
+
+disputes$cyear <- 
+	as.numeric(as.character(
+		paste(disputes$ccode, disputes$Year, sep='')))
+
+# Correcting duplicates
+multiples <- names(table(disputes$cyear)[table(disputes$cyear)>1])
 ###############################################################
 
 ###############################################################

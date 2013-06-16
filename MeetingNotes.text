@@ -41,3 +41,23 @@ June 11 2013
 		- first stage look at what predicts disputes
 		- second stage those that have disputes what is effect on proprights
 	+ Split population approach
+
+June 16 2013
+===============
+
+### To dos
+	+ Additional data needs
+		- Dummy for upper income
+		- Sector of economy where dispute is concentrated
+		- Member of ICSID
+		- violating other international commitments
+			+ expropriation
+		- sovereign ratings
+	+ Dataset modifications
+		- I need to create a spatial version of the BITs variable
+		- Instead of cumulative disputes measure need to put in an indicator of whether or not there was a dispute in a year
+	+ Modeling strategy
+		- Need to figure out how to incorporate ECM code into R
+	+ Things to email Karen about
+		- sector of economy for dispute
+		- concluded cases includes settlements

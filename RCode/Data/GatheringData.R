@@ -50,7 +50,13 @@ setwd(paste(pathData, '/Components', '/ReputationalMeasures/WGI', sep=''))
 list.files()
 WGIregQual <- read.csv('wgi_regQual.csv')
 
+setwd(paste(pathData, '/Components', sep=''))
+list.files()
+karenReputation <- read.dta('ICSID_Reputation.dta')
+wrightExprop <- read.dta('TomzWright2010.dta')
+
 setwd(pathData)
 save(WBgdp, WBgdpCap, WBinflDeflator, WBgdpDeflator, kaopen, 
 	polity, disputes, WBfdi, WBfdiGdp, fraser, heritage, icrg, 
-	WGIregQual, file='allData.rda')
+	WGIregQual, karenReputation, wrightExprop,
+	 file='allData.rda')
