@@ -325,6 +325,71 @@ multiples <- names(table(disputes$cyear)[table(disputes$cyear)>1])
 ###############################################################
 
 ###############################################################
+# Reputation Dataset
+# Correcting country names
+temp <- unique(karenReput[,c('Nation', 'Refno')])
+temp <- temp[order(temp$Nation,decreasing=F),]
+temp2 <- temp[(which(temp$Nation %in% '.')+1):nrow(temp),]
+multiples <- names(table(temp2$Refno)[table(temp2$Refno)>1])
+temp2[which(temp2$Refno %in% multiple),]
+temp2 <- temp2[temp2$Nation!='CAmeroon',]
+temp2 <- temp2[temp2$Nation!='Czeckoslovakia',]
+temp2 <- temp2[temp2$Nation!='EAst Timor',]
+temp2 <- temp2[temp2$Nation!='East Timur',]
+temp2 <- temp2[temp2$Nation!='Servia',]
+temp2 <- temp2[temp2$Nation!='Yugoslavia',]
+colnames(temp2) <- c('cname', 'Refno')
+karenReput <- merge(karenReput, temp2, by='Refno', all.x=T, all.y=F)
+
+karenReput$ccode <- countrycode(karenReput$cname, 'country.name', 'cown')
+
+unique(karenReput[is.na(karenReput$ccode),'cname'])
+
+karenReput <- karenReput[!is.na(karenReput$Refno),]
+karenReput[karenReput$cname=='Korea, North','ccode'] <- 731
+karenReput[karenReput$cname=='Serbia','ccode'] <- 345
+
+karenReput$cyear <- 
+	as.numeric(as.character(
+		paste(karenReput$ccode, karenReput$Year, sep='')))
+
+multiples <- names(table(karenReput$cyear)[table(karenReput$cyear)>1])
+###############################################################
+
+###############################################################
+# Wright Expropriation Dataset
+wrightExprop$ccode <- countrycode(wrightExprop$ctryname, 
+	'country.name', 'cown')
+
+wrightExprop[wrightExprop$ctryname=='Cook Islands','ccode'] <- 1023
+wrightExprop <- wrightExprop[wrightExprop$ctryname!='Danzig',]
+wrightExprop <- wrightExprop[wrightExprop$ctryname!='French Equatorial Africa',]
+wrightExprop <- wrightExprop[wrightExprop$ctryname!='French West Africa',]
+wrightExprop <- wrightExprop[wrightExprop$ctryname!='Guadeloupe',]
+wrightExprop[wrightExprop$ctryname=='Hong Kong','ccode'] <- 1009
+wrightExprop[wrightExprop$ctryname=='Korea North (1949+)','ccode'] <- 731
+wrightExprop[wrightExprop$ctryname=='Macao','ccode'] <- 1011
+wrightExprop[wrightExprop$ctryname=='Martinique','ccode'] <- 1026
+wrightExprop <- wrightExprop[wrightExprop$ctryname!='Montserrat',]
+wrightExprop[wrightExprop$ctryname=='New Caledonia','ccode'] <- 1012
+wrightExprop <- wrightExprop[wrightExprop$ctryname!='Newfoundland',]
+wrightExprop[wrightExprop$ctryname=='Palestine (-1947)','ccode'] <- 1020
+wrightExprop[wrightExprop$ctryname=='Puerto Rico','ccode'] <- 1014
+wrightExprop <- wrightExprop[wrightExprop$ctryname!='Rhodesia and Nyasaland Federation',]
+wrightExprop <- wrightExprop[wrightExprop$ctryname!='Saar',]
+wrightExprop[wrightExprop$ctryname=='Serbia and Montenegro (1992+)','ccode'] <- 345
+wrightExprop <- wrightExprop[wrightExprop$ctryname!='Straits Settlements',]
+
+unique(wrightExprop[is.na(wrightExprop$ccode), 'ctryname'])
+
+wrightExprop$cyear <- 
+	as.numeric(as.character(
+		paste(wrightExprop$ccode, wrightExprop$year, sep='')))
+multiples <- names(table(wrightExprop$cyear)[table(wrightExprop$cyear)>1])
+unique(wrightExprop[which(wrightExprop$cyear %in% multiples), c('ctryname', 'ccode')])
+###############################################################
+
+###############################################################
 # Combining data
 setwd(pathData)
 save(disputes,fraser3, WGIregQualClean, heritage,icrg,
