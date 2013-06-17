@@ -412,7 +412,7 @@ wrightExprop$cyear <-
 # Combining data
 setwd(pathData)
 save(disputes,fraser3, WGIregQualClean, heritage,icrg,
-	polity2, wbData, kaopen, file='cleanedData.rda')
+	polity2, wbData, kaopen, karenReput, wrightExprop, file='cleanedData.rda')
 
 ### Load setup
 source('/Users/janus829/Desktop/Research/RemmerProjects/disputesReputation/RCode/setup.R')

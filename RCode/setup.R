@@ -19,6 +19,7 @@ require(reshape)
 require(plyr)
 require(WDI)
 require(lme4)
+require(cshapes)
 
 setwd(pathFunctions)
 
