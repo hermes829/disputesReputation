@@ -10,6 +10,9 @@ load('combinedData.rda')
 
 # DV 
 # Investment Profile from PRS Group: Investment.Profile
+# Property rights from PRS group:
+combData$Property.Rights <- (combData$Investment.Profile + combData$Bureaucracy.Quality +
+	combData$Corruption + combData$Law.and.Order)/4
 
 # Model covariates
 # + GDP: gdp.y
@@ -34,6 +37,9 @@ vars <- c('ccode', 'cname', 'year', 'cyear',
 modelData <- combData[,vars]
 dim(modelData)
 
+# log transformation
+modelData$gdp.y <- log(modelData$gdp.y)
+
 # change from t-1
 countries <- unique(modelData$cname)
 years <- 1984:2011
@@ -50,7 +56,7 @@ for(ii in 1:length(countries)){
 		chData <- rbind(chData, chSlice) }
 	print(ii) }
 dim(modelData); dim(chData)
-modelData <- merge(modelData, chData, by='cyear', all.x=T)
+modelData <- merge(modelData, chData, by='cyear', all.x=T, all.y=F)
 dim(modelData); dim(chData)
 # dirty lag
 modelData <- ddply(modelData,.(ccode),transform,
@@ -71,9 +77,9 @@ modelData <- ddply(modelData,.(ccode),transform,
 	expropLag = c(NA, exprop[-length(exprop)]))
 
 # polity correction
-combData[combData$polity==-88,'polity'] <- -10
-combData[combData$polity==-77,'polity'] <- -10
-combData[combData$polity==-66,'polity'] <- -10
+combData$polity[combData$polity==-88] <- -10
+combData$polity[combData$polity==-77] <- -10
+combData$polity[combData$polity==-66] <- -10
 
 # conc_disputes spatial
 
@@ -82,6 +88,37 @@ combData[combData$polity==-66,'polity'] <- -10
 modelData <- na.omit(modelData)
 # Form of ECM
 # ∆Yt = α + β0*∆Xt - β1(Yt-1 - β2Xt-1) + ε
-formula = Investment.Profile ~ gdp.y + chgdp + polity + tradebalance + signedbits + 
-			settle + conc_disputes
+# formula = Investment.Profile ~ gdp.y + chgdp + polity + tradebalance + signedbits + 
+			# settle + conc_disputes
 
+formula = ch_Investment.Profile ~ 
+			Investment.ProfileLag + 
+			ch_gdp.y + ch_chgdp + ch_polity + ch_signedbits + ch_settle + ch_conc_disputes + ch_exprop +
+			gdp.yLag + chgdpLag + polityLag + signedbitsLag + settleLag + conc_disputesLag + expropLag +
+			as.factor(ccode)-1
+
+modelResults <- lm(formula, data=modelData)
+modelLatex <- xtable(modelResults)[1:15,]
+# rownames(modelLatex) <- c('Investment Profile$_{t-1}$',
+# 	'$\\Delta$GDP$_{t}$',
+# 	'$\\Delta$GDP Growth$_{t}$',
+# 	'$\\Delta$Polity$_{t}$',
+# 	'$\\Delta$BITs$_{t}$',
+# 	'$\\Delta$ICSID Settlements$_{t}$',
+# 	'$\\Delta$ICSID Disputes$_{t}$',
+# 	'$\\Delta$Expropriation$_{t}$',
+# 	'GDP$_{t-1}$',
+# 	'GDP Growth$_{t-1}$',
+# 	'Polity$_{t-1}$',
+# 	'BITs$_{t-1}$',
+# 	'ICSID Settlement$_{t-1}$',
+# 	'ICSID Dispute$_{t-1}$',
+# 	'Expropriation$_{t-1}$')
+# print(xtable(modelLatex, sanitize.text.function=function(x){x}))
+modelLatex
+
+# Prelim graphics
+setwd(pathGraphics)
+pdf(file='ch_inv_hist.pdf')
+hist(modelData$ch_Investment.Profile)
+dev.off()

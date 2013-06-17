@@ -17,10 +17,12 @@ require(xlsx)
 require(gdata)
 require(reshape)
 require(plyr)
+require(doBy)
 require(WDI)
 require(lme4)
 require(cshapes)
-
+require(xtable)
+require(apsrtable)
 setwd(pathFunctions)
 
 # Setting seed
