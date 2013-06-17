@@ -80,7 +80,8 @@ cleanWbData <- function(data, variable){
 	mdata2[mdata2$Country.Name=='New Caledonia','ccode'] <- 1012
 	mdata2[mdata2$Country.Name=='Northern Mariana Islands','ccode'] <- 1013
 	mdata2[mdata2$Country.Name=='Puerto Rico','ccode'] <- 1014
-	mdata2[mdata2$Country.Name=='Serbia','ccode'] <- 1015
+	# mdata2[mdata2$Country.Name=='Serbia','ccode'] <- 1015
+	mdata2[mdata2$Country.Name=='Serbia','ccode'] <- 345
 	mdata2[mdata2$Country.Name=='Sint Maarten (Dutch part)','ccode'] <- 1016
 	mdata2[mdata2$Country.Name=='St. Martin (French part)','ccode'] <- 1017
 	mdata2[mdata2$Country.Name=='Turks and Caicos Islands','ccode'] <- 1018
@@ -321,7 +322,7 @@ disputes$cyear <-
 		paste(disputes$ccode, disputes$Year, sep='')))
 
 # Correcting duplicates
-multiples <- names(table(disputes$cyear)[table(disputes$cyear)>1])
+# multiples <- names(table(disputes$cyear)[table(disputes$cyear)>1])
 ###############################################################
 
 ###############################################################
@@ -343,7 +344,7 @@ karenReput <- merge(karenReput, temp2, by='Refno', all.x=T, all.y=F)
 
 karenReput$ccode <- countrycode(karenReput$cname, 'country.name', 'cown')
 
-unique(karenReput[is.na(karenReput$ccode),'cname'])
+# unique(karenReput[is.na(karenReput$ccode),'cname'])
 
 karenReput <- karenReput[!is.na(karenReput$Refno),]
 karenReput[karenReput$cname=='Korea, North','ccode'] <- 731
@@ -353,7 +354,7 @@ karenReput$cyear <-
 	as.numeric(as.character(
 		paste(karenReput$ccode, karenReput$Year, sep='')))
 
-multiples <- names(table(karenReput$cyear)[table(karenReput$cyear)>1])
+# multiples <- names(table(karenReput$cyear)[table(karenReput$cyear)>1])
 ###############################################################
 
 ###############################################################
@@ -380,13 +381,31 @@ wrightExprop <- wrightExprop[wrightExprop$ctryname!='Saar',]
 wrightExprop[wrightExprop$ctryname=='Serbia and Montenegro (1992+)','ccode'] <- 345
 wrightExprop <- wrightExprop[wrightExprop$ctryname!='Straits Settlements',]
 
-unique(wrightExprop[is.na(wrightExprop$ccode), 'ctryname'])
+# unique(wrightExprop[is.na(wrightExprop$ccode), 'ctryname'])
+
+wrightExprop <- wrightExprop[wrightExprop$ctryname!='Belgium-Luxembourg',]
+wrightExprop <- wrightExprop[wrightExprop$ctryname!='Germany (-1945)',]
+wrightExprop[wrightExprop$ctryname=='Germany East (1945-1990)','ccode'] <- 265
+drop <- which(wrightExprop$ctryname=='Germany West (1945-1990)' & wrightExprop$year==1991)
+wrightExprop <- wrightExprop[c(1:(drop-1), (drop+1):nrow(wrightExprop)),]
+drop <- which(wrightExprop$ctryname=='Yugoslavia (1918-1992)' & wrightExprop$year==1992)
+wrightExprop <- wrightExprop[c(1:(drop-1), (drop+1):nrow(wrightExprop)),]
+wrightExprop[wrightExprop$ctryname=='Congo (Brazzaville)','ccode'] <- 484
+wrightExprop[wrightExprop$ctryname=='Congo (Kinshasa)','ccode'] <- 490
+drop <- which(wrightExprop$ctryname=='Ethiopia (1993+)' & wrightExprop$year<1993)
+wrightExprop <- wrightExprop[c(1:(drop[1]-1), (drop[length(drop)]+1):nrow(wrightExprop)),]
+drop <- which(wrightExprop$ctryname=='Yemen Unified (1990+)' & wrightExprop$year<1990)
+wrightExprop <- wrightExprop[c(1:(drop[1]-1), (drop[length(drop)]+1):nrow(wrightExprop)),]
+wrightExprop <- wrightExprop[wrightExprop$ctryname!='Indochina',]
+drop <- which(wrightExprop$ctryname=='Pakistan (1972+)' & wrightExprop$year<1972)
+wrightExprop <- wrightExprop[c(1:(drop[1]-1), (drop[length(drop)]+1):nrow(wrightExprop)),]
 
 wrightExprop$cyear <- 
 	as.numeric(as.character(
 		paste(wrightExprop$ccode, wrightExprop$year, sep='')))
-multiples <- names(table(wrightExprop$cyear)[table(wrightExprop$cyear)>1])
-unique(wrightExprop[which(wrightExprop$cyear %in% multiples), c('ctryname', 'ccode')])
+# multiples <- names(table(wrightExprop$cyear)[table(wrightExprop$cyear)>1])
+# temp <- unique(wrightExprop[which(wrightExprop$cyear %in% multiples), c('ctryname', 'ccode')])
+# temp[order(temp$ccode),]
 ###############################################################
 
 ###############################################################
@@ -426,6 +445,10 @@ unique(combData[is.na(combData$ccode), 1:5]); dim(combData)
 combData <- merge(combData, polity2[,c(7:36)],by='cyear',all.x=T,all.y=F)
 unique(combData[is.na(combData$ccode), 1:5]); dim(combData)
 combData <- merge(combData, icrg[,c(5:16,18)],by='cyear',all.x=T,all.y=F)
+unique(combData[is.na(combData$ccode), 1:5]); dim(combData)
+combData <- merge(combData, karenReput[,c(4:14,16:23,26)],by='cyear',all.x=T,all.y=F)
+unique(combData[is.na(combData$ccode), 1:5]); dim(combData)
+combData <- merge(combData, wrightExprop[,c(5,12)],by='cyear',all.x=T,all.y=F)
 unique(combData[is.na(combData$ccode), 1:5]); dim(combData)
 
 save(combData, file='combinedData.rda')
