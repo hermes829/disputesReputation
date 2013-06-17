@@ -32,7 +32,8 @@ combData$Property.Rights <- (combData$Investment.Profile + combData$Bureaucracy.
 
 # Variable manipulation
 vars <- c('ccode', 'cname', 'year', 'cyear',
-	'Investment.Profile', 'gdp.y', 'chgdp', 'polity', 
+	'Investment.Profile', 'Property.Rights',
+	'gdp.y', 'chgdp', 'polity', 
 	'signedbits', 'settle', 'conc_disputes', 'exprop')
 modelData <- combData[,vars]
 dim(modelData)
@@ -62,6 +63,8 @@ dim(modelData); dim(chData)
 modelData <- ddply(modelData,.(ccode),transform,
 	Investment.ProfileLag = c(NA, Investment.Profile[-length(Investment.Profile)]))
 modelData <- ddply(modelData,.(ccode),transform,
+	Property.RightsLag = c(NA, Property.Rights[-length(Property.Rights)]))
+modelData <- ddply(modelData,.(ccode),transform,
 	gdp.yLag = c(NA, gdp.y[-length(gdp.y)]))
 modelData <- ddply(modelData,.(ccode),transform,
 	chgdpLag = c(NA, chgdp[-length(chgdp)]))
@@ -85,7 +88,18 @@ combData$polity[combData$polity==-66] <- -10
 
 
 # Running model
+setwd(pathData)
 modelData <- na.omit(modelData)
+write.csv(modelData, file='forKaren.csv')
+
+### Descriptive statistics
+summary(modelData)
+modelSumm <- modelData[,5:ncol(modelData)]
+means <- apply(modelSumm, 2, mean)
+sds <- apply(modelSumm, 2, sd)
+quants <- t(apply(modelSumm, 2, function(x) FUN=quantile(x,seq(0,1,.25))))
+xtable(cbind(means, sds, quants),digits=3)
+
 # Form of ECM
 # ∆Yt = α + β0*∆Xt - β1(Yt-1 - β2Xt-1) + ε
 # formula = Investment.Profile ~ gdp.y + chgdp + polity + tradebalance + signedbits + 
