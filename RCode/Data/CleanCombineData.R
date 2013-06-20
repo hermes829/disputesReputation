@@ -410,15 +410,18 @@ wrightExprop$cyear <-
 
 ###############################################################
 bitsReporter <- bits[,c('Reporter','ReporterClean','ccodeRep',
-	'Year_Signature','Year_force','signedbitsSM', 'ratifiedbitsSM')]
+	'Year_Signature','Year_force','signedbitsSM', 'ratifiedbitsSM', 
+	'PartnerClean', 'ccodePar')]
 colnames(bitsReporter) <- c('Country', 'cname', 'ccode', 
-	'yearSign', 'yearRat', 'signedbitsSM', 'ratifiedbitsSM')
+	'yearSign', 'yearRat', 'signedbitsSM', 'ratifiedbitsSM','other','othercode')
 bitsPartner <- bits[,c('Partner','PartnerClean','ccodePar',
-	'Year_Signature','Year_force','signedbitsSM', 'ratifiedbitsSM')]
+	'Year_Signature','Year_force','signedbitsSM', 'ratifiedbitsSM', 
+	'ReporterClean', 'ccodeRep')]
 colnames(bitsPartner) <- c('Country', 'cname', 'ccode', 
-	'yearSign', 'yearRat', 'signedbitsSM', 'ratifiedbitsSM')
+	'yearSign', 'yearRat', 'signedbitsSM', 'ratifiedbitsSM','other','othercode')
 bitsMelt <- data.frame(rbind(bitsReporter,bitsPartner))
-bitsSigned <- bitsMelt; bitsRatified <- na.omit(bitsMelt)
+
+bitsSigned <- unique(bitsMelt); bitsRatified <- unique(na.omit(bitsMelt))
 bitsSigned$cyear <- 
 	as.numeric(as.character(
 		paste(bitsSigned$ccode, bitsSigned$yearSign, sep='')))
