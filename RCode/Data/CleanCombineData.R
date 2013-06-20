@@ -474,10 +474,15 @@ combData <- merge(combData, karenReput[,c(4:14,16:23,26)],by='cyear',all.x=T,all
 unique(combData[is.na(combData$ccode), 1:5]); dim(combData)
 combData <- merge(combData, wrightExprop[,c(5,12)],by='cyear',all.x=T,all.y=F)
 unique(combData[is.na(combData$ccode), 1:5]); dim(combData)
+
 combData <- merge(combData, bitsSigned,by='cyear',all.x=T,all.y=F)
 unique(combData[is.na(combData$ccode), 1:5]); dim(combData)
+combData$signedbitsSM[is.na(combData$signedbitsSM)] <- 0
+
 combData <- merge(combData, bitsRatified,by='cyear',all.x=T,all.y=F)
 unique(combData[is.na(combData$ccode), 1:5]); dim(combData)
+combData$ratifiedbitsSM[is.na(combData$ratifiedbitsSM)] <- 0
+
 
 save(combData, file='combinedData.rda')
 write.csv(combData, file='combinedData.csv')
