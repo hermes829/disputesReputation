@@ -54,9 +54,12 @@ setwd(paste(pathData, '/Components', sep=''))
 list.files()
 karenReput <- read.dta('ICSID_Reputation.dta')
 wrightExprop <- read.dta('TomzWright2010.dta')
+load('bits.rda')
+bits$signedbitsSM <- 1
+bits$ratifiedbitsSM <- ifelse(is.na(bits$Year_force), 0, 1)
 
 setwd(pathData)
 save(WBgdp, WBgdpCap, WBinflDeflator, WBgdpDeflator, kaopen, 
 	polity, disputes, WBfdi, WBfdiGdp, fraser, heritage, icrg, 
-	WGIregQual, karenReput, wrightExprop,
+	WGIregQual, karenReput, wrightExprop, bits,
 	 file='allData.rda')

@@ -332,7 +332,7 @@ temp <- unique(karenReput[,c('Nation', 'Refno')])
 temp <- temp[order(temp$Nation,decreasing=F),]
 temp2 <- temp[(which(temp$Nation %in% '.')+1):nrow(temp),]
 multiples <- names(table(temp2$Refno)[table(temp2$Refno)>1])
-temp2[which(temp2$Refno %in% multiple),]
+temp2[which(temp2$Refno %in% multiples),]
 temp2 <- temp2[temp2$Nation!='CAmeroon',]
 temp2 <- temp2[temp2$Nation!='Czeckoslovakia',]
 temp2 <- temp2[temp2$Nation!='EAst Timor',]
@@ -409,10 +409,34 @@ wrightExprop$cyear <-
 ###############################################################
 
 ###############################################################
+bitsReporter <- bits[,c('Reporter','ReporterClean','ccodeRep',
+	'Year_Signature','Year_force','signedbitsSM', 'ratifiedbitsSM')]
+colnames(bitsReporter) <- c('Country', 'cname', 'ccode', 
+	'yearSign', 'yearRat', 'signedbitsSM', 'ratifiedbitsSM')
+bitsPartner <- bits[,c('Partner','PartnerClean','ccodePar',
+	'Year_Signature','Year_force','signedbitsSM', 'ratifiedbitsSM')]
+colnames(bitsPartner) <- c('Country', 'cname', 'ccode', 
+	'yearSign', 'yearRat', 'signedbitsSM', 'ratifiedbitsSM')
+bitsMelt <- data.frame(rbind(bitsReporter,bitsPartner))
+bitsSigned <- bitsMelt; bitsRatified <- na.omit(bitsMelt)
+bitsSigned$cyear <- 
+	as.numeric(as.character(
+		paste(bitsSigned$ccode, bitsSigned$yearSign, sep='')))
+bitsSigned <- summaryBy(signedbitsSM ~ cyear, data=bitsSigned, FUN=(sum))
+colnames(bitsSigned)[2] <- 'signedbitsSM'
+bitsRatified$cyear <- 
+	as.numeric(as.character(
+		paste(bitsRatified$ccode, bitsRatified$yearRat, sep='')))
+bitsRatified <- summaryBy(ratifiedbitsSM ~ cyear, data=bitsRatified, FUN=(sum))
+colnames(bitsRatified)[2] <- 'ratifiedbitsSM'	
+###############################################################
+
+###############################################################
 # Combining data
 setwd(pathData)
 save(disputes,fraser3, WGIregQualClean, heritage,icrg,
-	polity2, wbData, kaopen, karenReput, wrightExprop, file='cleanedData.rda')
+	polity2, wbData, kaopen, karenReput, wrightExprop, 
+	bitsSigned, bitsRatified, file='cleanedData.rda')
 
 ### Load setup
 source('/Users/janus829/Desktop/Research/RemmerProjects/disputesReputation/RCode/setup.R')
@@ -449,6 +473,10 @@ unique(combData[is.na(combData$ccode), 1:5]); dim(combData)
 combData <- merge(combData, karenReput[,c(4:14,16:23,26)],by='cyear',all.x=T,all.y=F)
 unique(combData[is.na(combData$ccode), 1:5]); dim(combData)
 combData <- merge(combData, wrightExprop[,c(5,12)],by='cyear',all.x=T,all.y=F)
+unique(combData[is.na(combData$ccode), 1:5]); dim(combData)
+combData <- merge(combData, bitsSigned,by='cyear',all.x=T,all.y=F)
+unique(combData[is.na(combData$ccode), 1:5]); dim(combData)
+combData <- merge(combData, bitsRatified,by='cyear',all.x=T,all.y=F)
 unique(combData[is.na(combData$ccode), 1:5]); dim(combData)
 
 save(combData, file='combinedData.rda')
