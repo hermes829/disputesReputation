@@ -8,6 +8,7 @@ Sys.info()["user"]=="janus829"
   pathGraphics="~/Dropbox/Research/RemmerProjects/disputesReputation/Graphics";
   pathData="~/Dropbox/Research/RemmerProjects/disputesReputation/Data";
   pathCode="~/Desktop/Research/RemmerProjects/disputesReputation/RCode";
+  pathLatex="~/Desktop/Research/RemmerProjects/disputesReputation/Latex"
   pathFunctions="~/Desktop/Prog Notes/R Functions"}
 
 # Loading libraries and functions
@@ -24,6 +25,7 @@ require(lme4)
 require(cshapes)
 require(xtable)
 require(apsrtable)
+require(tikzDevice)
 setwd(pathFunctions)
 
 # Setting seed

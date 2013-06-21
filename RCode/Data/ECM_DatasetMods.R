@@ -206,7 +206,10 @@ modelData <- ddply(modelData,.(ccode),transform,
 # # Running model
 setwd(pathData)
 modelData <- na.omit(modelData)
-forKaren <- merge(modelData, 
+save(modelData, file='forAnalysis.rda')
+
+anData <- merge(modelData, 
 	combData[,c('cyear', setdiff(names(combData), names(modelData)))],
 	by='cyear',all.x=T,all.y=F)
-write.csv(forKaren, file='forKaren.csv')
+save(anData, file='forAnalysisFull.rda')
+write.csv(anData, file='forKaren.csv')
