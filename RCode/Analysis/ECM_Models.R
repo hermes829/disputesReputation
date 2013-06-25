@@ -33,7 +33,9 @@ vars <- c(
 	'conc_disputesLag',
 	'pend_disputesLag',
 	'cp_disputesLag',
-	'disputesNoSettleLag')
+	'disputesNoSettleLag',
+	# country effects
+	'ccode', 'cname', 'year')
 
 modelData <- modelData[,c(1:16,29:52)]
 modelSumm <- modelData[,5:ncol(modelData)]
@@ -73,25 +75,29 @@ covsV1 = paste(vars[3], vars[4], vars[5],
 	vars[15], vars[16], vars[17], 
 	# vars[6], vars[18], # rat bits
 	vars[7], vars[19], # sig bits
-	vars[9], vars[21], sep=' + ') # conc disp
+	vars[9], vars[21], # conc disp
+	vars[26], sep=' + ') 
 
 covsV1.5 = paste(vars[3], vars[4], vars[5], 
 	vars[15], vars[16], vars[17], 
 	# vars[6], vars[18], # rat bits
 	vars[7], vars[19], # sig bits
-	vars[10], vars[22], sep=' + ') # pend disp
+	vars[10], vars[22], # pend disp
+	vars[26], sep=' + ') 
 
 covsV2 = paste(vars[3], vars[4], vars[5], 
 	vars[15], vars[16], vars[17], 
 	# vars[6], vars[18], # rat bits 
 	vars[7], vars[19], # sig bits
-	vars[11], vars[23], sep=' + ') # cp disp
+	vars[11], vars[23], # cp disp
+	vars[26], sep=' + ') 
 
 covsV3 = paste(vars[3], vars[4], vars[5], 
 	vars[15], vars[16], vars[17], 
 	# vars[6], vars[18], # rat bits 
 	vars[7], vars[19], # sig bits
-	vars[12], vars[24], sep=' + ') # disp-settl
+	vars[12], vars[24], # disp-settl
+	vars[26], sep=' + ') 
 
 formulaV1=paste(dv,covsV1);formulaV1.5=paste(dv,covsV1.5);
 	formulaV2=paste(dv,covsV2);formulaV3=paste(dv,covsV3)
