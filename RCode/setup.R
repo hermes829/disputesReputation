@@ -27,6 +27,7 @@ require(xtable)
 require(apsrtable)
 require(tikzDevice)
 setwd(pathFunctions)
+source('clus_errors.R')
 
 # Setting seed
 set.seed(6886)

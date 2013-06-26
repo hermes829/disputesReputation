@@ -43,7 +43,7 @@ means <- apply(modelSumm, 2, mean)
 sds <- apply(modelSumm, 2, sd)
 quants <- t(apply(modelSumm, 2, function(x) FUN=quantile(x,seq(0,1,.25))))
 summResults <- xtable(cbind(means, sds, quants),digits=2)
-setwd(paste(pathLatex,'/reModel_V1',sep=''))
+setwd(paste(pathLatex,'/reModel_logDisputes',sep=''))
 print(summResults, file='summResults.tex')
 
 # Form of ECM
@@ -118,17 +118,23 @@ varsTable <- c(
 # Creating APSR like tables
 # tabEst <- paste(varsTable, 'Estimate', sep="__")
 # tabSE <- paste(varsTable, 'Std. Error', sep="__")
-tableResults <- matrix('', nrow=2*length(varsTable), ncol=5)
-digs = 3; noModels=4
-# rownames(tableResults) <- c(tabEst, tabSE)
+digs=3; noModels=4
+tableResults <- matrix('', nrow=2*length(varsTable), ncol=1+noModels)
+
 tableResults[,1] <- rep(varsTable,2)
 colnames(tableResults) <- c('Variable',paste('Model',1:noModels))
-
 for(ii in 2:ncol(tableResults)){
 	temp <- modelSumm[[ii-1]]
+	n <- attributes(summary(modelResults[[ii-1]]))[['dims']][2]
 	temp <- temp[match(tableResults[,'Variable'], rownames(temp)),]
 	estims <- temp[1:length(varsTable),'Estimate']
 	estims <- round(as.numeric(as.character(estims)),digs)
+	tvals <- abs(temp[1:length(varsTable),'t value'])
+	tvals <- round(as.numeric(as.character(tvals)),digs)
+	estims <- ifelse(tvals>=qt(0.95,n) & !is.na(tvals) & tvals<qt(0.975,n), 
+		paste('$', estims,'^{\\ast}$',sep=''), estims)
+	estims <- ifelse(tvals>=qt(0.975,n) & !is.na(tvals), 
+		paste('$', estims,'^{\\ast\\ast}$',sep=''), estims)
 	tableResults[1:length(varsTable),ii] <- estims
 	serrors <- temp[(length(varsTable)+1):nrow(tableResults),'Std. Error']
 	serrors <- round(as.numeric(as.character(serrors)),digs)
@@ -143,13 +149,31 @@ for(ii in 1:length(varsTable)){
 	temp <- cbind('', t(tableResults[ii+length(varsTable),2:ncol(tableResults)]))
 	tableFinal <- rbind(tableFinal, tableResults[ii,], temp) }
 
-setwd(paste(pathLatex,'/reModel_V1',sep=''))
-print(xtable(tableFinal,
-	caption='Here we show the results of a random effects regression on investment profile (DV=pch\\_Investment.Profile) using ratified BITs as a covariate, a number of dispute measures, and typical control variables.'
-	# caption='Here we show the results of a random effects regression on the protection of property rights (DV=pch\\_Property.Rights) using ratified BITs as a covariate, a number of dispute measures, and typical control variables.'
-	# caption='Here we show the results of a random effects regression on investment profile (DV=pch\\_Investment.Profile) using signed BITs as a covariate, a number of dispute measures, and typical control variables.'
-	# caption='Here we show the results of a random effects regression on the protection of property rights (DV=pch\\_Property.Rights) using signed BITs as a covariate, a number of dispute measures, and typical control variables.'
+# Adding other info
+sSize <- cbind('n', t(as.vector(mapply(x=modelResults,
+		function(x) FUN=attributes(summary(x))[['dims']][2]))))
+gSize <- cbind('N', t(as.vector(mapply(x=modelResults,
+			function(x) FUN=attributes(summary(x))[['dims']][4]))))
+fitStats <- mapply(x=modelResults, function(x) FUN=attributes(summary(x))[['AICtab']])
+fitStats <- cbind(rownames(fitStats), fitStats)[1:2,]
+fit <- matrix(c(as.character(fitStats[,1]),
+	round(as.numeric(fitStats[,2:(noModels+1)]),2)),nrow=2)
+rmse <- round(mapply(x=modelResults, function(x) 
+	FUN=sqrt(mean(attributes(summary(x))[['resid']]^2))),2)
+fRmse <- cbind('RMSE', t(rmse))
+
+tableFinal <- rbind(tableFinal, sSize, gSize, fit, fRmse)
+# colnames(tableFinal) <- paste('\\multicolumn{1}{c}{',colnames(tableFinal),'}',sep='')
+# \multicolumn{ 1 }{ c }{ Model 1 }
+
+setwd(paste(pathLatex,'/reModel_logDisputes',sep=''))
+print.xtable(xtable(tableFinal, align='llcccc',
+	caption='Random effects regression on investment profile (DV=pch\\_Investment.Profile) with standard errors in parentheses. $^**$ and $^*$ indicate significance at $p< 0.05 $ and $p< 0.10 $, respectively.'
+	# caption='Random effects regression on the protection of property rights (DV=pch\\_Property.Rights) with standard errors in parentheses. $^{**}$ and $^{*}$ indicate significance at $p< 0.05 $ and $p< 0.10 $, respectively.'
 	), include.rownames=FALSE,
+	# sanitize.text.function = function(x) x,
+	sanitize.text.function=function(str)gsub("_","\\_",str,fixed=TRUE),
+	hline.after=c(0,0,2,18,34,39,39), 
 	file='modelResultsInvProfileV1.tex'
 	# file='modelResultsPropRightsV1.tex'
 	# file='modelResultsInvProfileV2.tex'
@@ -169,3 +193,8 @@ print(xtable(tableFinal,
 # 	'Ratified BITs$_{t-1}$',
 # 	'Conc. Dispute$_{t-1}$'
 # 	)
+
+# mat <- matrix(0, nrow=2, ncol=2)
+# diag(mat) <- c('$\\sigma_1^2$', '$\\sigma_2^2$')
+# tbl <- xtable(mat) 
+# print.xtable(tbl, sanitize.text.function = function(x) x)

@@ -86,6 +86,23 @@ combData$cp_disputes_five <- combData$conc_disputes_five + combData$pend_dispute
 
 combData$disputesNoSettle <- combData$cp_disputes - combData$csettle
 
+# Logged disputes and bits measures
+lvars <- c('cratifiedbitsSM', 'csignedbitsSM', 'csettle',
+	'conc_disputes', 'pend_disputes', 'cp_disputes',
+	'disputesNoSettle')
+for(ii in 1:length(lvars)){ 
+	combData[paste('log_',lvars[ii],sep='')] <- NA
+	combData[,paste('log_',lvars[ii],sep='')] <- log(combData[,lvars[ii]]+0.0001) 
+}
+
+# combData$cratifiedbitsSM <- combData$log_cratifiedbitsSM
+# combData$csignedbitsSM <- combData$log_csignedbitsSM
+# combData$csettle <- combData$log_csettle
+# combData$conc_disputes <- combData$log_conc_disputes
+# combData$pend_disputes <- combData$log_pend_disputes
+# combData$cp_disputes <- combData$log_cp_disputes
+# combData$disputesNoSettle <- combData$log_disputesNoSettle
+
 # log transformation
 combData$LNgdp.y <- log(combData$gdp.y)
 combData$LNtradebalance <- log( combData$tradebalance + 200 )
