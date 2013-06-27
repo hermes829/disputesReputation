@@ -38,12 +38,19 @@ vars <- c(
 	'ccode', 'cname', 'year')
 
 modelData <- modelData[,c(1:16,29:52)]
+
+# Looking at proportion of no change cases
+# modelData <- merge(modelData, anData[,c('cyear', 'upperincome')], by='cyear')
+# temp <- modelData[modelData$upperincome==0 & modelData$cname!='JAPAN',]
+# length(temp$pch_Investment.Profile[temp$pch_Investment.Profile==0])/length(temp$pch_Investment.Profile)
+# length(temp$pch_Property.Rights[temp$pch_Property.Rights==0])/length(temp$pch_Property.Rights)
+
 modelSumm <- modelData[,5:ncol(modelData)]
 means <- apply(modelSumm, 2, mean)
 sds <- apply(modelSumm, 2, sd)
 quants <- t(apply(modelSumm, 2, function(x) FUN=quantile(x,seq(0,1,.25))))
 summResults <- xtable(cbind(means, sds, quants),digits=2)
-setwd(paste(pathLatex,'/reModel_logDisputes',sep=''))
+setwd(paste(pathLatex,'/reModel_V1',sep=''))
 print(summResults, file='summResults.tex')
 
 # Form of ECM
@@ -53,29 +60,29 @@ dv = paste(vars[1], ' ~ ', vars[13], ' +') # Prop Rights
 
 covsV1 = paste(vars[3], vars[4], vars[5],   
 	vars[15], vars[16], vars[17], 
-	vars[6], vars[18], # rat bits
-	# vars[7], vars[19], # sig bits
+	# vars[6], vars[18], # rat bits
+	vars[7], vars[19], # sig bits
 	vars[9], vars[21], # conc disp
 	paste('(1|',vars[25],')',sep=''), sep=' + ') 
 
 covsV1.5 = paste(vars[3], vars[4], vars[5], 
 	vars[15], vars[16], vars[17], 
-	vars[6], vars[18], # rat bits
-	# vars[7], vars[19], # sig bits
+	# vars[6], vars[18], # rat bits
+	vars[7], vars[19], # sig bits
 	vars[10], vars[22], # pend disp
 	paste('(1|',vars[25],')',sep=''), sep=' + ') 
 
 covsV2 = paste(vars[3], vars[4], vars[5], 
 	vars[15], vars[16], vars[17], 
-	vars[6], vars[18], # rat bits 
-	# vars[7], vars[19], # sig bits
+	# vars[6], vars[18], # rat bits 
+	vars[7], vars[19], # sig bits
 	vars[11], vars[23], # cp disp
 	paste('(1|',vars[25],')',sep=''), sep=' + ') 
 
 covsV3 = paste(vars[3], vars[4], vars[5], 
 	vars[15], vars[16], vars[17], 
-	vars[6], vars[18], # rat bits 
-	# vars[7], vars[19], # sig bits
+	# vars[6], vars[18], # rat bits 
+	vars[7], vars[19], # sig bits
 	vars[12], vars[24], # disp-settl
 	paste('(1|',vars[25],')',sep=''), sep=' + ') 
 
@@ -95,8 +102,8 @@ varsTable <- c(
 	# Percent change covariates
 	'pch_LNgdp.y', 'pch_LNtradebalance', 'pch_polity', 
 	# Include one of BIT measures
-	'pch_cratifiedbitsSM',
-	# 'pch_csignedbitsSM',
+	# 'pch_cratifiedbitsSM',
+	'pch_csignedbitsSM',
 	# Four models in a table, include all dispute measures
 	'pch_conc_disputes',
 	'pch_pend_disputes',
@@ -105,8 +112,8 @@ varsTable <- c(
 	# Lagged variables
 	'LNgdp.yLag', 'LNtradebalanceLag', 'polityLag', 
 	# Include one of BIT measures
-	'cratifiedbitsSMLag',
-	# 'csignedbitsSMLag',
+	# 'cratifiedbitsSMLag',
+	'csignedbitsSMLag',
 	# Four models in a table, include all dispute measures
 	'conc_disputesLag',
 	'pend_disputesLag',
@@ -166,7 +173,7 @@ tableFinal <- rbind(tableFinal, sSize, gSize, fit, fRmse)
 # colnames(tableFinal) <- paste('\\multicolumn{1}{c}{',colnames(tableFinal),'}',sep='')
 # \multicolumn{ 1 }{ c }{ Model 1 }
 
-setwd(paste(pathLatex,'/reModel_logDisputes',sep=''))
+setwd(paste(pathLatex,'/reModel_V1',sep=''))
 print.xtable(xtable(tableFinal, align='llcccc',
 	# caption='Random effects regression on investment profile (DV=pch\\_Investment.Profile) with standard errors in parentheses. $^**$ and $^*$ indicate significance at $p< 0.05 $ and $p< 0.10 $, respectively.'
 	caption='Random effects regression on the protection of property rights (DV=pch\\_Property.Rights) with standard errors in parentheses. $^{**}$ and $^{*}$ indicate significance at $p< 0.05 $ and $p< 0.10 $, respectively.'
@@ -175,9 +182,9 @@ print.xtable(xtable(tableFinal, align='llcccc',
 	sanitize.text.function=function(str)gsub("_","\\_",str,fixed=TRUE),
 	hline.after=c(0,0,2,18,34,39,39), 
 	# file='modelResultsInvProfileV1.tex'
-	file='modelResultsPropRightsV1.tex'
+	# file='modelResultsPropRightsV1.tex'
 	# file='modelResultsInvProfileV2.tex'
-	# file='modelResultsPropRightsV2.tex'
+	file='modelResultsPropRightsV2.tex'
 	)
 
 # rownames(modelLatex) <- c(

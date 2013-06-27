@@ -48,34 +48,34 @@ print(summResults, file='summResults.tex')
 
 # Form of ECM
 # ∆Yt = α + β0*∆Xt - β1(Yt-1 - β2Xt-1) + ε
-# dv = paste(vars[2], ' ~ ', vars[14], ' +') # Inv Profile
-dv = paste(vars[1], ' ~ ', vars[13], ' +') # Prop Rights
+dv = paste(vars[2], ' ~ ', vars[14], ' +') # Inv Profile
+# dv = paste(vars[1], ' ~ ', vars[13], ' +') # Prop Rights
 
 covsV1 = paste(vars[3], vars[4], vars[5],   
 	vars[15], vars[16], vars[17], 
-	# vars[6], vars[18], # rat bits
-	vars[7], vars[19], # sig bits
+	vars[6], vars[18], # rat bits
+	# vars[7], vars[19], # sig bits
 	vars[9], vars[21], # conc disp
 	paste('as.factor(',vars[25],')-1',sep=''), sep=' + ') 
 
 covsV1.5 = paste(vars[3], vars[4], vars[5], 
 	vars[15], vars[16], vars[17], 
-	# vars[6], vars[18], # rat bits
-	vars[7], vars[19], # sig bits
+	vars[6], vars[18], # rat bits
+	# vars[7], vars[19], # sig bits
 	vars[10], vars[22], # pend disp
 	paste('as.factor(',vars[25],')-1',sep=''), sep=' + ') 
 
 covsV2 = paste(vars[3], vars[4], vars[5], 
 	vars[15], vars[16], vars[17], 
-	# vars[6], vars[18], # rat bits 
-	vars[7], vars[19], # sig bits
+	vars[6], vars[18], # rat bits 
+	# vars[7], vars[19], # sig bits
 	vars[11], vars[23], # cp disp
 	paste('as.factor(',vars[25],')-1',sep=''), sep=' + ') 
 
 covsV3 = paste(vars[3], vars[4], vars[5], 
 	vars[15], vars[16], vars[17], 
-	# vars[6], vars[18], # rat bits 
-	vars[7], vars[19], # sig bits
+	vars[6], vars[18], # rat bits 
+	# vars[7], vars[19], # sig bits
 	vars[12], vars[24], # disp-settl
 	paste('as.factor(',vars[25],')-1',sep=''), sep=' + ') 
 
@@ -90,13 +90,13 @@ modelSumm <- lapply(modelResults, function(x) FUN=robust.se(x, modelData$ccode)[
 # Saving results
 varsTable <- c(
 	# Lagged versions of DV
-	# 'Investment.ProfileLag',
-	'Property.RightsLag',
+	'Investment.ProfileLag',
+	# 'Property.RightsLag',
 	# Percent change covariates
 	'pch_LNgdp.y', 'pch_LNtradebalance', 'pch_polity', 
 	# Include one of BIT measures
-	# 'pch_cratifiedbitsSM',
-	'pch_csignedbitsSM',
+	'pch_cratifiedbitsSM',
+	# 'pch_csignedbitsSM',
 	# Four models in a table, include all dispute measures
 	'pch_conc_disputes',
 	'pch_pend_disputes',
@@ -105,8 +105,8 @@ varsTable <- c(
 	# Lagged variables
 	'LNgdp.yLag', 'LNtradebalanceLag', 'polityLag', 
 	# Include one of BIT measures
-	# 'cratifiedbitsSMLag',
-	'csignedbitsSMLag',
+	'cratifiedbitsSMLag',
+	# 'csignedbitsSMLag',
 	# Four models in a table, include all dispute measures
 	'conc_disputesLag',
 	'pend_disputesLag',
@@ -167,16 +167,16 @@ tableFinal <- rbind(tableFinal, sSize, gSize, rSQ, arSQ, frmse)
 
 setwd(paste(pathLatex,'/feModel_V1',sep=''))
 print.xtable(xtable(tableFinal, align='llcccc',
-	# caption='Fixed effects regression on investment profile (DV=pch\\_Investment.Profile) with standard errors in parentheses. $^**$ and $^*$ indicate significance at $p< 0.05 $ and $p< 0.10 $, respectively.'
-	caption='Fixed effects regression on the protection of property rights (DV=pch\\_Property.Rights) with standard errors in parentheses. $^{**}$ and $^{*}$ indicate significance at $p< 0.05 $ and $p< 0.10 $, respectively.'
+	caption='Fixed effects regression on investment profile (DV=pch\\_Investment.Profile) with standard errors in parentheses. $^**$ and $^*$ indicate significance at $p< 0.05 $ and $p< 0.10 $, respectively.'
+	# caption='Fixed effects regression on the protection of property rights (DV=pch\\_Property.Rights) with standard errors in parentheses. $^{**}$ and $^{*}$ indicate significance at $p< 0.05 $ and $p< 0.10 $, respectively.'
 	), include.rownames=FALSE,
 	# sanitize.text.function = function(x) x,
 	sanitize.text.function=function(str)gsub("_","\\_",str,fixed=TRUE),
 	hline.after=c(0,0,2,18,34,39,39), 
-	# file='modelResultsInvProfileV1.tex'
+	file='modelResultsInvProfileV1.tex'
 	# file='modelResultsPropRightsV1.tex'
 	# file='modelResultsInvProfileV2.tex'
-	file='modelResultsPropRightsV2.tex'
+	# file='modelResultsPropRightsV2.tex'
 	)
 
 # rownames(modelLatex) <- c(
