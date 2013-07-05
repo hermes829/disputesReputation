@@ -61,3 +61,23 @@ June 16 2013
 	+ Things to email Karen about
 		- sector of economy for dispute
 		- concluded cases includes settlements
+
+June 27 2013
+===============
+
+### Add more variables
+	+ Financial flows
+	+ FDI as a proportion of GDP
+	+ Veto Players
+	+ Magnitude of debt overhand - debt services as a percentage of exports and as percentage of GDP
+	+ Coding disputes by firm -- energy
+	+ privatization data, countries with high numbers of privatized disputes --- enhance reputation
+
+### Two stage model
+	+ First stage: Country Fundamentals
+		- Debt as percentage from GDP
+		- Privatization data, cumulative number of firms privatized
+		- Veto Players
+		- Net flows on the financial side [ check coverage ]
+		- GDP per capita
+		- Population

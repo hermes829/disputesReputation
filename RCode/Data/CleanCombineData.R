@@ -1,6 +1,10 @@
 ### Goal of this file is to create matching IDs for the various
 ## datasets being used in this analysis
 
+## RULES
+#### CZECH REPUBLIC = CZECHOSLOVAKIA
+#### SERBIA = YUGOSLAVIA
+
 ### Load setup
 source('/Users/janus829/Desktop/Research/RemmerProjects/disputesReputation/RCode/setup.R')
 
@@ -156,7 +160,7 @@ polity2$ccode <- countrycode(polity2$country, 'country.name', 'cown')
 # Manual Corrections
 # unique(polity2[which(is.na(polity2$ccode)),1:3])
 polity2[polity2$country=="Korea North", 'ccode'] <- 731
-polity2[polity2$country=="Serbia", 'ccode'] <- 1015
+polity2[polity2$country=="Serbia", 'ccode'] <- 345
 polity2[polity2$country=="UAE", 'ccode'] <- 696
 polity2[polity2$country=="Serbia and Montenegro", 'ccode'] <- 345
 polity2[polity2$country=="Germany East", 'ccode'] <- 265
