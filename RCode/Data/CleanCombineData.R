@@ -100,7 +100,7 @@ kaopen2$cname <- countrycode(kaopen2$country_name, 'country.name', 'country.name
 
 kaopen2$cnameYear <- paste(kaopen2$cname, kaopen2$year, sep='')
 
-table(kaopen2$cnameYear)[kaopen2$cnameYear>1] # Dupe check
+table(kaopen2$cnameYear)[table(kaopen2$cnameYear)>1] # Dupe check
 
 # Adding in codes from panel
 kaopen2$ccode <- panel$ccode[match(kaopen2$cname,panel$cname)]
@@ -255,65 +255,42 @@ table(fraser3$cyear)[table(fraser3$cyear)>1] # Dupe check
 
 ###############################################################
 # Disputes
-disputes$cname <- countrycode(disputes$Country, 'country.name', 'country.name')
-disputes$ccode <- countrycode(disputes$cname, 'country.name', 'cown')
+disputes2 <- disputes
 
-# Manual corrections
-disputes[disputes$Country=='Korea, North','ccode'] <- 731
-disputes[disputes$Country=='Serbia','ccode'] <- 345
-disputes[disputes$Country=='Aruba','ccode'] <- 1000
-disputes[disputes$Country=='Bermuda','ccode'] <- 1001
-disputes[disputes$Country=='Cayman Islands','ccode'] <- 1002
-disputes[disputes$Country=='Czechoslovachia','ccode'] <- 315
-disputes[disputes$Country=='Faeroe Islands','ccode'] <- 1005
-disputes[disputes$Country=='Greenland','ccode'] <- 1007
-disputes[disputes$Country=='Hong Kong','ccode'] <- 1009
-disputes[disputes$Country=='Macao, China','ccode'] <- 1011
-disputes <- disputes[disputes$Country!='Netherlands Antilles',]
-disputes[disputes$Country=='New Caledonia','ccode'] <- 1012
-disputes[disputes$Country=='Congo-Brazzaville','ccode'] <- 484
-disputes[disputes$Country=='Congo-Kinshasa','ccode'] <- 490
-disputes <- disputes[disputes$Country!='Zaire',]
-# unique(disputes[is.na(disputes$ccode),c(2,ncol(disputes))])
+disputes2$cname <- countrycode(disputes2$Country, 'country.name', 'country.name')
+disputes2$cname[disputes2$cname=='Czechoslovakia'] <- 'CZECH REPUBLIC'
 
-disputes$cyear <- 
-	as.numeric(as.character(
-		paste(disputes$ccode, disputes$Year, sep='')))
+drop <- unique(disputes2[which(disputes2$cname %in% setdiff(disputes2$cname, panel$cname)), 'Country'])
+disputes2 <- disputes2[which(!disputes2$Country %in% drop),]
 
-# Correcting duplicates
-# multiples <- names(table(disputes$cyear)[table(disputes$cyear)>1])
+disputes2$cnameYear <- paste(disputes2$cname, disputes2$Year, sep='')
+
+table(disputes2$cnameYear)[table(disputes2$cnameYear)>1] # Dupe check
+
+# Adding in codes from panel
+disputes2$ccode <- panel$ccode[match(disputes2$cname,panel$cname)]
+disputes2$cyear <- paste(disputes2$ccode, disputes2$Year, sep='')
+table(disputes2$cyear)[table(disputes2$cyear)>1] # Dupe check
 ###############################################################
 
 ###############################################################
 # Reputation Dataset
 # Correcting country names
-temp <- unique(karenReput[,c('Nation', 'Refno')])
-temp <- temp[order(temp$Nation,decreasing=F),]
-temp2 <- temp[(which(temp$Nation %in% '.')+1):nrow(temp),]
-multiples <- names(table(temp2$Refno)[table(temp2$Refno)>1])
-temp2[which(temp2$Refno %in% multiples),]
-temp2 <- temp2[temp2$Nation!='CAmeroon',]
-temp2 <- temp2[temp2$Nation!='Czeckoslovakia',]
-temp2 <- temp2[temp2$Nation!='EAst Timor',]
-temp2 <- temp2[temp2$Nation!='East Timur',]
-temp2 <- temp2[temp2$Nation!='Servia',]
-temp2 <- temp2[temp2$Nation!='Yugoslavia',]
-colnames(temp2) <- c('cname', 'Refno')
-karenReput <- merge(karenReput, temp2, by='Refno', all.x=T, all.y=F)
+karenReput2 <- karenReput
 
-karenReput$ccode <- countrycode(karenReput$cname, 'country.name', 'cown')
+karenReput2$cname <- countrycode(karenReput2$NationSM, 'country.name', 'country.name')
+karenReput2$cname[karenReput2$cname=='Czechoslovakia'] <- 'CZECH REPUBLIC'
+karenReput2$cname[karenReput2$cname=='Yugoslavia'] <- 'SERBIA'
 
-# unique(karenReput[is.na(karenReput$ccode),'cname'])
+karenReput2$cnameYear <- paste(karenReput2$cname, karenReput2$Year, sep='')
 
-karenReput <- karenReput[!is.na(karenReput$Refno),]
-karenReput[karenReput$cname=='Korea, North','ccode'] <- 731
-karenReput[karenReput$cname=='Serbia','ccode'] <- 345
+table(karenReput2$cnameYear)[table(karenReput2$cnameYear)>1] # Dupe check
+karenReput2 <- karenReput2[!is.na(karenReput2$cname),]
 
-karenReput$cyear <- 
-	as.numeric(as.character(
-		paste(karenReput$ccode, karenReput$Year, sep='')))
-
-# multiples <- names(table(karenReput$cyear)[table(karenReput$cyear)>1])
+# Adding in codes from panel
+karenReput2$ccode <- panel$ccode[match(karenReput2$cname,panel$cname)]
+karenReput2$cyear <- paste(karenReput2$ccode, karenReput2$Year, sep='')
+table(karenReput2$cyear)[table(karenReput2$cyear)>1] # Dupe check
 ###############################################################
 
 ###############################################################
