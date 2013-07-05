@@ -174,55 +174,49 @@ table(icrg2$cyear)[table(icrg2$cyear)>1] # Dupe check
 
 ###############################################################
 # heritage
-heritage$ccode <- countrycode(heritage$name, 'country.name', 'cown')
+heritage2 <- heritage
 
-# Manual corrections
-# temp <- unique(heritage[,c(1,ncol(heritage))]); temp[is.na(temp$ccode),]
-heritage[heritage$name=='Hong Kong','ccode'] <- 1009
-heritage[heritage$name=='Macau','ccode'] <- 1011
-heritage[heritage$name=='North Korea','ccode'] <- 731
-heritage[heritage$name=='Serbia ','ccode'] <- 345
-heritage[heritage$name=='Serbia','ccode'] <- 345
+heritage2$name <- as.character(trim(heritage2$name))
 
-heritage$cyear <- as.numeric(as.character(
-	paste(heritage$ccode, heritage$index.year, sep='')))
+drop <- c("Hong Kong", "Macau" )
+heritage2 <- heritage2[which(!heritage2$name %in% drop),]
+
+heritage2$cname <- countrycode(heritage2$name, 'country.name', 'country.name')
+
+heritage2$cnameYear <- paste(heritage2$cname, heritage2$index.year, sep='')
+
+table(heritage2$cnameYear)[table(heritage2$cnameYear)>1] # Dupe check
+
+# Adding in codes from panel
+heritage2$ccode <- panel$ccode[match(heritage2$cname,panel$cname)]
+heritage2$cyear <- paste(heritage2$ccode, heritage2$index.year, sep='')
+table(heritage2$cyear)[table(heritage2$cyear)>1] # Dupe check
 ###############################################################
 
 ###############################################################
 # WGI
-colnames(WGIregQual)[1:2] <- c('Country.Name','Country.Code')
-data <- WGIregQual; variable <- 'regQual'
-WGIregQualClean <- cleanWbData(WGIregQual, 'regQual')
+WGIregQual2 <- WGIregQual
+colnames(WGIregQual2)[1:2] <- c('Country.Name','Country.Code')
+data <- WGIregQual2; variable <- 'regQual'
+WGIregQual2Clean <- cleanWbData(WGIregQual2, 'regQual')
 
-# Manual corrections
-# temp <- WGIregQualClean[is.na(WGIregQualClean$ccode),3:4];unique(temp)
-WGIregQualClean[WGIregQualClean$cname=='AMERICAN SAMOA','ccode'] <- 1021
-WGIregQualClean[WGIregQualClean$cname=='ANGUILLA','ccode'] <- 1022
-WGIregQualClean[WGIregQualClean$cname=='ARUBA','ccode'] <- 1000
-WGIregQualClean[WGIregQualClean$cname=='BERMUDA','ccode'] <- 1001
-WGIregQualClean[WGIregQualClean$cname=='CAYMAN ISLANDS','ccode'] <- 1002
-WGIregQualClean[WGIregQualClean$cname=='COOK ISLANDS','ccode'] <- 1023
-WGIregQualClean[WGIregQualClean$cname=='FRENCH GUIANA','ccode'] <- 1024
-WGIregQualClean[WGIregQualClean$cname=='GREENLAND','ccode'] <- 1007
-WGIregQualClean[WGIregQualClean$cname=='GUAM','ccode'] <- 1008
-WGIregQualClean[WGIregQualClean$cname=='HONG KONG','ccode'] <- 1009
-WGIregQualClean[WGIregQualClean$cname=='JERSEY','ccode'] <- 1025
-WGIregQualClean[WGIregQualClean$cname=="KOREA, DEMOCRATIC PEOPLE'S REPUBLIC OF",'ccode'] <- 731
-WGIregQualClean[WGIregQualClean$cname=='MACAO','ccode'] <- 1011
-WGIregQualClean[WGIregQualClean$cname=='MARTINIQUE','ccode'] <- 1026
-WGIregQualClean <- WGIregQualClean[which(WGIregQualClean$cname!='NETHERLANDS ANTILLES'),]
-WGIregQualClean[WGIregQualClean$cname=='NEW CALEDONIA','ccode'] <- 1012
-WGIregQualClean <- WGIregQualClean[which(WGIregQualClean$cname!='NIUE'),]
-WGIregQualClean[WGIregQualClean$cname=='PUERTO RICO','ccode'] <- 1014
-WGIregQualClean <- WGIregQualClean[which(WGIregQualClean$cname!='REUNION'),]
-WGIregQualClean[WGIregQualClean$cname=='SERBIA','ccode'] <- 345
-WGIregQualClean[WGIregQualClean$cname=='VIRGIN ISLANDS, U.S.','ccode'] <- 1019
-WGIregQualClean[WGIregQualClean$cname=='PALESTINIAN TERRITORY, OCCUPIED','ccode'] <- 1020
-# temp <- WGIregQualClean[is.na(WGIregQualClean$ccode),3:4];unique(temp)
+WGIregQual2Clean$Country.Name[WGIregQual2Clean$Country.Name=="S\355O TOM\304 AND PRINCIPE"] <- 'Sao Tome'
+WGIregQual2Clean$Country.Name[WGIregQual2Clean$Country.Name=="KOREA, DEM. REP."] <- 'North Korea' 
+WGIregQual2Clean$Country.Name[WGIregQual2Clean$Country.Name=="KOREA, REP."] <- 'South Korea' 
 
-WGIregQualClean$cyear <- 
-	as.numeric(as.character(
-		paste(WGIregQualClean$ccode, WGIregQualClean$year, sep='')))
+WGIregQual2Clean$cname <- countrycode(WGIregQual2Clean$Country.Name, 'country.name', 'country.name')
+
+drop <- unique(WGIregQual2Clean[which(WGIregQual2Clean$cname %in% setdiff(WGIregQual2Clean$cname, panel$cname)), 'Country.Name'])
+WGIregQual2Clean <- WGIregQual2Clean[which(!WGIregQual2Clean$Country.Name %in% drop),]
+
+WGIregQual2Clean$cnameYear <- paste(WGIregQual2Clean$cname, WGIregQual2Clean$year, sep='')
+
+table(WGIregQual2Clean$cnameYear)[table(WGIregQual2Clean$cnameYear)>1] # Dupe check
+
+# Adding in codes from panel
+WGIregQual2Clean$ccode <- panel$ccode[match(WGIregQual2Clean$cname,panel$cname)]
+WGIregQual2Clean$cyear <- paste(WGIregQual2Clean$ccode, WGIregQual2Clean$year, sep='')
+table(WGIregQual2Clean$cyear)[table(WGIregQual2Clean$cyear)>1] # Dupe check
 ###############################################################
 
 ###############################################################
@@ -237,24 +231,26 @@ fraser3 <- NULL
 for(ii in 1:length(fraser2)){
 	slice <- fraser2[[ii]]
 	slice <- slice[,finVars]
+	slice <- cbind(slice, year=names(fraser2)[ii])
 	fraser3 <- rbind(fraser3,slice) }
 
+fraser3$Countries <- as.character(fraser3$Countries)
+fraser3[fraser3$Countries=='Pap. New Guinea','Countries'] <- 'PAPUA NEW GUINEA'
+fraser3[fraser3$Countries=='Unit. Arab Em.','Countries'] <- 'UNITED ARAB EMIRATES'
+
 fraser3$cname <- countrycode(fraser3$Countries, 'country.name', 'country.name')
-fraser3$ccode <- countrycode(fraser3$cname, 'country.name', 'cown')
 
-# Manual corrections
-fraser3[fraser3$Countries=='Pap. New Guinea','cname'] <- 'PAPUA NEW GUINEA'
-fraser3[fraser3$Countries=='Pap. New Guinea','ccode'] <- 910
-fraser3[fraser3$Countries=='Unit. Arab Em.','cname'] <- 'UNITED ARAB EMIRATES'
-fraser3[fraser3$Countries=='Unit. Arab Em.','ccode'] <- 696
-fraser3[fraser3$Countries=='Hong Kong','ccode'] <- 1009
-fraser3[fraser3$Countries=='Serbia','ccode'] <- 345
-fraser3[fraser3$cname=='SERBIA','ccode'] <- 345
-# unique(fraser3[is.na(fraser3$ccode), c('Countries', 'cname', 'ccode')])
+drop <- unique(fraser3[which(fraser3$cname %in% setdiff(fraser3$cname, panel$cname)), 'Countries'])
+fraser3 <- fraser3[which(!fraser3$Countries %in% drop),]
 
-fraser3$cyear <- 
-	as.numeric(as.character(
-		paste(fraser3$ccode, fraser3$cyear, sep='')))
+fraser3$cnameYear <- paste(fraser3$cname, fraser3$year, sep='')
+
+table(fraser3$cnameYear)[table(fraser3$cnameYear)>1] # Dupe check
+
+# Adding in codes from panel
+fraser3$ccode <- panel$ccode[match(fraser3$cname,panel$cname)]
+fraser3$cyear <- paste(fraser3$ccode, fraser3$year, sep='')
+table(fraser3$cyear)[table(fraser3$cyear)>1] # Dupe check
 ###############################################################
 
 ###############################################################
