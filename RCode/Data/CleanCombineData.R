@@ -1,26 +1,18 @@
 ### Goal of this file is to create matching IDs for the various
 ## datasets being used in this analysis
 
-## RULES
-#### CZECH REPUBLIC = CZECHOSLOVAKIA
-#### SERBIA = YUGOSLAVIA
-
 ### Load setup
 source('/Users/janus829/Desktop/Research/RemmerProjects/disputesReputation/RCode/setup.R')
 
 ### Load data
 setwd(pathData)
 load('allData.rda')
-
-# countrycode
-write.csv(na.omit(cbind(
-	1:999,
-	countrycode(1:999,'cown','country.name'))),
-	file='cowcodes_countrynames.csv')
+load('~/Desktop/Research/BuildingPanelData/panel.rda')
 
 ###############################################################
 # Organizing WB data
 ### Fx for Melting/Cleaning WB Data for Merge
+
 cleanWbData <- function(data, variable){
 	var <- variable
 	mdata <- melt(data, id=c('Country.Name', 'Country.Code'))
@@ -28,7 +20,7 @@ cleanWbData <- function(data, variable){
 	mdata$year <-  as.numeric(as.character(substring(mdata$variable,2)))
 	mdata <- mdata[,c(1,2,5,4)]
 
-	# Remove non-country observations
+	# Remove non-country observations and small islands/territories
 	drop <- c('Arab World', 'Caribbean small states', 
 		'East Asia & Pacific (all income levels)', 
 		'East Asia & Pacific (developing only)', 'Euro area', 
@@ -47,82 +39,37 @@ cleanWbData <- function(data, variable){
 		'Small states', 'South Asia', 
 		'Sub-Saharan Africa (all income levels)', 
 		'Sub-Saharan Africa (developing only)', 'Upper middle income', 
-		'World')
+		'World',
+		 "American Samoa",            "Aruba",                    
+		 "Bermuda",                   "Cayman Islands", "Channel Islands",          
+		 "Curacao",                   "Faeroe Islands",           
+		 "French Polynesia",          "Greenland",                
+		 "Guam",                      "Hong Kong SAR, China",     
+		 "Isle of Man",               "Macao SAR, China",         
+		 "New Caledonia",             "Northern Mariana Islands", 
+		 "Puerto Rico",               "Sint Maarten (Dutch part)",
+		 "St. Martin (French part)",  "Turks and Caicos Islands", 
+		 "Virgin Islands (U.S.)",     "West Bank and Gaza")
 	mdata <- mdata[which(!mdata$Country.Name %in% drop),]
 
-	# WB abbreviations vary for some measures
-	mdata$Country.Code <- as.character(mdata$Country.Code)
-	mdata[mdata$Country.Name=='Andorra','Country.Code'] <- 'ADO'
-	mdata[mdata$Country.Name=='Congo, Dem. Rep.','Country.Code'] <- 'ZAR'
-	mdata[mdata$Country.Name=='Isle of Man','Country.Code'] <- 'IMY'
-	mdata[mdata$Country.Name=='Romania','Country.Code'] <- 'ROM'
-	mdata[mdata$Country.Name=='Timor-Leste','Country.Code'] <- 'TMP'
-	mdata[mdata$Country.Name=='West Bank and Gaza','Country.Code'] <- 'WBG'
-
-	# Incorp common IDs from countrycode
-	mdata2 <- cbind(mdata[,1:2], 
-		cname=countrycode(mdata$Country.Code, 'wb', 'country.name'),
-		ccode=countrycode(mdata$Country.Code, 'wb', 'cown'),
-		mdata[,3:4])
-
-	# Manually adding ccodes for select countries
-	mdata2[mdata2$Country.Name=='Korea, Dem. Rep.','ccode'] <- 731
-	mdata2[mdata2$Country.Name=='Aruba','ccode'] <- 1000
-	mdata2[mdata2$Country.Name=='Bermuda','ccode'] <- 1001
-	mdata2[mdata2$Country.Name=='Cayman Islands','ccode'] <- 1002
-	mdata2[mdata2$Country.Name=='Channel Islands','ccode'] <- 1003
-	mdata2$cname <- as.character(mdata2$cname)
-	mdata2[mdata2$Country.Name=='Channel Islands','cname'] <- 'CHANNEL ISLANDS'
-	mdata2[mdata2$Country.Name=='Curacao','ccode'] <- 1004
-	mdata2[mdata2$Country.Name=='Faeroe Islands','ccode'] <- 1005
-	mdata2[mdata2$Country.Name=='French Polynesia','ccode'] <- 1006
-	mdata2[mdata2$Country.Name=='Greenland','ccode'] <- 1007
-	mdata2[mdata2$Country.Name=='Guam','ccode'] <- 1008
-	mdata2[mdata2$Country.Name=='Hong Kong SAR, China','ccode'] <- 1009
-	mdata2[mdata2$Country.Name=='Isle of Man','ccode'] <- 1010
-	mdata2[mdata2$Country.Name=='Macao SAR, China','ccode'] <- 1011
-	mdata2[mdata2$Country.Name=='New Caledonia','ccode'] <- 1012
-	mdata2[mdata2$Country.Name=='Northern Mariana Islands','ccode'] <- 1013
-	mdata2[mdata2$Country.Name=='Puerto Rico','ccode'] <- 1014
-	# mdata2[mdata2$Country.Name=='Serbia','ccode'] <- 1015
-	mdata2[mdata2$Country.Name=='Serbia','ccode'] <- 345
-	mdata2[mdata2$Country.Name=='Sint Maarten (Dutch part)','ccode'] <- 1016
-	mdata2[mdata2$Country.Name=='St. Martin (French part)','ccode'] <- 1017
-	mdata2[mdata2$Country.Name=='Turks and Caicos Islands','ccode'] <- 1018
-	mdata2[mdata2$Country.Name=='Virgin Islands (U.S.)','ccode'] <- 1019
-	mdata2[mdata2$Country.Name=='West Bank and Gaza','ccode'] <- 1020
-	mdata2[mdata2$Country.Name=='American Samoa','ccode'] <- 1021
-	mdata2 }
+	# Setting standardized countryname for WB data
+	mdata$Country.Name <- as.character(mdata$Country.Name)
+	mdata$Country.Name[mdata$Country.Name=='Korea, Dem. Rep.'] <- 'North Korea' 
+	mdata$Country.Name[mdata$Country.Name=='Korea, Rep.'] <- 'South Korea' 
+	mdata$cname <- countrycode(mdata$Country.Name, 'country.name', 'country.name')
+	mdata$cnameYear <- paste(mdata$cname, mdata$year, sep='')
+	
+	# Adding in codes from panel
+	mdata$ccode <- panel$ccode[match(mdata$cname,panel$cname)]
+	mdata$cyear <- paste(mdata$ccode, mdata$year, sep='')
+	mdata }
 
 WBinflDeflatorClean <- cleanWbData(WBinflDeflator, 'inflDeflator')
-WBinflDeflatorClean$cyear <- 
-	as.numeric(as.character(
-			paste(WBinflDeflatorClean$ccode, WBinflDeflatorClean$year, sep='')))
-
 WBgdpDeflatorClean <- cleanWbData(WBgdpDeflator, 'gdpDeflator')
-WBgdpDeflatorClean$cyear <- 
-	as.numeric(as.character(
-		paste(WBgdpDeflatorClean$ccode, WBgdpDeflatorClean$year, sep='')))
-
 WBfdiClean <- cleanWbData(WBfdi, 'fdi')
-WBfdiClean$cyear <- 
-	as.numeric(as.character(
-		paste(WBfdiClean$ccode, WBfdiClean$year, sep='')))
-
 WBfdiGdpClean <- cleanWbData(WBfdiGdp, 'fdiGDP')
-WBfdiGdpClean$cyear <- 
-	as.numeric(as.character(
-		paste(WBfdiGdpClean$ccode, WBfdiGdpClean$year, sep='')))
-
 WBgdpClean <- cleanWbData(WBgdp, 'gdp')
-WBgdpClean$cyear <- 
-	as.numeric(as.character(
-		paste(WBgdpClean$ccode, WBgdpClean$year, sep='')))
-
 WBgdpCapClean <- cleanWbData(WBgdpCap, 'gdpCAP')
-WBgdpCapClean$cyear <- 
-	as.numeric(as.character(
-		paste(WBgdpCapClean$ccode, WBgdpCapClean$year, sep='')))
 
 # Make sure order matches
 sum(WBinflDeflatorClean$cyear!=WBgdpDeflatorClean$cyear)
@@ -142,49 +89,50 @@ save(wbData, file='wbData.rda')
 
 ###############################################################
 # kaopen (uses imf numeric codes, cn)
-kaopen$stabb <- kaopen$ccode
-kaopen$ccode <- countrycode(kaopen$cn, 'imf', 'cown')
-kaopen[kaopen$cn==314,'ccode'] <- 1000 # Aruba
-kaopen <- kaopen[which(!kaopen$cn %in% 353),] # Drop Netherland Antilles
-kaopen[kaopen$cn==532,'ccode'] <- 1009 # Hong Kong
-kaopen[kaopen$cn==728,'ccode'] <- 565 # Namibia
-kaopen$cyear <- as.numeric(as.character(
-	paste(kaopen$ccode, kaopen$year, sep='')))
+kaopen2 <- kaopen
+kaopen2$country_name <- as.character(kaopen2$country_name)
+kaopen2$country_name[kaopen2$country_name=="S? Tom\341and Principe"] <- 'Sao Tome'
+kaopen2$country_name[kaopen2$country_name=="C?e d'Ivoire"] <- 'Ivory Coast'
+drop <- c("Aruba", "Netherlands Antilles", "Hong Kong, China")
+kaopen2 <- kaopen2[which(!kaopen2$country_name %in% drop),]
+kaopen2$cname <- countrycode(kaopen2$country_name, 'country.name', 'country.name')
+kaopen2$cnameYear <- paste(kaopen2$cname, kaopen2$year, sep='')
+table(kaopen2$cnameYear)[kaopen2$cnameYear>1] # Dupe check
+# Adding in codes from panel
+kaopen2$ccode <- panel$ccode[match(kaopen2$cname,panel$cname)]
+kaopen2$cyear <- paste(kaopen2$ccode, kaopen2$year, sep='')
 ###############################################################
 
 ###############################################################
 # Polity
 polity2 <- polity[polity$year>=1960,3:ncol(polity)]
-polity2$ccode <- countrycode(polity2$country, 'country.name', 'cown') 
+polity2$country <- as.character(polity2$country)
+polity2$country[polity2$country=='UAE'] <- 'United Arab Emirates'
+polity2$country[polity2$country=='Congo Brazzaville'] <- 'Congo, Republic of'
+polity2$country[polity2$country=='Congo Kinshasa'] <- 'Congo, Democratic Republic of'
+polity2$country[polity2$country=='Germany East'] <- "Germany Democratic Republic"
+polity2$cname <- countrycode(polity2$country, 'country.name', 'country.name')
+polity2$cname[polity2$country=='Yemen South'] <- "S. YEMEN"
+polity2$cname[polity2$country=='Vietnam South'] <- "S. VIETNAM"
+polity2[polity2$cname=='Yugoslavia', 'cname'] <- 'SERBIA'
+polity2[polity2$cname=='Czechoslovakia', 'cname'] <- 'CZECH REPUBLIC'
+polity2$cnameYear <- paste(polity2$cname, polity2$year, sep='')
 
-# Manual Corrections
-# unique(polity2[which(is.na(polity2$ccode)),1:3])
-polity2[polity2$country=="Korea North", 'ccode'] <- 731
-polity2[polity2$country=="Serbia", 'ccode'] <- 345
-polity2[polity2$country=="UAE", 'ccode'] <- 696
-polity2[polity2$country=="Serbia and Montenegro", 'ccode'] <- 345
-polity2[polity2$country=="Germany East", 'ccode'] <- 265
-polity2[polity2$country=="Congo Kinshasa", 'ccode'] <- 490
+polity2$drop <- 0
+polity2[polity2$scode=='ETH' & polity2$year==1993, 'drop'] <- 1
+polity2[polity2$scode=='GMY' & polity2$year==1990, 'drop'] <- 1
+polity2[polity2$scode=='YGS' & polity2$year==1991, 'drop'] <- 1
+polity2[polity2$scode=='YGS' & polity2$year==2006, 'drop'] <- 1
+polity2[polity2$scode=='SDN' & polity2$year==2011, 'drop'] <- 1
+polity2[polity2$scode=='DRV' & polity2$year==1976, 'drop'] <- 1
+polity2[polity2$scode=='YAR' & polity2$year==1990, 'drop'] <- 1
+polity2 <- polity2[polity2$drop==0,]; polity2 <- polity2[,1:37]
 
-polity2$cyear <- as.numeric(as.character(
-	paste(polity2$ccode, polity2$year, sep='')))
+names(table(polity2$cnameYear)[table(polity2$cnameYear)>1]) # Dupe check
 
-# Need to remove duplicate cases
-polity2$temp <- 1:nrow(polity2)
-# N. Vietnam 1976 and Vietnam repeat 1976
-# Ethiopia repeat 1993
-# W Germany and Germany repeat 1990
-# Drop S. Vietnam between 1960 to 1975
-# Drop Sudan repeat 2011
-# Drop South Yemen
-multiples <- names(table(polity2$cyear)[table(polity2$cyear)>1])
-temp <- unique(polity2[which(polity2$cyear %in% multiples), c(1:4,10,ncol(polity2))])
-rownames(temp) <- 1:nrow(temp)
-# temp
-# Choose cases to drop
-drop <- temp[c(17,18,20,22:37,38,64,66,67:90),'temp']
-polity2 <- polity2[which(!polity2$temp %in% drop),]
-polity2 <- polity2[,1:36]
+# Adding in codes from panel
+polity2$ccode <- panel$ccode[match(polity2$cname,panel$cname)]
+polity2$cyear <- paste(polity2$ccode, polity2$year, sep='')
 ###############################################################
 
 ###############################################################
