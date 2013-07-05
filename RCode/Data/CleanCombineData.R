@@ -90,22 +90,28 @@ save(wbData, file='wbData.rda')
 ###############################################################
 # kaopen (uses imf numeric codes, cn)
 kaopen2 <- kaopen
+
 kaopen2$country_name <- as.character(kaopen2$country_name)
 kaopen2$country_name[kaopen2$country_name=="S? Tom\341and Principe"] <- 'Sao Tome'
 kaopen2$country_name[kaopen2$country_name=="C?e d'Ivoire"] <- 'Ivory Coast'
 drop <- c("Aruba", "Netherlands Antilles", "Hong Kong, China")
 kaopen2 <- kaopen2[which(!kaopen2$country_name %in% drop),]
 kaopen2$cname <- countrycode(kaopen2$country_name, 'country.name', 'country.name')
+
 kaopen2$cnameYear <- paste(kaopen2$cname, kaopen2$year, sep='')
+
 table(kaopen2$cnameYear)[kaopen2$cnameYear>1] # Dupe check
+
 # Adding in codes from panel
 kaopen2$ccode <- panel$ccode[match(kaopen2$cname,panel$cname)]
 kaopen2$cyear <- paste(kaopen2$ccode, kaopen2$year, sep='')
+table(kaopen2$cyear)[table(kaopen2$cyear)>1] # Dupe check
 ###############################################################
 
 ###############################################################
 # Polity
 polity2 <- polity[polity$year>=1960,3:ncol(polity)]
+
 polity2$country <- as.character(polity2$country)
 polity2$country[polity2$country=='UAE'] <- 'United Arab Emirates'
 polity2$country[polity2$country=='Congo Brazzaville'] <- 'Congo, Republic of'
@@ -116,6 +122,7 @@ polity2$cname[polity2$country=='Yemen South'] <- "S. YEMEN"
 polity2$cname[polity2$country=='Vietnam South'] <- "S. VIETNAM"
 polity2[polity2$cname=='Yugoslavia', 'cname'] <- 'SERBIA'
 polity2[polity2$cname=='Czechoslovakia', 'cname'] <- 'CZECH REPUBLIC'
+
 polity2$cnameYear <- paste(polity2$cname, polity2$year, sep='')
 
 polity2$drop <- 0
@@ -126,39 +133,43 @@ polity2[polity2$scode=='YGS' & polity2$year==2006, 'drop'] <- 1
 polity2[polity2$scode=='SDN' & polity2$year==2011, 'drop'] <- 1
 polity2[polity2$scode=='DRV' & polity2$year==1976, 'drop'] <- 1
 polity2[polity2$scode=='YAR' & polity2$year==1990, 'drop'] <- 1
-polity2 <- polity2[polity2$drop==0,]; polity2 <- polity2[,1:37]
+polity2 <- polity2[polity2$drop==0,]; polity2 <- polity2[,1:(ncol(polity2)-1)]
 
 names(table(polity2$cnameYear)[table(polity2$cnameYear)>1]) # Dupe check
 
 # Adding in codes from panel
 polity2$ccode <- panel$ccode[match(polity2$cname,panel$cname)]
 polity2$cyear <- paste(polity2$ccode, polity2$year, sep='')
+table(polity2$cyear)[table(polity2$cyear)>1] # Dupe check
 ###############################################################
 
 ###############################################################
 # ICRG data from PRS group
-icrg$ccode <- countrycode(icrg$Country, 'country.name', 'cown')
+icrg2 <- icrg
 
-# Manual corrections
-# unique(icrg[is.na(icrg$ccode),1:3])
-icrg[icrg$Country=='Hong Kong', 'ccode'] <- 1009
-icrg[icrg$Country=='Korea, North', 'ccode'] <- 731
-icrg[icrg$Country=='New Caledonia', 'ccode'] <- 1012
-icrg[icrg$Country=='Serbia and Montenegro', 'ccode'] <- 345
-icrg[icrg$Country=='Congo-Brazzaville', 'ccode'] <- 484
-icrg[icrg$Country=='Congo-Kinshasa', 'ccode'] <- 490
-icrg <- icrg[which(!icrg$Country %in% 'Serbia'),] # Drop Serbia
-icrg <- icrg[which(!is.na(icrg$ccode)),] # Dropping extra NA cases
+icrg2$Country <- as.character(icrg$Country)
+icrg2$Country[icrg2$Country=='Congo-Brazzaville'] <- 'Congo, Republic of'
+icrg2$Country[icrg2$Country=='Congo-Kinshasa'] <- 'Congo, Democratic Republic of'
+drop <- c("Hong Kong", "New Caledonia")
+icrg2 <- icrg2[which(!icrg2$Country %in% drop),]
+icrg2$cname <- countrycode(icrg2$Country, 'country.name', 'country.name')
+icrg2[icrg2$cname=='Czechoslovakia', 'cname'] <- 'CZECH REPUBLIC'
 
-icrg$cyear <- as.numeric(as.character(
-	paste(icrg$ccode, icrg$Year, sep='')))
+icrg2$cnameYear <- paste(icrg2$cname, icrg2$Year, sep='')
 
-# Remove duplicate cases
-# icrg$temp <- 1:nrow(icrg)
-# multiples <- names(table(icrg$cyear)[table(icrg$cyear)>1])
-# temp <- unique(icrg[which(icrg$cyear %in% multiples), c(2,4,17,18,19)])
-# rownames(temp) <- 1:nrow(temp)
-# temp[order(temp$ccode),]
+icrg2$drop <- 0
+icrg2[icrg2$Country=='Serbia and Montenegro' & icrg2$Year>=2006, 'drop'] <- 1
+icrg2[icrg2$Country=='Serbia' & icrg2$Year<2006, 'drop'] <- 1
+icrg2[icrg2$Country=='Czechoslovakia' & icrg2$Year>=1993, 'drop'] <- 1
+icrg2[icrg2$Country=='Czech Republic' & icrg2$Year<1993, 'drop'] <- 1
+icrg2 <- icrg2[icrg2$drop==0,]; icrg2 <- icrg2[,1:(ncol(icrg2)-1)]
+
+table(icrg2$cnameYear)[table(icrg2$cnameYear)>1]
+
+# Adding in codes from panel
+icrg2$ccode <- panel$ccode[match(icrg2$cname,panel$cname)]
+icrg2$cyear <- paste(icrg2$ccode, icrg2$Year, sep='')
+table(icrg2$cyear)[table(icrg2$cyear)>1] # Dupe check
 ###############################################################
 
 ###############################################################
