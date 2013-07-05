@@ -70,6 +70,8 @@ WBfdiClean <- cleanWbData(WBfdi, 'fdi')
 WBfdiGdpClean <- cleanWbData(WBfdiGdp, 'fdiGDP')
 WBgdpClean <- cleanWbData(WBgdp, 'gdp')
 WBgdpCapClean <- cleanWbData(WBgdpCap, 'gdpCAP')
+WBpopClean <- cleanWbData(WBpop, 'population')
+WBdebtClean <- cleanWbData(WBdebt, 'debtGDP')
 
 # Make sure order matches
 sum(WBinflDeflatorClean$cyear!=WBgdpDeflatorClean$cyear)
@@ -77,13 +79,16 @@ sum(WBinflDeflatorClean$cyear!=WBfdiClean$cyear)
 sum(WBinflDeflatorClean$cyear!=WBfdiGdpClean$cyear)
 sum(WBinflDeflatorClean$cyear!=WBgdpClean$cyear)
 sum(WBinflDeflatorClean$cyear!=WBgdpCapClean$cyear)
+sum(WBinflDeflatorClean$cyear!=WBpopClean$cyear)
+sum(WBinflDeflatorClean$cyear!=WBdebtClean$cyear)
 
 # combine data
 setwd(pathData)
 wbData <- data.frame(cbind(WBinflDeflatorClean,
 	gdpDeflator=WBgdpDeflatorClean[,6], fdi=WBfdiClean[,6],
 	fdiGdp=WBfdiGdpClean[,6], gdp=WBgdpClean[,6],
-	gdpCAP=WBgdpCapClean[,6]))
+	gdpCAP=WBgdpCapClean[,6]), population=WBpopClean[,6],
+	debtGDP=WBdebtClean[,6])
 save(wbData, file='wbData.rda')
 ###############################################################
 
@@ -106,6 +111,23 @@ table(kaopen2$cnameYear)[table(kaopen2$cnameYear)>1] # Dupe check
 kaopen2$ccode <- panel$ccode[match(kaopen2$cname,panel$cname)]
 kaopen2$cyear <- paste(kaopen2$ccode, kaopen2$year, sep='')
 table(kaopen2$cyear)[table(kaopen2$cyear)>1] # Dupe check
+###############################################################
+
+###############################################################
+# constraints
+constraints2 <- constraints[,1:10]
+constraints2 <- constraints2[!is.na(constraints2$ccode),]
+
+constraints2$cnts_country <- as.character(constraints2$cnts_country)
+
+constraints2$cname <- countrycode(constraints2$cnts_country, 'country.name', 'country.name')
+constraints2[is.na(constraints2$cname),'cname'] <- countrycode(
+	constraints2[is.na(constraints2$cname),'polity_country'],
+	'country.name', 'country.name')
+
+constraints2$cnameYear <- paste(constraints2$cname, constraints2$year, sep='')
+
+names(table(constraints2$cnameYear)[table(constraints2$cnameYear)>1]) # Dupe check
 ###############################################################
 
 ###############################################################
@@ -295,53 +317,48 @@ table(karenReput2$cyear)[table(karenReput2$cyear)>1] # Dupe check
 
 ###############################################################
 # Wright Expropriation Dataset
-wrightExprop$ccode <- countrycode(wrightExprop$ctryname, 
-	'country.name', 'cown')
+wrightExprop2 <- wrightExprop
 
-wrightExprop[wrightExprop$ctryname=='Cook Islands','ccode'] <- 1023
-wrightExprop <- wrightExprop[wrightExprop$ctryname!='Danzig',]
-wrightExprop <- wrightExprop[wrightExprop$ctryname!='French Equatorial Africa',]
-wrightExprop <- wrightExprop[wrightExprop$ctryname!='French West Africa',]
-wrightExprop <- wrightExprop[wrightExprop$ctryname!='Guadeloupe',]
-wrightExprop[wrightExprop$ctryname=='Hong Kong','ccode'] <- 1009
-wrightExprop[wrightExprop$ctryname=='Korea North (1949+)','ccode'] <- 731
-wrightExprop[wrightExprop$ctryname=='Macao','ccode'] <- 1011
-wrightExprop[wrightExprop$ctryname=='Martinique','ccode'] <- 1026
-wrightExprop <- wrightExprop[wrightExprop$ctryname!='Montserrat',]
-wrightExprop[wrightExprop$ctryname=='New Caledonia','ccode'] <- 1012
-wrightExprop <- wrightExprop[wrightExprop$ctryname!='Newfoundland',]
-wrightExprop[wrightExprop$ctryname=='Palestine (-1947)','ccode'] <- 1020
-wrightExprop[wrightExprop$ctryname=='Puerto Rico','ccode'] <- 1014
-wrightExprop <- wrightExprop[wrightExprop$ctryname!='Rhodesia and Nyasaland Federation',]
-wrightExprop <- wrightExprop[wrightExprop$ctryname!='Saar',]
-wrightExprop[wrightExprop$ctryname=='Serbia and Montenegro (1992+)','ccode'] <- 345
-wrightExprop <- wrightExprop[wrightExprop$ctryname!='Straits Settlements',]
+wrightExprop2$ctryname[wrightExprop2$ctryname=='Congo (Brazzaville)'] <- 'Congo, Republic of'
+wrightExprop2$ctryname[wrightExprop2$ctryname=='Congo (Kinshasa)'] <- 'Congo, Democratic Republic of'
+wrightExprop2$ctryname[wrightExprop2$ctryname=='Germany East (1945-1990)'] <- "Germany Democratic Republic"
+wrightExprop2 <- wrightExprop2[wrightExprop2$ctryname!='Belgium-Luxembourg',]
 
-# unique(wrightExprop[is.na(wrightExprop$ccode), 'ctryname'])
+wrightExprop2$drop <- 0
+wrightExprop2[wrightExprop2$ctryname=='Czechoslovakia' & wrightExprop2$year>=1993, 'drop'] <- 1
+wrightExprop2[wrightExprop2$ctryname=='Czech Republic' & wrightExprop2$year<1993, 'drop'] <- 1
+wrightExprop2[wrightExprop2$ctryname=='Ethiopia (-1992)' & wrightExprop2$year>=1993, 'drop'] <- 1
+wrightExprop2[wrightExprop2$ctryname=='Ethiopia (1993+)' & wrightExprop2$year<1993, 'drop'] <- 1
+wrightExprop2[wrightExprop2$ctryname=='Germany West (1945-1990)' & wrightExprop2$year>=1991, 'drop'] <- 1
+wrightExprop2[wrightExprop2$ctryname=='Germany (-1945)' & wrightExprop2$year>=1945, 'drop'] <- 1
+wrightExprop2[wrightExprop2$ctryname=='Pakistan (1972+)' & wrightExprop2$year<1972, 'drop'] <- 1
+wrightExprop2[wrightExprop2$ctryname=='Yugoslavia (1918-1992)' & wrightExprop2$year>=1992, 'drop'] <- 1
+wrightExprop2[wrightExprop2$ctryname=='Yemen Unified (1990+)' & wrightExprop2$year<1990, 'drop'] <- 1
+wrightExprop2 <- wrightExprop2[wrightExprop2$drop==0,]; wrightExprop2 <- wrightExprop2[,1:(ncol(wrightExprop2)-1)]
 
-wrightExprop <- wrightExprop[wrightExprop$ctryname!='Belgium-Luxembourg',]
-wrightExprop <- wrightExprop[wrightExprop$ctryname!='Germany (-1945)',]
-wrightExprop[wrightExprop$ctryname=='Germany East (1945-1990)','ccode'] <- 265
-drop <- which(wrightExprop$ctryname=='Germany West (1945-1990)' & wrightExprop$year==1991)
-wrightExprop <- wrightExprop[c(1:(drop-1), (drop+1):nrow(wrightExprop)),]
-drop <- which(wrightExprop$ctryname=='Yugoslavia (1918-1992)' & wrightExprop$year==1992)
-wrightExprop <- wrightExprop[c(1:(drop-1), (drop+1):nrow(wrightExprop)),]
-wrightExprop[wrightExprop$ctryname=='Congo (Brazzaville)','ccode'] <- 484
-wrightExprop[wrightExprop$ctryname=='Congo (Kinshasa)','ccode'] <- 490
-drop <- which(wrightExprop$ctryname=='Ethiopia (1993+)' & wrightExprop$year<1993)
-wrightExprop <- wrightExprop[c(1:(drop[1]-1), (drop[length(drop)]+1):nrow(wrightExprop)),]
-drop <- which(wrightExprop$ctryname=='Yemen Unified (1990+)' & wrightExprop$year<1990)
-wrightExprop <- wrightExprop[c(1:(drop[1]-1), (drop[length(drop)]+1):nrow(wrightExprop)),]
-wrightExprop <- wrightExprop[wrightExprop$ctryname!='Indochina',]
-drop <- which(wrightExprop$ctryname=='Pakistan (1972+)' & wrightExprop$year<1972)
-wrightExprop <- wrightExprop[c(1:(drop[1]-1), (drop[length(drop)]+1):nrow(wrightExprop)),]
+wrightExprop2$cname <- countrycode(wrightExprop2$ctryname, 'country.name', 'country.name')
+wrightExprop2$cname[wrightExprop2$cname=='Czechoslovakia'] <- 'CZECH REPUBLIC'
+wrightExprop2$cname[wrightExprop2$cname=='Yugoslavia'] <- 'SERBIA'
 
-wrightExprop$cyear <- 
-	as.numeric(as.character(
-		paste(wrightExprop$ccode, wrightExprop$year, sep='')))
-# multiples <- names(table(wrightExprop$cyear)[table(wrightExprop$cyear)>1])
-# temp <- unique(wrightExprop[which(wrightExprop$cyear %in% multiples), c('ctryname', 'ccode')])
-# temp[order(temp$ccode),]
+wrightExprop2 <- wrightExprop2[wrightExprop2$ctryname!='Danzig',]
+wrightExprop2 <- wrightExprop2[wrightExprop2$ctryname!='French Equatorial Africa',]
+wrightExprop2 <- wrightExprop2[wrightExprop2$ctryname!='French West Africa',]
+wrightExprop2 <- wrightExprop2[wrightExprop2$ctryname!='Newfoundland',]
+wrightExprop2 <- wrightExprop2[wrightExprop2$ctryname!='Saar',]
+wrightExprop2 <- wrightExprop2[wrightExprop2$ctryname!='Straits Settlements',]
+wrightExprop2 <- wrightExprop2[wrightExprop2$ctryname!='Indochina',]
+
+drop <- unique(wrightExprop2[which(wrightExprop2$cname %in% setdiff(wrightExprop2$cname, panel$cname)), 'ctryname'])
+wrightExprop2 <- wrightExprop2[which(!wrightExprop2$ctryname %in% drop),]
+
+wrightExprop2$cnameYear <- paste(wrightExprop2$cname, wrightExprop2$year, sep='')
+
+names(table(wrightExprop2$cnameYear)[table(wrightExprop2$cnameYear)>1])
+
+# Adding in codes from panel
+wrightExprop2$ccode <- panel$ccode[match(wrightExprop2$cname,panel$cname)]
+wrightExprop2$cyear <- paste(wrightExprop2$ccode, wrightExprop2$year, sep='')
+table(wrightExprop2$cyear)[table(wrightExprop2$cyear)>1] # Dupe check
 ###############################################################
 
 ###############################################################
@@ -357,24 +374,38 @@ colnames(bitsPartner) <- c('Country', 'cname', 'ccode',
 	'yearSign', 'yearRat', 'signedbitsSM', 'ratifiedbitsSM','other','othercode')
 bitsMelt <- data.frame(rbind(bitsReporter,bitsPartner))
 
+bitsMelt$Country <- as.character(bitsMelt$Country)
+bitsMelt$Country[bitsMelt$Country=='Congo, DR'] <- 'Congo, Democratic Republic of'
+bitsMelt$Country[bitsMelt$Country=="Democratic People's Republic of Korea"] <- 'North Korea'
+bitsMelt$Country[bitsMelt$Country=="S\355\243o Tom\355\251 and Principe"] <- 'Sao Tome'
+bitsMelt$Country[bitsMelt$Country=="ghanistan"] <- 'Afghanistan'
+
 bitsSigned <- unique(bitsMelt); bitsRatified <- unique(na.omit(bitsMelt))
-bitsSigned$cyear <- 
-	as.numeric(as.character(
-		paste(bitsSigned$ccode, bitsSigned$yearSign, sep='')))
+
+bitsSigned$cname <- countrycode(bitsSigned$Country, 'country.name', 'country.name')
+bitsSigned$cnameYear <- paste(bitsSigned$cname, bitsSigned$yearSign, sep='')
+drop <- unique(bitsSigned[which(bitsSigned$cname %in% setdiff(bitsSigned$cname, panel$cname)), 'Country'])
+bitsSigned <- bitsSigned[which(!bitsSigned$Country %in% drop),]
+bitsSigned$ccode <- panel$ccode[match(bitsSigned$cname,panel$cname)]
+bitsSigned$cyear <- paste(bitsSigned$ccode, bitsSigned$yearSign, sep='')
 bitsSigned <- summaryBy(signedbitsSM ~ cyear, data=bitsSigned, FUN=(sum))
 colnames(bitsSigned)[2] <- 'signedbitsSM'
-bitsRatified$cyear <- 
-	as.numeric(as.character(
-		paste(bitsRatified$ccode, bitsRatified$yearRat, sep='')))
-bitsRatified <- summaryBy(ratifiedbitsSM ~ cyear, data=bitsRatified, FUN=(sum))
+
+bitsRatified$cname <- countrycode(bitsRatified$Country, 'country.name', 'country.name')
+bitsRatified$cnameYear <- paste(bitsRatified$cname, bitsRatified$yearRat, sep='')
+drop <- unique(bitsRatified[which(bitsRatified$cname %in% setdiff(bitsRatified$cname, panel$cname)), 'Country'])
+bitsRatified <- bitsRatified[which(!bitsRatified$Country %in% drop),]
+bitsRatified$ccode <- panel$ccode[match(bitsRatified$cname,panel$cname)]
+bitsRatified$cyear <- paste(bitsRatified$ccode, bitsRatified$yearRat, sep='')
+bitsRatified <- summaryBy(signedbitsSM ~ cyear, data=bitsRatified, FUN=(sum))
 colnames(bitsRatified)[2] <- 'ratifiedbitsSM'	
 ###############################################################
 
 ###############################################################
 # Combining data
 setwd(pathData)
-save(disputes,fraser3, WGIregQualClean, heritage,icrg,
-	polity2, wbData, kaopen, karenReput, wrightExprop, 
+save(disputes2,fraser3, WGIregQual2Clean, heritage2,icrg2,
+	polity2, wbData, kaopen2, karenReput2, wrightExprop2, 
 	bitsSigned, bitsRatified, file='cleanedData.rda')
 
 ### Load setup

@@ -17,8 +17,12 @@ WBinflDeflator <- read.csv('NY.GDP.DEFL.KD.ZG_Indicator_MetaData_en_EXCEL.csv')
 WBgdpDeflator <- read.csv('NY.GDP.DEFL.ZS_Indicator_MetaData_en_EXCEL.csv')
 WBgdp <- read.csv('NY.GDP.MKTP.CD_Indicator_MetaData_en_EXCEL.csv')
 WBgdpCap <- read.csv('NY.GDP.PCAP.CD_Indicator_MetaData_en_EXCEL.csv')
+WBpop <- read.csv('SP.POP.TOTL_Indicator_MetaData_en_EXCEL.csv')
+WBdebt <- read.csv('GC.DOD.TOTL.GD.ZS_Indicator_MetaData_en_EXCEL.csv')
 kaopen <- read.csv('kaopen_2011.csv')
 polity <- read.csv('p4v2011.csv')
+constraints <- read.dta('polcon2012.dta')
+privatization <- read.csv('privatizationData.csv')
 
 setwd(paste(pathData, '/Components', '/Disputes', sep=''))
 list.files()
@@ -96,12 +100,13 @@ bits$signedbitsSM <- 1
 bits$ratifiedbitsSM <- ifelse(is.na(bits$Year_force), 0, 1)
 
 setwd(pathData)
-save(WBgdp, WBgdpCap, WBinflDeflator, WBgdpDeflator, kaopen, 
+save(WBgdp, WBgdpCap, WBinflDeflator, WBgdpDeflator, WBpop, WBdebt,
+	kaopen, privatization, constraints,
 	polity, disputes, WBfdi, WBfdiGdp, fraser, heritage, icrg, 
 	WGIregQual, karenReput, wrightExprop, bits,
 	 file='allData.rda')
 
-# Comparing my disputes to karen's (disputes v karenReput)
+# Comparing my disputes ™to karen's (disputes v karenReput)
 temp <- karenReput[,c('Refno', 'NationSM', 'Year', 'icsidcase', 'settle', 'cunctadcase')]
 temp$cname <- countrycode(temp$NationSM, 'country.name', 'country.name')
 temp$cname[temp$cname=='Yugoslavia'] <- 'SERBIA'
