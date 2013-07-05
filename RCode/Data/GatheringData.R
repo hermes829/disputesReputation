@@ -162,4 +162,4 @@ dim(masterDisp); dim(fullData)
 
 # Comparing my disputes against karen
 masterDisp$cp_disputes <- masterDisp$conc_disputes + masterDisp$pend_disputes
-write.csv(masterDisp[,c('NationSM', 'Year', 'cp_disputes', 'cicsidcase')],file='temp.csv')
+write.csv(masterDisp[,c('NationSM', 'Year', 'conc_disputes', 'pend_disputes', 'cp_disputes', 'icsidcase', 'cicsidcase')],file='temp2.csv')
