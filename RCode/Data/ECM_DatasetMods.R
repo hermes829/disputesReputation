@@ -78,7 +78,7 @@ dim(combData); dim(fullData)
 # Other var transformations
 combData$Property.Rights <- (combData$Investment.ProfileRescale + 
 	combData$Bureaucracy.QualityRescale +
-	combData$CorruptionRescale + combData$Law.and.OrderRescale)/4
+	combData$CorruptionRescale + combData$Law.and.OrderRescale)
 
 combData$cp_disputes <- combData$conc_disputes + combData$pend_disputes
 combData$cp_disputes_three <- combData$conc_disputes_three + combData$pend_disputes_three
@@ -112,22 +112,6 @@ combData$polity[combData$polity==-88] <- -10
 combData$polity[combData$polity==-77] <- -10
 combData$polity[combData$polity==-66] <- -10
 combData$polity <- combData$polity + 10
-
-# Model covariates
-# + GDP: LNgdp.y
-# + GDP growth: chgdp
-# + Polity / Polity^2 / Change in polity / Years in democracy: polity
-# + Banks conflict index
-# + Trade balance: LNtradebalance
-# + BITs: signedbits
-# + Settlement of concluded cases [[ would be fun if there was a positive relationship ]]: settle
-# + Inflation: 
-# + Dummy for upper income (World Bank Classification): 
-# + ICSID disputes: conc_disputes
-# + Spatial disputes [ distance ]: cshapes
-# + FDI
-# + Natural resource
-#     - Possible interaction between this and ICSID disputes
 
 # Variable manipulation
 vars <- c('ccode', 'cname', 'year', 'cyear',

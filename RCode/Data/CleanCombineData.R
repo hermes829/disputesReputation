@@ -85,10 +85,10 @@ sum(WBinflDeflatorClean$cyear!=WBdebtClean$cyear)
 # combine data
 setwd(pathData)
 wbData <- data.frame(cbind(WBinflDeflatorClean,
-	gdpDeflator=WBgdpDeflatorClean[,6], fdi=WBfdiClean[,6],
-	fdiGdp=WBfdiGdpClean[,6], gdp=WBgdpClean[,6],
-	gdpCAP=WBgdpCapClean[,6]), population=WBpopClean[,6],
-	debtGDP=WBdebtClean[,6])
+	gdpDeflator=WBgdpDeflatorClean[,4], fdi=WBfdiClean[,4],
+	fdiGdp=WBfdiGdpClean[,4], gdp=WBgdpClean[,4],
+	gdpCAP=WBgdpCapClean[,4]), population=WBpopClean[,4],
+	debtGDP=WBdebtClean[,4])
 save(wbData, file='wbData.rda')
 ###############################################################
 
@@ -115,19 +115,75 @@ table(kaopen2$cyear)[table(kaopen2$cyear)>1] # Dupe check
 
 ###############################################################
 # constraints
-constraints2 <- constraints[,1:10]
+constraints2 <- constraints[constraints$year>=1960,1:10]
 constraints2 <- constraints2[!is.na(constraints2$ccode),]
 
 constraints2$cnts_country <- as.character(constraints2$cnts_country)
+constraints2$cnts_country[constraints2$cnts_country=='CONGO (BRA)'] <- 'Congo, Republic of'
+constraints2$cnts_country[constraints2$cnts_country=='CONGO (KIN)'] <- 'Congo, Democratic Republic of'
+constraints2$cnts_country[constraints2$cnts_country=='CONGO DR'] <- 'Congo, Democratic Republic of'
+constraints2$cnts_country[constraints2$cnts_country=='GERMAN DR'] <- "Germany Democratic Republic"
 
 constraints2$cname <- countrycode(constraints2$cnts_country, 'country.name', 'country.name')
 constraints2[is.na(constraints2$cname),'cname'] <- countrycode(
 	constraints2[is.na(constraints2$cname),'polity_country'],
 	'country.name', 'country.name')
+constraints2$cname[constraints2$cnts_country=='VIETNAM REP'] <- 'S. VIETNAM'
+constraints2$cname[constraints2$cnts_country=='YEMEN PDR'] <- 'S. YEMEN'
+constraints2$cname[constraints2$cnts_country=="CZECHOS'KIA"] <- 'CZECH REPUBLIC'
+constraints2$cname[constraints2$cnts_country=="YUGOSLAVIA"] <- 'SERBIA'
+constraints2 <- constraints2[constraints2$cname!='HONG KONG',]
 
 constraints2$cnameYear <- paste(constraints2$cname, constraints2$year, sep='')
 
 names(table(constraints2$cnameYear)[table(constraints2$cnameYear)>1]) # Dupe check
+
+# Adding in codes from panel
+constraints2$ccode <- panel$ccode[match(constraints2$cname,panel$cname)]
+constraints2$cyear <- paste(constraints2$ccode, constraints2$year, sep='')
+table(constraints2$cyear)[table(constraints2$cyear)>1] # Dupe check
+###############################################################
+
+###############################################################
+# banks dataset
+banks2 <- banks[banks$year>=1960,c('code', 'Wbcode', 'country', 
+	'year', paste('domestic', 1:9, sep=''))]
+banks2 <- banks2[!is.na(banks2$code),]
+banks2$country <- trim(banks2$country)
+
+banks2$country <- as.character(banks2$country)
+banks2$country[banks2$country=='Congo (BRA)'] <- 'Congo, Republic of'
+banks2$country[banks2$country=='Congo (KIN)'] <- 'Congo, Democratic Republic of'
+banks2$country[banks2$country=='German DR'] <- "Germany Democratic Republic" 
+banks2$country[banks2$country=='German FR'] <- "Germany" 
+banks2 <- banks2[banks2$country!='Cyprus: Turkish Sector',]
+banks2 <- banks2[banks2$country!='Cyprus: Greek Sector',]
+banks2 <- banks2[banks2$country!='Senegambia',]
+banks2 <- banks2[banks2$country!='Somaliland',]
+banks2 <- banks2[banks2$code!=1145,] # Removing extra cases for Trinidad
+banks2 <- banks2[banks2$code!=1247,] # Removing extra cases for Venezuela
+
+banks2$cname <- countrycode(banks2$country, 'country.name', 'country.name')
+banks2$cname[banks2$country=='Vietnam REP'] <- 'S. VIETNAM'
+banks2$cname[banks2$country=='Yemen PDR'] <- 'S. YEMEN'
+banks2$cname[banks2$country=="Yemen PDR (So. Yemen)"] <- 'S. YEMEN'
+banks2$cname[banks2$country=="Yugoslavia"] <- 'SERBIA'
+banks2 <- banks2[banks2$cname!='HONG KONG',]
+banks2$cname[banks2$country=="Czechoslovakia"] <- 'CZECH REPUBLIC'
+
+drop <- unique(banks2[is.na(banks2$cname),c('country')])
+banks2 <- banks2[which(!banks2$country %in% drop),]
+
+banks2$cnameYear <- paste(banks2$cname, banks2$year, sep='')
+
+names(table(banks2$cnameYear)[table(banks2$cnameYear)>1]) # Dupe check
+
+# Adding in codes from panel
+banks2$ccode <- panel$ccode[match(banks2$cname,panel$cname)]
+banks2$cyear <- paste(banks2$ccode, banks2$year, sep='')
+drop <- unique(banks2[is.na(banks2$ccode),'cname'])
+banks2 <- banks2[which(!banks2$cname %in% drop),]
+table(banks2$cyear)[table(banks2$cyear)>1] # Dupe check
 ###############################################################
 
 ###############################################################
@@ -297,7 +353,6 @@ table(disputes2$cyear)[table(disputes2$cyear)>1] # Dupe check
 
 ###############################################################
 # Reputation Dataset
-# Correcting country names
 karenReput2 <- karenReput
 
 karenReput2$cname <- countrycode(karenReput2$NationSM, 'country.name', 'country.name')
@@ -313,6 +368,26 @@ karenReput2 <- karenReput2[!is.na(karenReput2$cname),]
 karenReput2$ccode <- panel$ccode[match(karenReput2$cname,panel$cname)]
 karenReput2$cyear <- paste(karenReput2$ccode, karenReput2$Year, sep='')
 table(karenReput2$cyear)[table(karenReput2$cyear)>1] # Dupe check
+###############################################################
+
+###############################################################
+# Privatization dataset
+privatization2 <- privatization
+
+privatization2$cname <- countrycode(privatization2$NationSM, 'country.name', 'country.name')
+privatization2$cname[privatization2$cname=='Czechoslovakia'] <- 'CZECH REPUBLIC'
+privatization2$cname[privatization2$cname=='Yugoslavia'] <- 'SERBIA'
+
+privatization2$cnameYear <- paste(privatization2$cname, privatization2$Year, sep='')
+
+privatization2 <- unique(privatization2) # Angola 1980 is entered twice
+
+names(table(privatization2$cnameYear)[table(privatization2$cnameYear)>1]) # Dupe check
+
+# Adding in codes from panel
+privatization2$ccode <- panel$ccode[match(privatization2$cname,panel$cname)]
+privatization2$cyear <- paste(privatization2$ccode, privatization2$Year, sep='')
+table(privatization2$cyear)[table(privatization2$cyear)>1] # Dupe check
 ###############################################################
 
 ###############################################################
@@ -405,44 +480,47 @@ colnames(bitsRatified)[2] <- 'ratifiedbitsSM'
 # Combining data
 setwd(pathData)
 save(disputes2,fraser3, WGIregQual2Clean, heritage2,icrg2,
-	polity2, wbData, kaopen2, karenReput2, wrightExprop2, 
-	bitsSigned, bitsRatified, file='cleanedData.rda')
+	polity2, wbData, kaopen2, karenReput2, wrightExprop2, kaopen2,
+	bitsSigned, bitsRatified, constraints2, banks2, privatization2,
+	file='cleanedData.rda')
 
 ### Load setup
 source('/Users/janus829/Desktop/Research/RemmerProjects/disputesReputation/RCode/setup.R')
 setwd(pathData)
 load('cleanedData.rda')
+load('~/Desktop/Research/BuildingPanelData/panel.rda')
 
-frame <- na.omit(cbind(1:999, countrycode(1:999,'cown','country.name')))
-frame <- rbind(frame, matrix(c('731', 'NORTH KOREA'),nrow=1,ncol=2,byrow=T))
-frame <- data.frame(frame)
-frame$X1 <- as.numeric(as.character(frame$X1))
-colnames(frame) <- c('ccode', 'cname')
-
+frame <- unique(panel[,c('ccode', 'cname')])
 dframe <- NULL; frame$year <- NA; years <- seq(1960,2012,1)
 for(ii in 1:length(years)){
 	frame$year <- years[ii]; dframe <- rbind(dframe, frame) }
 dframe$cyear <- paste(dframe$ccode, dframe$year, sep='')
-
-combData <- merge(dframe, wbData[,c(7,6,8:12)],by='cyear',all.x=T,all.y=F)
+dim(dframe)
+combData <- merge(dframe, wbData[,c(4,8:ncol(wbData))],by='cyear',all.x=T,all.y=F)
 unique(combData[is.na(combData$ccode), 1:5]); dim(combData)
-combData <- merge(combData, WGIregQualClean[,6:7],by='cyear',all.x=T,all.y=F)
+combData <- merge(combData, WGIregQual2Clean[,c(4,ncol(WGIregQual2Clean))],by='cyear',all.x=T,all.y=F)
 unique(combData[is.na(combData$ccode), 1:5]); dim(combData)
-combData <- merge(combData, disputes[,c(4:9,12)],by='cyear',all.x=T,all.y=F)
+combData <- merge(combData, disputes2[,c(4:9,ncol(disputes2))],by='cyear',all.x=T,all.y=F)
 unique(combData[is.na(combData$ccode), 1:5]); dim(combData)
-combData <- merge(combData, heritage[,c(3:13,15)],by='cyear',all.x=T,all.y=F)
+combData <- merge(combData, heritage2[,c(3:13,ncol(heritage2))],by='cyear',all.x=T,all.y=F)
 unique(combData[is.na(combData$ccode), 1:5]); dim(combData)
-combData <- merge(combData, kaopen[,c(3,7)],by='cyear',all.x=T,all.y=F)
+combData <- merge(combData, kaopen2[,c(3,ncol(kaopen2))],by='cyear',all.x=T,all.y=F)
 unique(combData[is.na(combData$ccode), 1:5]); dim(combData)
-combData <- merge(combData, fraser3[,c(2:56,59)],by='cyear',all.x=T,all.y=F)
+combData <- merge(combData, fraser3[,c(2:56,ncol(fraser3))],by='cyear',all.x=T,all.y=F)
 unique(combData[is.na(combData$ccode), 1:5]); dim(combData)
-combData <- merge(combData, polity2[,c(7:36)],by='cyear',all.x=T,all.y=F)
+combData <- merge(combData, polity2[,c(7:35,ncol(polity2))],by='cyear',all.x=T,all.y=F)
 unique(combData[is.na(combData$ccode), 1:5]); dim(combData)
-combData <- merge(combData, icrg[,c(5:16,18)],by='cyear',all.x=T,all.y=F)
+combData <- merge(combData, icrg2[,c(5:16,ncol(icrg2))],by='cyear',all.x=T,all.y=F)
 unique(combData[is.na(combData$ccode), 1:5]); dim(combData)
-combData <- merge(combData, karenReput[,c(4:14,16:23,26)],by='cyear',all.x=T,all.y=F)
+combData <- merge(combData, karenReput2[,c(5:19,ncol(karenReput2))],by='cyear',all.x=T,all.y=F)
 unique(combData[is.na(combData$ccode), 1:5]); dim(combData)
-combData <- merge(combData, wrightExprop[,c(5,12)],by='cyear',all.x=T,all.y=F)
+combData <- merge(combData, wrightExprop2[,c(5:6,ncol(wrightExprop2))],by='cyear',all.x=T,all.y=F)
+unique(combData[is.na(combData$ccode), 1:5]); dim(combData)
+combData <- merge(combData, banks2[,c(5:13,ncol(banks2))],by='cyear',all.x=T,all.y=F)
+unique(combData[is.na(combData$ccode), 1:5]); dim(combData)
+combData <- merge(combData, privatization2[,c(5:16,ncol(privatization2))],by='cyear',all.x=T,all.y=F)
+unique(combData[is.na(combData$ccode), 1:5]); dim(combData)
+combData <- merge(combData, constraints2[,c(8:10,ncol(constraints2))],by='cyear',all.x=T,all.y=F)
 unique(combData[is.na(combData$ccode), 1:5]); dim(combData)
 
 combData <- merge(combData, bitsSigned,by='cyear',all.x=T,all.y=F)

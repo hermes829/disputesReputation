@@ -23,6 +23,7 @@ kaopen <- read.csv('kaopen_2011.csv')
 polity <- read.csv('p4v2011.csv')
 constraints <- read.dta('polcon2012.dta')
 privatization <- read.csv('privatizationData.csv')
+banks <- read.csv('CNTSDATA.csv')
 
 setwd(paste(pathData, '/Components', '/Disputes', sep=''))
 list.files()
@@ -71,8 +72,14 @@ setwd(paste(pathData, '/Components', sep=''))
 list.files()
 # karenReput <- read.dta('ICSID_Reputation.dta')
 karenReput <- read.dta('icsid_13.dta') # Updated dataset from Karen
-# Throwing away NA rows
 karenReput <- karenReput[!is.na(karenReput$Refno),] 
+karenReput$key <- paste(karenReput$Refno, karenReput$Nation, karenReput$Year, sep='')
+temp <- read.dta("revised icsid.dta")
+temp <- temp[!is.na(temp$Refno),] 
+temp$key <- paste(temp$Refno, temp$Nation, temp$Year, sep='')
+dim(karenReput)
+karenReput <- merge(karenReput[,c(1:3,7:ncol(karenReput))], temp[,c(4:ncol(temp))], by='key', all.x=T)
+dim(karenReput)
 # Fixing mislabeling of Philippines 1971 case
 karenReput$Nation <- trim(karenReput$Nation)
 karenReput[karenReput$Refno==137 & karenReput$Nation=='Philippines' &
@@ -101,7 +108,7 @@ bits$ratifiedbitsSM <- ifelse(is.na(bits$Year_force), 0, 1)
 
 setwd(pathData)
 save(WBgdp, WBgdpCap, WBinflDeflator, WBgdpDeflator, WBpop, WBdebt,
-	kaopen, privatization, constraints,
+	kaopen, privatization, constraints, banks,
 	polity, disputes, WBfdi, WBfdiGdp, fraser, heritage, icrg, 
 	WGIregQual, karenReput, wrightExprop, bits,
 	 file='allData.rda')
