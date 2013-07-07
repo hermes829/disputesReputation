@@ -8,7 +8,20 @@ source('/Users/janus829/Desktop/Research/RemmerProjects/disputesReputation/RCode
 setwd(pathData)
 load('combinedData.rda')
 load('~/Desktop/Research/BuildingPanelData/panel.rda')
+# Adding in real country names that vary by year
+combData$country <- panel$CNTRY_NAME[match(combData$cyear,panel$ccodeYear)]
+col_idx <- grep("country", names(combData))
+combData <- combData[, c(col_idx, (1:ncol(combData))[-col_idx])]
+combData <- combData[combData$year>=1970 & combData$year<2012,] # Subsetting data a little bit
 
+col_idx <- grep("WB_Fuel_Exports", names(combData))
+combData <- combData[, c((1:ncol(combData))[-col_idx])]
+col_idx <- grep("WB_Ore_Exports", names(combData))
+combData <- combData[, c((1:ncol(combData))[-col_idx])]
+
+combData$WB_Firms_Privatized[is.na(combData$WB_Firms_Privatized)] <- 0
+combData$WB_Firms_Privatized_Energy[is.na(combData$WB_Firms_Privatized_Energy)] <- 0
+combData$WB_Firms_Privatized_Infra[is.na(combData$WB_Firms_Privatized_Infra)] <- 0
 ################################################################################
 # Function to generate cumulative of TS variables
 cumulTS <- function(
@@ -34,7 +47,7 @@ cumulTS <- function(
 	print(' Completed '); fullData[,c(key, var, cum_var)]
 }
 # Run cumulTS function across relevant vars
-vars <- c('settle', 'energycase', 'icsidcase')
+vars <- c('settle', 'energycase', 'icsidcase', 'signedbitsSM', 'ratifiedbitsSM')
 cumul_data <- lapply(vars, function(x) FUN=cumulTS(var=x))
 
 # Merge results back into original dataframe
@@ -53,13 +66,13 @@ rescale <- function(x,new_max,new_min){
  xResc <- (new_max - new_min) / (max(x,na.rm=T) - min(x,na.rm=T))*(x - min(x,na.rm=T)) + new_min
  xResc }
 
-combData$Investment.ProfileRescale <- rescale(combData$Investment.Profile,10,0)
-combData$Bureaucracy.QualityRescale <- rescale(combData$Bureaucracy.Quality,10,0)
-combData$CorruptionRescale <- rescale(combData$Corruption,10,0)
-combData$Law.and.OrderRescale <- rescale(combData$Law.and.Order,10,0)
-combData$Property.Rights <- (combData$Investment.ProfileRescale + 
-	combData$Bureaucracy.QualityRescale +
-	combData$CorruptionRescale + combData$Law.and.OrderRescale)
+Investment.ProfileRescale <- rescale(combData$Investment.Profile,10,0)
+Bureaucracy.QualityRescale <- rescale(combData$Bureaucracy.Quality,10,0)
+CorruptionRescale <- rescale(combData$Corruption,10,0)
+Law.and.OrderRescale <- rescale(combData$Law.and.Order,10,0)
+combData$Property.Rights <- (Investment.ProfileRescale + 
+	Bureaucracy.QualityRescale +
+	CorruptionRescale + Law.and.OrderRescale)
 ################################################################################
 
 ################################################################################
@@ -107,90 +120,27 @@ combData$polity <- combData$polity + 10
 
 ################################################################################
 # Calculating change in TS variables
-vars <- c('ccode', 'cname', 'year', 'cyear',
-	'Investment.Profile', 
-	'Property.Rights',
-	'LNtradebalance',
-	'LNgdp.y', 
-	# 'chgdp', 
-	'polity', 
-	'csignedbitsSM',
-	'cratifiedbitsSM',
-	'conc_disputes',
-	'pend_disputes',
-	'cp_disputes',
-	'csettle',
-	'disputesNoSettle'
-	)
-modelData <- combData[,vars]
-dim(modelData)
+chgIN <- function(x) diff(c(NA, x))
+combData <- combData[order(combData$cyear),]
+dchData <- cbind(cyear=as.numeric(as.character(combData$cyear)), 
+	apply(combData[,6:ncol(combData)], 2, function(x) FUN=unlist(by(x, combData$ccode, chgIN))))
+save(dchData, file='ddiffData.rda')
 
-# change from t-1
-countries <- unique(modelData$cname)
-years <- 1984:2011
-chData <- NULL
-for(ii in 1:length(countries)){
-	slice <- modelData[modelData$cname==countries[ii],]
-	for(jj in 2:length(years)){
-		cyear <- slice[slice$year==years[jj],'cyear']
-		tData <- slice[slice$year==years[jj],5:ncol(slice)]
-		t_1Data <- slice[slice$year==(years[jj]-1),5:ncol(slice)]
-		chSlice <- tData - t_1Data
-		colnames(chSlice) <- paste('dch_' ,colnames(tData),sep='')
-		chSlice <- cbind(cyear, chSlice)
-		chData <- rbind(chData, chSlice) }
-	print(ii) }
-dim(modelData); dim(chData)
-modelData <- merge(modelData, chData, by='cyear', all.x=T, all.y=F)
-dim(modelData); dim(chData)
+pchgIN <- function(x) diff(c(NA, x))/ifelse(abs(c(NA,x[-1]))==0,1,abs(c(NA,x[-1])))
+pchData <- cbind(cyear=as.numeric(as.character(combData$cyear)), 
+	apply(combData[,6:ncol(combData)], 2, function(x) FUN=unlist(by(x, combData$ccode, pchgIN))))
+save(pchData, file='pdiffData.rda')
+dim(pchData)
+################################################################################
 
-countries <- unique(modelData$cname)
-years <- 1984:2011
-chData <- NULL
-for(ii in 1:length(countries)){
-	slice <- modelData[modelData$cname==countries[ii],1:length(vars)]
-	for(jj in 2:length(years)){
-		cyear <- slice[slice$year==years[jj],'cyear']
-		tData <- slice[slice$year==years[jj],5:ncol(slice)]
-		t_1Data <- slice[slice$year==(years[jj]-1),5:ncol(slice)]
-		t_1DataDenom <- data.matrix(t_1Data)
-		t_1DataDenom[t_1DataDenom==0] <- 1
-		chSlice <- (tData - t_1Data)/t_1DataDenom
-		colnames(chSlice) <- paste('pch_' ,colnames(tData),sep='')
-		chSlice <- cbind(cyear, chSlice)
-		chData <- rbind(chData, chSlice) }
-	print(ii) }
-dim(modelData); dim(chData)
-modelData <- merge(modelData, chData, by='cyear', all.x=T, all.y=F)
-dim(modelData); dim(chData)
-
-# dirty lag
-modelData <- ddply(modelData,.(ccode),transform,
-	Investment.ProfileLag = c(NA, Investment.Profile[-length(Investment.Profile)]))
-modelData <- ddply(modelData,.(ccode),transform,
-	Property.RightsLag = c(NA, Property.Rights[-length(Property.Rights)]))
-modelData <- ddply(modelData,.(ccode),transform,
-	LNtradebalanceLag = c(NA, LNtradebalance[-length(LNtradebalance)]))
-modelData <- ddply(modelData,.(ccode),transform,
-	LNgdp.yLag = c(NA, LNgdp.y[-length(LNgdp.y)]))
-modelData <- ddply(modelData,.(ccode),transform,
-	polityLag = c(NA, polity[-length(polity)]))
-modelData <- ddply(modelData,.(ccode),transform,
-	csignedbitsSMLag = c(NA, csignedbitsSM[-length(csignedbitsSM)]))
-modelData <- ddply(modelData,.(ccode),transform,
-	cratifiedbitsSMLag = c(NA, cratifiedbitsSM[-length(cratifiedbitsSM)]))
-modelData <- ddply(modelData,.(ccode),transform,
-	disputesNoSettleLag = c(NA, disputesNoSettle[-length(disputesNoSettle)]))
-modelData <- ddply(modelData,.(ccode),transform,
-	csettleLag = c(NA, csettle[-length(csettle)]))
-modelData <- ddply(modelData,.(ccode),transform,
-	cp_disputesLag = c(NA, cp_disputes[-length(cp_disputes)]))
-modelData <- ddply(modelData,.(ccode),transform,
-	conc_disputesLag = c(NA, conc_disputes[-length(conc_disputes)]))
-modelData <- ddply(modelData,.(ccode),transform,
-	pend_disputesLag = c(NA, pend_disputes[-length(pend_disputes)]))
-# modelData <- ddply(modelData,.(ccode),transform,
-# 	expropLag = c(NA, exprop[-length(exprop)]))
+################################################################################
+# Lagging variables
+lagTS <- function(x) c(NA, x[-1])
+lagData <- cbind(cyear=as.numeric(as.character(combData$cyear)), 
+	apply(combData[,6:ncol(combData)], 2, function(x) FUN=unlist(by(x, combData$ccode, pchgIN))))
+save(lagData, file='lagData.rda')
+dim(lagData)
+################################################################################
 
 # conc_disputes spatial
 
@@ -243,16 +193,14 @@ temp <- na.omit(combData[,c('cname', 'ccode', 'cyear', 'year', 'Investment.Profi
 toKeep <- unique(temp$cyear)
 combData <- combData[which(combData$cyear %in% toKeep), vars]
 
-combData$country <- panel$CNTRY_NAME[match(combData$cyear,panel$ccodeYear)]
-
 
 # # Running model
 setwd(pathData)
-modelData <- na.omit(modelData)
-save(modelData, file='forAnalysis.rda')
+combData <- na.omit(combData)
+save(combData, file='forAnalysis.rda')
 
-anData <- merge(modelData, 
-	combData[,c('cyear', setdiff(names(combData), names(modelData)))],
+anData <- merge(combData, 
+	combData[,c('cyear', setdiff(names(combData), names(combData)))],
 	by='cyear',all.x=T,all.y=F)
 save(anData, file='forAnalysisFull.rda')
 write.csv(anData, file='forKaren.csv')
