@@ -124,13 +124,12 @@ chgIN <- function(x) diff(c(NA, x))
 combData <- combData[order(combData$cyear),]
 dchData <- cbind(cyear=as.numeric(as.character(combData$cyear)), 
 	apply(combData[,6:ncol(combData)], 2, function(x) FUN=unlist(by(x, combData$ccode, chgIN))))
-save(dchData, file='ddiffData.rda')
+save(dchData, file='ddiffData.rda'); dim(dchData)
 
 pchgIN <- function(x) diff(c(NA, x))/ifelse(abs(c(NA,x[-1]))==0,1,abs(c(NA,x[-1])))
 pchData <- cbind(cyear=as.numeric(as.character(combData$cyear)), 
 	apply(combData[,6:ncol(combData)], 2, function(x) FUN=unlist(by(x, combData$ccode, pchgIN))))
-save(pchData, file='pdiffData.rda')
-dim(pchData)
+save(pchData, file='pdiffData.rda'); dim(pchData)
 ################################################################################
 
 ################################################################################
@@ -138,13 +137,12 @@ dim(pchData)
 lagTS <- function(x) c(NA, x[-1])
 lagData <- cbind(cyear=as.numeric(as.character(combData$cyear)), 
 	apply(combData[,6:ncol(combData)], 2, function(x) FUN=unlist(by(x, combData$ccode, pchgIN))))
-save(lagData, file='lagData.rda')
-dim(lagData)
+save(lagData, file='lagData.rda'); dim(lagData)
 ################################################################################
 
-# conc_disputes spatial
-
-# Vars for Analysis
+################################################################################
+# Cleaning up dataset and throwing away variables unlikely to be used
+# in analysis
 vars <- c("cyear", "ccode", "cname", "year",                  
 
 	"energycase", "icsidcase", "settle", "cunctadcase", "icsidmember",
@@ -192,6 +190,31 @@ temp <- na.omit(combData[,c('cname', 'ccode', 'cyear', 'year', 'Investment.Profi
 	'Corruption','Law.and.Order')])
 toKeep <- unique(temp$cyear)
 combData <- combData[which(combData$cyear %in% toKeep), vars]
+################################################################################
+
+
+################################################################################
+# Read in OECD Data
+setwd(paste(pathData, '/Components/Controls',sep=''))
+oecd <- read.csv('oecdMembers.csv')
+oecd$cname <- countrycode(oecd$Country, 'country.name', 'country.name')
+oecd$ccode <- panel$ccode[match(oecd$cname,panel$cname)]
+oecdFinal <- oecd[oecd$Year<=1984,]
+combData$oecd <- 0
+combData[which(combData$ccode %in% oecdFinal$ccode),'oecd'] <- 1
+################################################################################
+
+################################################################################
+# spatial vars
+setwd(pathData)
+distMats <- list()
+years <- 1984:2011
+date <- paste(years, '-12-31', sep='')
+for(ii in 1:length(years)){
+	distMats[[ii]] <- distmatrix(as.Date(date[ii]), type="mindist", useGW=TRUE)
+	print(years[ii]) }
+save(distMats, file='mindistMatrices.rda')
+################################################################################
 
 
 # # Running model
