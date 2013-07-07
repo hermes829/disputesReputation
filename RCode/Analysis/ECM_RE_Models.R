@@ -6,15 +6,54 @@ source('/Users/janus829/Desktop/Research/RemmerProjects/disputesReputation/RCode
 ### load data
 setwd(pathData)
 load('forAnalysis.rda')
-load('forAnalysisFull.rda')
+
+# Play models
+model <- lmer(pch_Property.Rights ~ 
+	pch_cicsidcase + lag_cicsidcase +
+	pch_csettle + lag_csettle +
+	# pch_disputesNoSettle + lag_disputesNoSettle +
+	pch_cenergycase + lag_cenergycase +
+	
+	# pch_sp_cicsidcase + lag_sp_cicsidcase + 
+	# pch_sp_csettle + lag_sp_csettle +		
+	# # pch_sp_disputesNoSettle + lag_sp_disputesNoSettle
+	# pch_sp_cenergycase + lag_sp_cenergycase +
+
+	pch_signedbits + lag_signedbits +
+	pch_ratifiedbits + lag_ratifiedbits +
+
+	# pch_sp_signedbits + lag_sp_signedbits +
+	# pch_sp_ratifiedbits + lag_sp_ratifiedbits +
+
+	# pch_fdiGdp + lag_fdiGdp +
+	# pch_LNr_gdpCAP + lag_LNr_gdpCAP +
+	pch_LNgdpCAP + lag_LNgdpCAP +
+
+	pch_LNpopulation + lag_LNpopulation +
+
+	# pch_debtGDP + lag_debtGDP +
+	pch_tradebalance + lag_tradebalance +
+
+	# WB_Firms_Privatized +
+
+	pch_domestic9 + lag_domestic9 +
+
+	pch_polity + lag_polity +
+	
+	(1 | ccode), data=allData )
+summary(model)
 
 # ### Descriptive statistics
 vars <- c(
 	# DVs
 	'pch_Property.Rights',
 	'pch_Investment.Profile',
+	# Controls
+	'icsidmember',
 	# PCH controls
-	'pch_LNgdp.y', 'pch_LNtradebalance', 'pch_polity', 
+	'pch_debtGDP'
+	'pch_', 'pch_LNtradebalance', 'pch_polity', 
+
 	# PCH key covariates
 	'pch_cratifiedbitsSM',
 	'pch_csignedbitsSM',
@@ -23,9 +62,13 @@ vars <- c(
 	'pch_pend_disputes',
 	'pch_cp_disputes',
 	'pch_disputesNoSettle',
+	
 	# Lagged variables
 	'Property.RightsLag',
 	'Investment.ProfileLag',
+
+	'lag_debtGDP',
+
 	'LNgdp.yLag', 'LNtradebalanceLag', 'polityLag', 
 	'cratifiedbitsSMLag',
 	'csignedbitsSMLag',
@@ -37,7 +80,7 @@ vars <- c(
 	# country effects
 	'ccode', 'cname', 'year')
 
-modelData <- modelData[,c(1:16,29:52)]
+modelData <- allData[,c(1:16,29:52)]
 
 # Looking at proportion of no change cases
 # modelData <- merge(modelData, anData[,c('cyear', 'upperincome')], by='cyear')
@@ -57,20 +100,6 @@ print(summResults, file='summResults.tex')
 # ∆Yt = α + β0*∆Xt - β1(Yt-1 - β2Xt-1) + ε
 # dv = paste(vars[2], ' ~ ', vars[14], ' +') # Inv Profile
 dv = paste(vars[1], ' ~ ', vars[13], ' +') # Prop Rights
-
-covsV1 = paste(vars[3], vars[4], vars[5],   
-	vars[15], vars[16], vars[17], 
-	# vars[6], vars[18], # rat bits
-	vars[7], vars[19], # sig bits
-	vars[9], vars[21], # conc disp
-	paste('(1|',vars[25],')',sep=''), sep=' + ') 
-
-covsV1.5 = paste(vars[3], vars[4], vars[5], 
-	vars[15], vars[16], vars[17], 
-	# vars[6], vars[18], # rat bits
-	vars[7], vars[19], # sig bits
-	vars[10], vars[22], # pend disp
-	paste('(1|',vars[25],')',sep=''), sep=' + ') 
 
 covsV2 = paste(vars[3], vars[4], vars[5], 
 	vars[15], vars[16], vars[17], 
