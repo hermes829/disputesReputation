@@ -115,7 +115,7 @@ table(kaopen2$cyear)[table(kaopen2$cyear)>1] # Dupe check
 
 ###############################################################
 # constraints
-constraints2 <- constraints[constraints$year>=1960,1:10]
+constraints2 <- constraints[constraints$year>=1960,2:10]
 constraints2 <- constraints2[!is.na(constraints2$ccode),]
 
 constraints2$cnts_country <- as.character(constraints2$cnts_country)
@@ -520,7 +520,7 @@ combData <- merge(combData, banks2[,c(5:13,ncol(banks2))],by='cyear',all.x=T,all
 unique(combData[is.na(combData$ccode), 1:5]); dim(combData)
 combData <- merge(combData, privatization2[,c(5:16,ncol(privatization2))],by='cyear',all.x=T,all.y=F)
 unique(combData[is.na(combData$ccode), 1:5]); dim(combData)
-combData <- merge(combData, constraints2[,c(8:10,ncol(constraints2))],by='cyear',all.x=T,all.y=F)
+combData <- merge(combData, constraints2[,c(7:9,ncol(constraints2))],by='cyear',all.x=T,all.y=F)
 unique(combData[is.na(combData$ccode), 1:5]); dim(combData)
 
 combData <- merge(combData, bitsSigned,by='cyear',all.x=T,all.y=F)

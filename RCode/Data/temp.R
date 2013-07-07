@@ -1,0 +1,5 @@
+set.seed(1234)
+x <- data.frame(id=1:5, value=sample(20:30, 5, replace=T), year=3)
+y <- data.frame(id=1:5, value=sample(10:19, 5, replace=T), year=2)
+z <- data.frame(id=1:5, value=sample(0:9, 5, replace=T), year=1)
+(df <- rbind(x, y, z))
