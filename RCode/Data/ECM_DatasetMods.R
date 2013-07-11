@@ -156,7 +156,7 @@ setwd(pathData)
 # 	spat_vars <- c('ccode',
 # 		"cenergycase", "cicsidcase", "csettle", 'disputesNoSettle',
 # 		"conc_disputes", "pend_disputes", "cp_disputes",
-# 	"signedbits", "ratifiedbits", "signedbitsSM", "ratifiedbitsSM")
+# 	"signedbits", "ratifiedbits", "csignedbitsSM", "cratifiedbitsSM")
 # 	dataYear <- combData[combData$year==years[i], spat_vars]
 # 	dataYear <- dataYear[which(dataYear$ccode %in% ndistNames),]
 # 	o <- as.character(dataYear$ccode)
@@ -218,21 +218,30 @@ load('lagData.rda'); load('pdiffData.rda'); load('ddiffData.rda')
 ################################################################################
 
 ################################################################################
-# Read in OECD Data and drop pre 1990 OECD countries
+# Read in OECD Data and upper income dummy
 setwd(paste(pathData, '/Components/Controls',sep=''))
 oecd <- read.csv('oecdMembers.csv')
 oecd$cname <- countrycode(oecd$Country, 'country.name', 'country.name')
 oecd$ccode <- panel$ccode[match(oecd$cname,panel$cname)]
-oecdFinal <- oecd[oecd$Year<=1984,]
+# oecdFinal <- oecd[oecd$Year<=1984,]
+oecdFinal <- oecd
 combData$oecd <- 0
 combData[which(combData$ccode %in% oecdFinal$ccode),'oecd'] <- 1
-combData <- combData[combData$oecd!=1,]
+# combData <- combData[combData$oecd!=1,]
+
+WBupperInc <- read.csv('WB_UpperInc.csv')
+WBupperInc$cname <- countrycode(WBupperInc$Countries, 'country.name', 'country.name')
+WBupperInc$ccode <- panel$ccode[match(WBupperInc$cname,panel$cname)]
+WBupperInc <- na.omit(WBupperInc) # Dropping small islands
+combData$upperincome <-  0
+combData[which(combData$ccode %in% WBupperInc$ccode),'upperincome'] <- 1
 ################################################################################
 
 ################################################################################
 # Cleaning up dataset and throwing away variables unlikely to be used
 # in analysis
-untransVars <- c("cyear", "ccode", "cname", "country", "year", "icsidmember",
+untransVars <- c("cyear", "ccode", "cname", "country", "year", "icsidmember", 
+				"oecd", 'upperincome',
 				"energycase", "icsidcase", "settle")
 
 vars <- list(
@@ -244,8 +253,8 @@ vars <- list(
 	"conc_disputes", "pend_disputes", "cp_disputes",
 	"sp_conc_disputes", "sp_pend_disputes", "sp_cp_disputes",
 
-	"signedbits", "ratifiedbits", "signedbitsSM", "ratifiedbitsSM",
-	"sp_signedbits", "sp_ratifiedbits", "sp_signedbitsSM", "sp_ratifiedbitsSM",
+	"signedbits", "ratifiedbits", "csignedbitsSM", "cratifiedbitsSM",
+	"sp_signedbits", "sp_ratifiedbits", "sp_csignedbitsSM", "sp_cratifiedbitsSM",
 
 	"fdiGdp", "fdi", "gdp", "gdpCAP", "r_fdi", "r_gdp", "r_gdpCAP", 
 	"LNfdi", "LNgdp", "LNgdpCAP", "LNr_fdi", "LNr_gdp", "LNr_gdpCAP", 
@@ -298,4 +307,5 @@ allData <- allData[which(allData$cyear %in% toKeep), finVars]
 setwd(pathData)
 save(allData, file='forAnalysis.rda')
 write.csv(allData, file='forAnalysis.csv')
+write.dta(allData, file='forAnalysis.dta')
 ################################################################################
