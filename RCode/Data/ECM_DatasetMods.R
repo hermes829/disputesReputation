@@ -25,37 +25,26 @@ combData$WB_Firms_Privatized_Infra[is.na(combData$WB_Firms_Privatized_Infra)] <-
 ################################################################################
 
 ################################################################################
+# Fixed to icsid case variable
+# I figured out the ICSID case list. Two cases should go from the 
+# icsidcase: 
+# Gabon v.  Societe Serete 1976, and 
+# Govt of the Province of East Kalimantan v. PT Kaltim Coal and Others (Indonesia 2007).
+# Two cases should be added: Egypt 1984 and Egypt 2009.
+combData[combData$cname=='GABON' & combData$year==1976,'icsidcase'] <- 0
+combData[combData$cname=='INDONESIA' & combData$year==2007,'icsidcase'] <- 0
+combData[combData$cname=='EGYPT' & combData$year==1984,'icsidcase'] <- 1
+combData[combData$cname=='EGYPT' & combData$year==2009,'icsidcase'] <- 1
+################################################################################
+
+################################################################################
 # Function to generate cumulative of TS variables
 setwd(pathData)
-# cumulTS <- function(
-# 	data=combData, cntry_var='cname', time_var='year', key='cyear', start=1971, end=2012, var){
-# 	print(paste('Progress in calculating cumulative sum for ', var))
-# 	cum_var <- paste('c',var,sep='')
-# 	temp <- combData[data[,time_var]>=start & data[,time_var]<end,c(key,cntry_var,time_var,var)]
-# 	temp <- cbind(temp, 0)
-# 	names(temp) <- c('cyear', 'cntry', 'year', var, cum_var)
-	
-# 	countries <- unique(data[,cntry_var]); years <- start:end; fullData <- NULL
+vars <- c('settle', 'energycase', 'icsidcase', 'signedbitsSM', 'ratifiedbitsSM')
+cumul_data <- lapply(vars, function(x) FUN=cumulTS(
+	data=combData, cntry_var='cname', time_var='year', key='cyear', 
+	start=1960, end=2012,variable=x))
 
-# 	for(ii in 1:length(countries)){
-# 		slice <- temp[temp$cntry==countries[ii],]
-# 			for(jj in 2:length(years)){
-# 				slice[slice$year==years[jj],cum_var] <- 
-# 					slice[slice$year==years[jj],var] + 
-# 						slice[slice$year==(years[jj]-1),cum_var] }
-# 			fullData <- rbind(fullData, slice) 
-# 			if(ii==1 | ii%%20==0 | ii==length(countries)){
-# 				cat(paste(round(100*ii/length(countries),0),'% ',sep=''))}
-# 		}
-# 	print(' Completed '); fullData[,c(key, var, cum_var)]
-# }
-# # Run cumulTS function across relevant vars
-# vars <- c('settle', 'energycase', 'icsidcase', 'signedbitsSM', 'ratifiedbitsSM')
-# cumul_data <- lapply(vars, function(x) FUN=cumulTS(var=x))
-# save(cumul_data, file='cumulData.rda')
-load('cumulData.rda')
-
-# Merge results back into original dataframe
 dim(combData)
 for(ii in 1:length(cumul_data)){
 	toMerge <- cumul_data[[ii]]
@@ -67,10 +56,6 @@ dim(combData)
 # DV Investment Profile from PRS Group: Investment.Profile
 # Property rights from PRS group:
 # First need to rescale each of the IVs
-rescale <- function(x,new_max,new_min){
- xResc <- (new_max - new_min) / (max(x,na.rm=T) - min(x,na.rm=T))*(x - min(x,na.rm=T)) + new_min
- xResc }
-
 Investment.ProfileRescale <- rescale(combData$Investment.Profile,10,0)
 Bureaucracy.QualityRescale <- rescale(combData$Bureaucracy.Quality,10,0)
 CorruptionRescale <- rescale(combData$Corruption,10,0)
@@ -104,12 +89,6 @@ combData$r_gdp <- (combData$gdp/combData$USgdpDeflYr)*combData$USgdpDefl11
 combData$r_gdpCAP <- (combData$gdpCAP/combData$USgdpDeflYr)*combData$USgdpDefl11
 
 # Log transformations for GDP, GDP capita, FDI
-logNeg <- function(z){
-	x <- z[!is.na(z)]; y <- x
-	y[x>0] <- log(x[x>0]); y[x<0] <- -log(abs(x[x<0])); y[x==0] <- 0
-	z[!is.na(z)] <- y; z
-}
-
 combData$LNfdi <- logNeg(combData$fdi); combData$LNr_fdi <- logNeg(combData$r_fdi)
 combData$LNtradebalance <- logNeg(combData$tradebalance)
 combData$LNgdp <- log(combData$gdp); combData$LNr_gdp <- log(combData$r_gdp)
@@ -128,93 +107,56 @@ combData$polity <- combData$polity + 10
 ################################################################################
 # spatial vars
 setwd(pathData)
-# distMats <- list()
-# years <- 1984:2011
-# # date <- paste(years, '-12-31', sep='')
-# # for(ii in 1:length(years)){
-# # 	distMats[[ii]] <- distmatrix(as.Date(date[ii]), type="mindist", useGW=TRUE)
-# # 	print(years[ii]) }
-# # names(distMats) <- years
-# # save(distMats, file='mindistMatrices.rda')
-# load('mindistMatrices.rda')
+years <- 1984:2011
+load('mindistMatrices.rda')
+load('DYADmat.rda')
+distMatsD <- lapply(distMats, function(x){
+	x <- ifelse(x<=200,1,0); diag(x) <- 0; x })
 
-# BitsDispMindist <- NULL
-# for(i in 1:length(years)){
-# 	distMat <- distMats[[i]]
-# 	# rownames for matrices
-# 	distNames <- as.numeric(rownames(distMat))
-# 	ndistNames <- panel$ccode[match(distNames, panel$GWCODE)]
-# 	rownames(distMat) <- ndistNames; colnames(distMat) <- ndistNames
-# 	# setting bordering countries as having distance of 1
-# 	distMat[distMat==0] <- 1
-# 	inv_dmat <- 1/distMat
-#   # Setting country x to x values to 0
-# 	diag(inv_dmat) <- 0
-# 	# Applying row standardized weights
-# 	inv_dmat_rowst <- inv_dmat/apply(inv_dmat,1,sum)
-# 	# Bringing in fdi dataset
-# 	spat_vars <- c('ccode',
-# 		"cenergycase", "cicsidcase", "csettle", 'disputesNoSettle',
-# 		"conc_disputes", "pend_disputes", "cp_disputes",
-# 	"signedbits", "ratifiedbits", "csignedbitsSM", "cratifiedbitsSM")
-# 	dataYear <- combData[combData$year==years[i], spat_vars]
-# 	dataYear <- dataYear[which(dataYear$ccode %in% ndistNames),]
-# 	o <- as.character(dataYear$ccode)
-# 	inv_dmat_rowst <- inv_dmat_rowst[o,o]
-# 	# data rows with NAs that are in distance matrix
-# 	# this is equivalent to just dropping them from teh 
-# 	# spatial variable calculation
-# 	dataYear[is.na(dataYear)] <- 0
-# 	for(j in 1:nrow(inv_dmat_rowst)){
-# 	row_weights <- NULL
-# 	row_weights <- t(t(dataYear[,c(2:ncol(dataYear))]) %*%  inv_dmat_rowst[j,])
-# 	row_weights2 <- NULL
-# 	row_weights2 <- cbind(row_weights, years[i], dataYear$ccode[j])
-# 	BitsDispMindist <- rbind(BitsDispMindist, row_weights2)
-# 	}
-# }
-# BitsDispMindist <- data.frame(BitsDispMindist, row.names=NULL)
-# names(BitsDispMindist) <- c(
-# 	paste('sp_',names(BitsDispMindist)[1:(length(spat_vars)-1)],sep=''),
-# 	'year','ccode')
-# BitsDispMindist$cyear <- paste(BitsDispMindist$ccode, BitsDispMindist$year, sep='')
-# save(BitsDispMindist, file='spatialData.rda')
-load('spatialData.rda')
-dim(combData); dim(BitsDispMindist)
-combData <- merge(combData, BitsDispMindist[,c(1:11,14)], by='cyear', all.x=T)
-dim(combData); dim(BitsDispMindist)
+vars <- c("cicsidcase", "icsidcase",
+	"conc_disputes", "pend_disputes", "cp_disputes",
+	"signedbits", "ratifiedbits", "csignedbitsSM", "cratifiedbitsSM")
+wghtMats <- list(distMats, distMatsD, distMatsD, exportMats, tradeTotMats)
+spNames <- c('distC_', 'distD_', 'distD2_', 'exp_', 'tra_')
+inv <- c(TRUE, FALSE, FALSE, FALSE, FALSE)
+rst <- c(TRUE, FALSE, TRUE, TRUE, TRUE)
+
+dim(combData)
+for(ii in 1:length(wghtMats)){
+	spData <- spatialBuild(spatList=wghtMats[[ii]],
+		varData=combData, years=years, variable=vars,
+		sp_suffix=spNames[ii], invert=inv[ii], rowST=rst[ii])
+	combData <- merge(combData, 
+		spData[,c(1:length(vars),ncol(spData))],by='cyear',all.x=T)
+	print(spNames[ii])	}
+dim(combData)
 ################################################################################
 
 ################################################################################
 # Calculating change and lag in TS variables
 setwd(pathData)
-# combData$cyear <- as.numeric(as.character(combData$cyear))
+combData$cyear <- as.numeric(as.character(combData$cyear))
 
-# chgIN <- function(x) diff(c(NA, x))
-# combData <- combData[order(combData$cyear),]
-# dchData <- cbind(cyear=as.numeric(as.character(combData$cyear)), 
-# 	apply(combData[,6:ncol(combData)], 2, function(x) FUN=unlist(by(x, combData$ccode, chgIN))))
-# dchData <- data.frame(dchData, row.names=NULL)
-# names(dchData) <- c('cyear', paste('dch_', names(dchData)[2:length(dchData)], sep=''))
-# save(dchData, file='ddiffData.rda'); dim(dchData)
+chgIN <- function(x) diff(c(NA, x))
+combData <- combData[order(combData$cyear),]
+dchData <- cbind(cyear=as.numeric(as.character(combData$cyear)), 
+	apply(combData[,6:ncol(combData)], 2, function(x) FUN=unlist(by(x, combData$ccode, chgIN))))
+dchData <- data.frame(dchData, row.names=NULL)
+names(dchData) <- c('cyear', paste('dch_', names(dchData)[2:length(dchData)], sep=''))
 
-# pchgIN <- function(x) diff(c(NA, x))/ifelse(abs(c(NA,x[-length(x)]))==0,1,abs(c(NA,x[-length(x)])))
-# combData <- combData[order(combData$cyear),]
-# pchData <- cbind(cyear=as.numeric(as.character(combData$cyear)), 
-# 	apply(combData[,6:ncol(combData)], 2, function(x) FUN=unlist(by(x, combData$ccode, pchgIN))))
-# pchData <- data.frame(pchData, row.names=NULL)
-# names(pchData) <- c('cyear', paste('pch_', names(pchData)[2:length(pchData)], sep=''))
-# save(pchData, file='pdiffData.rda'); dim(pchData)
+pchgIN <- function(x) diff(c(NA, x))/ifelse(abs(c(NA,x[-length(x)]))==0,1,abs(c(NA,x[-length(x)])))
+combData <- combData[order(combData$cyear),]
+pchData <- cbind(cyear=as.numeric(as.character(combData$cyear)), 
+	apply(combData[,6:ncol(combData)], 2, function(x) FUN=unlist(by(x, combData$ccode, pchgIN))))
+pchData <- data.frame(pchData, row.names=NULL)
+names(pchData) <- c('cyear', paste('pch_', names(pchData)[2:length(pchData)], sep=''))
 
-# lagTS <- function(x) c(NA, x[-length(x)])
-# combData <- combData[order(combData$cyear),]
-# lagData <- cbind(cyear=as.numeric(as.character(combData$cyear)), 
-# 	apply(combData[,6:ncol(combData)], 2, function(x) FUN=unlist(by(x, combData$ccode, lagTS))))
-# lagData <- data.frame(lagData, row.names=NULL)
-# names(lagData) <- c('cyear', paste('lag_', names(lagData)[2:length(lagData)], sep=''))
-# save(lagData, file='lagData.rda'); dim(lagData)
-
-load('lagData.rda'); load('pdiffData.rda'); load('ddiffData.rda')
+lagTS <- function(x) c(NA, x[-length(x)])
+combData <- combData[order(combData$cyear),]
+lagData <- cbind(cyear=as.numeric(as.character(combData$cyear)), 
+	apply(combData[,6:ncol(combData)], 2, function(x) FUN=unlist(by(x, combData$ccode, lagTS))))
+lagData <- data.frame(lagData, row.names=NULL)
+names(lagData) <- c('cyear', paste('lag_', names(lagData)[2:length(lagData)], sep=''))
 ################################################################################
 
 ################################################################################
@@ -245,16 +187,22 @@ untransVars <- c("cyear", "ccode", "cname", "country", "year", "icsidmember",
 				"energycase", "icsidcase", "settle")
 
 vars <- list(
-	"cenergycase", "cicsidcase", "csettle", 'disputesNoSettle',
-	"sp_cenergycase", "sp_cicsidcase", "sp_csettle", 'sp_disputesNoSettle',
+	"cicsidcase", "icsidcase",
+	"distC_cicsidcase", "distC_icsidcase",
+	"distD_cicsidcase", "distD_icsidcase",	
+	"distD2_cicsidcase", "distD2_icsidcase",		
 	
 	"cunctadcase", 
 
 	"conc_disputes", "pend_disputes", "cp_disputes",
-	"sp_conc_disputes", "sp_pend_disputes", "sp_cp_disputes",
+	"distC_conc_disputes", "distC_pend_disputes", "distC_cp_disputes",
+	"distD_conc_disputes", "distD_pend_disputes", "distD_cp_disputes",
+	"distD2_conc_disputes", "distD2_pend_disputes", "distD2_cp_disputes",	
 
 	"signedbits", "ratifiedbits", "csignedbitsSM", "cratifiedbitsSM",
-	"sp_signedbits", "sp_ratifiedbits", "sp_csignedbitsSM", "sp_cratifiedbitsSM",
+	"distC_signedbits", "distC_ratifiedbits", "distC_csignedbitsSM", "distC_cratifiedbitsSM",
+	"distD_signedbits", "distD_ratifiedbits", "distD_csignedbitsSM", "distD_cratifiedbitsSM",			
+	"distD2_signedbits", "distD2_ratifiedbits", "distD2_csignedbitsSM", "distD2_cratifiedbitsSM",		
 
 	"fdiGdp", "fdi", "gdp", "gdpCAP", "r_fdi", "r_gdp", "r_gdpCAP", 
 	"LNfdi", "LNgdp", "LNgdpCAP", "LNr_fdi", "LNr_gdp", "LNr_gdpCAP", 
