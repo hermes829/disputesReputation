@@ -6,7 +6,6 @@ source('/Users/janus829/Desktop/Research/RemmerProjects/disputesReputation/RCode
 ### load data
 setwd(pathData)
 load('forAnalysis.rda')
-load('forAnalysisFull.rda')
 
 # ### Descriptive statistics
 vars <- c(
