@@ -242,6 +242,11 @@ allData <- merge(allData, dchData, by='cyear')
 allData <- merge(allData, pchData, by='cyear')
 dim(allData)
 
+# Saving data for descriptive analysis
+setwd(pathData)
+allData0 <- allData
+save(allData0, file='forAnalysis0.rda')
+
 # Subsetting dataset
 allData <- allData[allData$year>=1984 & allData$year<=2011,]
 temp <- na.omit(allData[,c('cname', 'ccode', 'cyear', 'year', 'Investment.Profile', 

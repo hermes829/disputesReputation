@@ -11,11 +11,15 @@ Sys.info()["user"]=="janus829"
   pathLatex="~/Desktop/Research/RemmerProjects/disputesReputation/Latex"
   pathFunctions="~/Desktop/Prog Notes/R Functions"}
 
+load('~/Desktop/Research/BuildingPanelData/panel.rda')
+
 # Loading libraries and functions
 require(foreign)
 require(countrycode)
 require(xlsx)
 require(gdata)
+require(ggplot2)
+theme_set(theme_bw())
 require(reshape)
 require(plyr)
 require(doBy)
@@ -28,6 +32,7 @@ require(apsrtable)
 require(tikzDevice)
 setwd(pathFunctions)
 source('clus_errors.R')
+source('multiplot.R')
 
 # Setting seed
 set.seed(6886)

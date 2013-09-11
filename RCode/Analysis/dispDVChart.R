@@ -7,6 +7,9 @@ load('forAnalysis0.rda')
 
 ### Slicing to relevant vars
 vars <- c('Investment.Profile', 'Property.Rights', 
+	'property.rights', 'investment.freedom',
+	'X2C..Protection.of.property.rights',
+	'X2..Legal.System...Property.Rights',
 	'cicsidcase', 'icsidcase',
 	'conc_disputes', 'pend_disputes', 'cp_disputes', 
 	'oecd', 'upperincome',
@@ -37,13 +40,15 @@ ggplotSM <- function(x='cicsidcase', xlabel='Cum. ICSID Cases by',
 		means <- summaryBy(form, data=ggData, FUN=mean)
 		q25 <- summaryBy(form, data=ggData, FUN=function(x){quantile(x, 0.25)})
 		q75 <- summaryBy(form, data=ggData, FUN=function(x){quantile(x, 0.75)})
-		ggSumm <- cbind(means, q25[,2], q75[,2])
-		colnames(ggSumm)[2:4] <- c('mean', 'q25', 'q75')
+		n <- summaryBy(form, data=ggData, FUN=function(x){length(x)})
+		ggSumm <- cbind(means, q25[,2], q75[,2], n[,2])
+		colnames(ggSumm)[2:5] <- c('mean', 'q25', 'q75', 'n')
 		ggData <- merge(ggData, ggSumm, by=x, all.x=T)
 		colnames(ggData)[1:2] <- c('x', 'y')
+		# ggData <- ggData[ggData$n>=3,]
 
 		ggplot(ggData, aes(x=x, y=y)) + 
-		 geom_jitter(position=position_jitter(width=.25), size=2.5, col='grey') +
+		 # geom_jitter(position=position_jitter(width=.25), size=2.5, col='grey') +
 		  geom_errorbar(aes(ymin=q25, ymax=q75), width=0.2) +
 		   geom_point(aes(y=mean), shape=18, size=2.5) +
 		    xlab(paste(xlabel, time)) + ylab(paste(ylabel, time)) +
@@ -63,9 +68,9 @@ ggPropRight <- lapply(years, function(zz)
 		time=zz, dataframe=data))
 
 setwd(pathGraphics)
-pdf(file='dvCDisp.pdf', height=7, width=10)
-multiplot(ggInvProf, cols=3); multiplot(ggPropRight, cols=3)
-dev.off()
+# pdf(file='dvCDisp.pdf', height=7, width=10)
+# multiplot(ggInvProf, cols=3); multiplot(ggPropRight, cols=3)
+# dev.off()
 
 
 years <- c(1985, 1990, 1995, 2000, 2005, 2010)
@@ -79,6 +84,76 @@ ggPropRight <- lapply(years, function(zz)
 		time=zz, dataframe=data))
 
 setwd(pathGraphics)
-pdf(file='dvMVA3Disp.pdf', height=7, width=10)
-multiplot(ggInvProf, cols=3); multiplot(ggPropRight, cols=3)
+# pdf(file='dvMVA3Disp.pdf', height=7, width=10)
+# multiplot(ggInvProf, cols=3); multiplot(ggPropRight, cols=3)
+# dev.off()
+
+### Subsetting to countries with high disputes
+temp <- na.omit(data[data$year==2011, c('cname', 'year', 'cicsidcase')])
+temp <- temp[order(temp$cicsidcase, decreasing=T),]
+hdcntries <- temp[temp$cicsidcase>=2,'cname']
+
+# setwd(pathGraphics)
+# pdf(file='highDispCntries.pdf')
+# par(mar=c(5,4,4,5)+.1, mfrow=c(3,2))
+# for(ii in 1:length(hdcntries)){
+# 	pdata <- data[data$cname==hdcntries[ii],]
+# 	plot(pdata$year, pdata$Investment.Profile, las=1,
+# 		type='l', col='blue', ylab='Reputation', xlab='year')
+# 	par(new=T)
+# 	plot(pdata$year, pdata$cicsidcase,
+# 		type='h', col="red", xaxt="n", yaxt="n", xlab="", ylab="")
+# 	axis(4,las=1,at=pdata$cicsidcase,labels=round(pdata$cicsidcase,digits=0))
+# 	mtext("Disputes",side=4,line=3,cex=.8)
+# 	legend("topleft",col=c("blue","red"), bty='n',
+# 		lty=1,legend=c("Reputation","Disputes"))
+# 	title(hdcntries[ii])
+# }
+# dev.off()
+
+### 2010 plots
+mapData <- cshp(date = as.Date("2010-6-30"))
+coords<-coordinates(mapData)
+dst<-as.matrix(dist(coords, upper=TRUE, diag=TRUE))
+xy<-cmdscale(dst, k=3)
+r<-rank(xy[,1])/dim(xy)[1]
+g<-rank(xy[,2])/dim(xy)[1]
+b<-rank(xy[,3])/dim(xy)[1]
+
+farben<-rgb(g,r,0)
+#add colors back to the map
+mapData$mapcolors<-farben
+# rearrange order of farben to align with 
+# latent space data
+latColors <- data.frame(cbind(gwcodes=mapData$GWCODE,farben))
+latColors$gwcodes <- as.numeric(as.character(latColors$gwcodes))
+latColors$ccode <- panel$ccode[match(latColors$gwcodes,panel$GWCODE)]
+
+data10 <- data[data$year==2010,]
+data10 <- merge(data10, latColors, by='ccode', all.x=T)
+data10$CNTRY_NAME <- panel$CNTRY_NAME[match(data10$ccode, panel$ccode)]
+data10$sabb <- countrycode(data10$CNTRY_NAME, 'country.name', 'iso3c')
+repVars <- c('Investment.Profile', 'Property.Rights', 
+	'property.rights', 'investment.freedom',
+	'X2C..Protection.of.property.rights',
+	'X2..Legal.System...Property.Rights')
+ylabs <- c(rep('ICRG Rep. Var',2), rep('Herit Rep. Var', 2), 
+	rep('Fraser Rep. Var', 2))
+
+pdf(file='rep2010ICSID.pdf')
+par(mfrow=c(3,2))
+for(ii in 1:length(repVars)){
+	plot(data10$cicsidcase, data10[,repVars[ii]], 
+		ylab=ylabs[ii], xlab='Disputes', xaxt='n',
+		las=1
+		, pch=''
+		# , pch=18, col=as.character(data10$farben)
+		)
+	text(data10$cicsidcase, data10[,repVars[ii]],
+	 labels = data10$sabb, cex = 0.8, col=as.character(data10$farben))
+	axis(1, at = seq(1, 50, by = 2), las=1)
+	title(paste(repVars[ii], " & \n Cum. Disputes in 2010", sep=''))
+	}
+# par(mfrow=c(1,1))
+# plot(mapData, col=farben, lwd=1e-200)
 dev.off()
