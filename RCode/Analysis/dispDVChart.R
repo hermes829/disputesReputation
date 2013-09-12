@@ -6,14 +6,17 @@ setwd(pathData)
 load('forAnalysis0.rda')
 
 ### Slicing to relevant vars
-vars <- c('Investment.Profile', 'Property.Rights', 
-	'property.rights', 'investment.freedom',
+repVars <- c('Investment.Profile', 'Property.Rights', 
+	'property.rights', 
+	'investment.freedom',
 	'X2C..Protection.of.property.rights',
-	'X2..Legal.System...Property.Rights',
-	'cicsidcase', 'icsidcase',
-	'conc_disputes', 'pend_disputes', 'cp_disputes', 
-	'oecd', 'upperincome',
-	'year', 'ccode', 'cname')
+	'X2..Legal.System...Property.Rights')
+repchVars <- paste('dch_', repVars, sep='')
+vars <- c(repVars, repchVars,
+	c('cicsidcase', 'icsidcase',
+		'conc_disputes', 'pend_disputes', 'cp_disputes', 
+		'oecd', 'upperincome',
+		'year', 'ccode', 'cname') )
 data <- allData0[, vars]
 
 ### Creating moving sum for disputes
@@ -133,34 +136,75 @@ data10 <- data[data$year==2010,]
 data10 <- merge(data10, latColors, by='ccode', all.x=T)
 data10$CNTRY_NAME <- panel$CNTRY_NAME[match(data10$ccode, panel$ccode)]
 data10$sabb <- countrycode(data10$CNTRY_NAME, 'country.name', 'iso3c')
-repVars <- c('Investment.Profile', 'Property.Rights', 
-	'property.rights', 
-	'investment.freedom',
-	'X2C..Protection.of.property.rights',
-	'X2..Legal.System...Property.Rights')
 ylabs <- c(rep('ICRG Rep. Var',2), rep('Herit Rep. Var', 2), 
 	rep('Fraser Rep. Var', 2))
 # data10 <- data10[data10$cicsidcase>1,]
 data10 <- data10[data10$cicsidcase<40,]
 
-pdf(file='rep2010ICSID_noArg.pdf', width=10, height=8)
-par(mfrow=c(3,2))
-for(ii in 1:length(repVars)){
-	plot(data10$cicsidcase, data10[,repVars[ii]], 
-		ylab=ylabs[ii], xlab='Disputes', xaxt='n',
-		las=1
-		, pch=''
-		# , pch=18, col=as.character(data10$farben)
-		)
-		text(jitter(data10$cicsidcase, .25), data10[,repVars[ii]],
-		 labels = data10$sabb, cex = 0.8, col=as.character(data10$farben))
-	axis(1, at = seq(0, 18, by = 1), las=1)
-	title(paste(repVars[ii], " & \n Cum. Disputes in 2010", sep=''))
-	}
+# pdf(file='rep2010ICSID_noArg.pdf', width=10, height=8)
+# par(mfrow=c(3,2))
+# for(ii in 1:length(repVars)){
+# 	plot(data10$cicsidcase, data10[,repVars[ii]], 
+# 		ylab=ylabs[ii], xlab='Disputes', xaxt='n',
+# 		las=1
+# 		, pch=''
+# 		# , pch=18, col=as.character(data10$farben)
+# 		)
+# 		text(jitter(data10$cicsidcase, .25), data10[,repVars[ii]],
+# 		 labels = data10$sabb, cex = 0.8, col=as.character(data10$farben))
+# 	axis(1, at = seq(0, 18, by = 1), las=1)
+# 	title(paste(repVars[ii], " & \n Cum. Disputes in 2010", sep=''))
+# 	}
 # plot(mapData, col=farben, lwd=1e-200)
-dev.off()
+# dev.off()
 
 ### Change in ratings after n disputes in t periods
 	# n = 1, 2, 3, 4, 5
 	# t = 1, 3, 5
+dataD <- data; dataD$cyear <- paste(dataD$ccode, dataD$year, sep='')
+dataD <- lagDataSM(dataD, 'cyear', 'ccode', c('cicsidcase','icsidcase'), 1)
+dataD <- lagDataSM(dataD, 'cyear', 'ccode', c('cicsidcase','icsidcase'), 2)
+dataD <- lagDataSM(dataD, 'cyear', 'ccode', c('cicsidcase','icsidcase'), 3)
+dataD <- lagDataSM(dataD, 'cyear', 'ccode', c('cicsidcase','icsidcase'), 4)
 
+chVar <- 'dch_Investment.Profile'
+chData <- NULL
+for(ii in 1:5){
+	for(jj in 1:4){
+		lVar <- paste('lag',jj,'_icsidcase',sep='')		
+		clVar <- paste('lag',jj,'_cicsidcase',sep='')
+		slice <- cbind(
+			dataD[which(dataD[,lVar]==1 & dataD[,clVar]==ii), 
+				c(chVar,c('ccode', 'year'))], 
+			ii, jj)
+		chData <- rbind(chData, slice)
+	}
+}
+
+chData <- data.frame(chData)
+colnames(chData) <- c('change', 'ccode', 'year', 'dispute', 'time')
+chData <- na.omit(chData); summary(chData)
+chData$time <- factor(chData$time, 
+	levels=1:4, labels=paste(1:4, 'Year(s) After'))
+chData$farben <- as.character(latColors$farben[match(chData$ccode, latColors$ccode)])
+chData$ccode <- as.factor(chData$ccode)
+chData$CNTRY_NAME <- panel$cname[match(chData$ccode, panel$ccode)]
+chData$sabb <- countrycode(chData$CNTRY_NAME, 'country.name', 'iso3c')
+ggColors <- chData$farben
+names(ggColors) <- chData$ccode
+
+pdf(file='chRatingByDispute.pdf', width=8, height=5)
+ggCh <- ggplot(chData, aes(x=dispute, y=change, 
+	label=sabb, group=time, color=ccode ) )
+ggCh <- ggCh + geom_text(size=2, position=position_jitter(width=.15, height=.15))
+ggCh <- ggCh + scale_colour_manual(values=ggColors)
+ggCh <- ggCh + geom_hline(yintercept=0, color='red', lty=2, size=0.25)
+ggCh <- ggCh + facet_wrap(~time,ncol=4)
+ggCh <- ggCh + xlab('Dispute Number') + ylab('Change in Rating')
+ggCh <- ggCh + theme(legend.position='none', legend.title=element_blank(),
+			    axis.ticks=element_blank(), 
+			    panel.grid.major=element_blank(),
+			    # panel.grid.minor=element_blank(), 
+			    text=element_text(size=10))
+ggCh
+dev.off()
