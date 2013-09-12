@@ -134,13 +134,16 @@ data10 <- merge(data10, latColors, by='ccode', all.x=T)
 data10$CNTRY_NAME <- panel$CNTRY_NAME[match(data10$ccode, panel$ccode)]
 data10$sabb <- countrycode(data10$CNTRY_NAME, 'country.name', 'iso3c')
 repVars <- c('Investment.Profile', 'Property.Rights', 
-	'property.rights', 'investment.freedom',
+	'property.rights', 
+	'investment.freedom',
 	'X2C..Protection.of.property.rights',
 	'X2..Legal.System...Property.Rights')
 ylabs <- c(rep('ICRG Rep. Var',2), rep('Herit Rep. Var', 2), 
 	rep('Fraser Rep. Var', 2))
+# data10 <- data10[data10$cicsidcase>1,]
+data10 <- data10[data10$cicsidcase<40,]
 
-pdf(file='rep2010ICSID.pdf')
+pdf(file='rep2010ICSID_noArg.pdf', width=10, height=8)
 par(mfrow=c(3,2))
 for(ii in 1:length(repVars)){
 	plot(data10$cicsidcase, data10[,repVars[ii]], 
@@ -149,11 +152,15 @@ for(ii in 1:length(repVars)){
 		, pch=''
 		# , pch=18, col=as.character(data10$farben)
 		)
-	text(data10$cicsidcase, data10[,repVars[ii]],
-	 labels = data10$sabb, cex = 0.8, col=as.character(data10$farben))
-	axis(1, at = seq(1, 50, by = 2), las=1)
+		text(jitter(data10$cicsidcase, .25), data10[,repVars[ii]],
+		 labels = data10$sabb, cex = 0.8, col=as.character(data10$farben))
+	axis(1, at = seq(0, 18, by = 1), las=1)
 	title(paste(repVars[ii], " & \n Cum. Disputes in 2010", sep=''))
 	}
-# par(mfrow=c(1,1))
 # plot(mapData, col=farben, lwd=1e-200)
 dev.off()
+
+### Change in ratings after n disputes in t periods
+	# n = 1, 2, 3, 4, 5
+	# t = 1, 3, 5
+
