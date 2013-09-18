@@ -40,7 +40,8 @@ combData[combData$cname=='EGYPT' & combData$year==2009,'icsidcase'] <- 1
 ################################################################################
 # Function to generate cumulative of TS variables
 setwd(pathData)
-vars <- c('settle', 'energycase', 'icsidcase', 'signedbitsSM', 'ratifiedbitsSM')
+vars <- c('settle', 'energycase', 'icsidcase', 'icsidtreaty_case',
+	'signedbitsSM', 'ratifiedbitsSM')
 cumul_data <- lapply(vars, function(x) FUN=cumulTS(
 	data=combData, cntry_var='cname', time_var='year', key='cyear', 
 	start=1960, end=2012,variable=x))
@@ -113,7 +114,8 @@ load('DYADmat.rda')
 distMatsD <- lapply(distMats, function(x){
 	x <- ifelse(x<=200,1,0); diag(x) <- 0; x })
 
-vars <- c("cicsidcase", "icsidcase",
+vars <- c("cicsidcase", "icsidcase", 
+	"cicsidtreaty_case","icsidtreaty_case",
 	"conc_disputes", "pend_disputes", "cp_disputes",
 	"signedbits", "ratifiedbits", "csignedbitsSM", "cratifiedbitsSM")
 wghtMats <- list(distMats, distMatsD, distMatsD, exportMats, tradeTotMats)
@@ -184,7 +186,7 @@ combData[which(combData$ccode %in% WBupperInc$ccode),'upperincome'] <- 1
 # in analysis
 untransVars <- c("cyear", "ccode", "cname", "country", "year", "icsidmember", 
 				"oecd", 'upperincome',
-				"energycase", "icsidcase", "settle")
+				"energycase", "settle")
 
 vars <- list(
 	"cicsidcase", "icsidcase",
@@ -192,6 +194,11 @@ vars <- list(
 	"distD_cicsidcase", "distD_icsidcase",	
 	"distD2_cicsidcase", "distD2_icsidcase",		
 	
+	"cicsidtreaty_case", "icsidtreaty_case",
+	"distC_cicsidtreaty_case", "distC_icsidtreaty_case",
+	"distD_cicsidtreaty_case", "distD_icsidtreaty_case",	
+	"distD2_cicsidtreaty_case", "distD2_icsidtreaty_case",		
+
 	"cunctadcase", 
 
 	"conc_disputes", "pend_disputes", "cp_disputes",

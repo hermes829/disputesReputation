@@ -512,7 +512,7 @@ combData <- merge(combData, polity2[,c(7:35,ncol(polity2))],by='cyear',all.x=T,a
 unique(combData[is.na(combData$ccode), 1:5]); dim(combData)
 combData <- merge(combData, icrg2[,c(5:16,ncol(icrg2))],by='cyear',all.x=T,all.y=F)
 unique(combData[is.na(combData$ccode), 1:5]); dim(combData)
-combData <- merge(combData, karenReput2[,c(5:19,ncol(karenReput2))],by='cyear',all.x=T,all.y=F)
+combData <- merge(combData, karenReput2[,c(5:20,ncol(karenReput2))],by='cyear',all.x=T,all.y=F)
 unique(combData[is.na(combData$ccode), 1:5]); dim(combData)
 combData <- merge(combData, wrightExprop2[,c(5:6,ncol(wrightExprop2))],by='cyear',all.x=T,all.y=F)
 unique(combData[is.na(combData$ccode), 1:5]); dim(combData)

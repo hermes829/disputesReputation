@@ -74,7 +74,7 @@ list.files()
 karenReput <- read.dta('icsid_13.dta') # Updated dataset from Karen
 karenReput <- karenReput[!is.na(karenReput$Refno),] 
 karenReput$key <- paste(karenReput$Refno, karenReput$Nation, karenReput$Year, sep='')
-temp <- read.dta("revised icsid.dta")
+temp <- read.dta("revised icsid v2.dta")
 temp <- temp[!is.na(temp$Refno),] 
 temp$key <- paste(temp$Refno, temp$Nation, temp$Year, sep='')
 dim(karenReput)

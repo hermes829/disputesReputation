@@ -11,8 +11,9 @@ repVars <- c('Investment.Profile', 'Property.Rights',
 	'investment.freedom',
 	'X2C..Protection.of.property.rights',
 	'X2..Legal.System...Property.Rights')
-repchVars <- paste('dch_', repVars, sep='')
-vars <- c(repVars, repchVars,
+repdchVars <- paste('dch_', repVars, sep='')
+reppchVars <- paste('pch_', repVars, sep='')
+vars <- c(repVars, repdchVars, reppchVars,
 	c('cicsidcase', 'icsidcase',
 		'conc_disputes', 'pend_disputes', 'cp_disputes', 
 		'oecd', 'upperincome',
@@ -167,44 +168,47 @@ dataD <- lagDataSM(dataD, 'cyear', 'ccode', c('cicsidcase','icsidcase'), 2)
 dataD <- lagDataSM(dataD, 'cyear', 'ccode', c('cicsidcase','icsidcase'), 3)
 dataD <- lagDataSM(dataD, 'cyear', 'ccode', c('cicsidcase','icsidcase'), 4)
 
-chVar <- 'dch_Investment.Profile'
-chData <- NULL
-for(ii in 1:5){
-	for(jj in 1:4){
-		lVar <- paste('lag',jj,'_icsidcase',sep='')		
-		clVar <- paste('lag',jj,'_cicsidcase',sep='')
-		slice <- cbind(
-			dataD[which(dataD[,lVar]==1 & dataD[,clVar]==ii), 
-				c(chVar,c('ccode', 'year'))], 
-			ii, jj)
-		chData <- rbind(chData, slice)
+for(kk in 1:length(repdchVars)){
+	chVar <- repdchVars[kk]
+	chData <- NULL
+	for(ii in 1:5){
+		for(jj in 1:4){
+			lVar <- paste('lag',jj,'_icsidcase',sep='')		
+			clVar <- paste('lag',jj,'_cicsidcase',sep='')
+			slice <- cbind(
+				dataD[which(dataD[,lVar]==1 & dataD[,clVar]==ii), 
+					c(chVar,c('ccode', 'year'))], 
+				ii, jj)
+			chData <- rbind(chData, slice)
+		}
 	}
+
+	chData <- data.frame(chData)
+	colnames(chData) <- c('change', 'ccode', 'year', 'dispute', 'time')
+	chData <- na.omit(chData); summary(chData)
+	chData$dispute <- factor(chData$dispute, 
+		levels=1:5, labels=paste(1:5, 'Dispute(s)'))
+	chData$farben <- as.character(latColors$farben[match(chData$ccode, latColors$ccode)])
+	chData$ccode <- as.factor(chData$ccode)
+	chData$CNTRY_NAME <- panel$cname[match(chData$ccode, panel$ccode)]
+	chData$sabb <- countrycode(chData$CNTRY_NAME, 'country.name', 'iso3c')
+	ggColors <- chData$farben
+	names(ggColors) <- chData$ccode
+
+	pdf(file=paste(chVar, 'chByDispute.pdf', sep=''), width=8, height=5)
+	ggCh <- ggplot(chData, aes(x=time, y=change, 
+		label=sabb, group=dispute, color=ccode ) )
+	ggCh <- ggCh + geom_text(size=2, position=position_jitter(width=.24, height=0))
+	ggCh <- ggCh + scale_colour_manual(values=ggColors)
+	ggCh <- ggCh + geom_hline(yintercept=0, color='red', lty=2, size=0.25)
+	ggCh <- ggCh + facet_wrap(~dispute,ncol=5)
+	ggCh <- ggCh + xlab('Time Since Dispute (Years)') + 
+		ylab(paste('Change in', chVar))
+	ggCh <- ggCh + theme(legend.position='none', legend.title=element_blank(),
+				    axis.ticks=element_blank(), 
+				    panel.grid.major=element_blank(),
+				    # panel.grid.minor=element_blank(), 
+				    text=element_text(size=10))
+	ggCh
+	dev.off()
 }
-
-chData <- data.frame(chData)
-colnames(chData) <- c('change', 'ccode', 'year', 'dispute', 'time')
-chData <- na.omit(chData); summary(chData)
-chData$time <- factor(chData$time, 
-	levels=1:4, labels=paste(1:4, 'Year(s) After'))
-chData$farben <- as.character(latColors$farben[match(chData$ccode, latColors$ccode)])
-chData$ccode <- as.factor(chData$ccode)
-chData$CNTRY_NAME <- panel$cname[match(chData$ccode, panel$ccode)]
-chData$sabb <- countrycode(chData$CNTRY_NAME, 'country.name', 'iso3c')
-ggColors <- chData$farben
-names(ggColors) <- chData$ccode
-
-pdf(file='chRatingByDispute.pdf', width=8, height=5)
-ggCh <- ggplot(chData, aes(x=dispute, y=change, 
-	label=sabb, group=time, color=ccode ) )
-ggCh <- ggCh + geom_text(size=2, position=position_jitter(width=.15, height=.15))
-ggCh <- ggCh + scale_colour_manual(values=ggColors)
-ggCh <- ggCh + geom_hline(yintercept=0, color='red', lty=2, size=0.25)
-ggCh <- ggCh + facet_wrap(~time,ncol=4)
-ggCh <- ggCh + xlab('Dispute Number') + ylab('Change in Rating')
-ggCh <- ggCh + theme(legend.position='none', legend.title=element_blank(),
-			    axis.ticks=element_blank(), 
-			    panel.grid.major=element_blank(),
-			    # panel.grid.minor=element_blank(), 
-			    text=element_text(size=10))
-ggCh
-dev.off()
