@@ -233,7 +233,10 @@ vars <- list(
 
 	"regQual",
 
-	"overall.score", "property.rights", 
+	"overall.score", "property.rights", "fiscal.freedom",
+	"government.spending", "business.freedom", "labor.freedom",
+	"monetary.freedom", "trade.freedom", "investment.freedom",
+	"financial.freedom",
 
 	"X2C..Protection.of.property.rights",
 	"X2..Legal.System...Property.Rights",

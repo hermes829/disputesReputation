@@ -7,9 +7,10 @@ source('/Users/janus829/Desktop/Research/RemmerProjects/disputesReputation/RCode
 setwd(pathData)
 load('forAnalysis.rda')
 
-vars <- c('pch_Property.Rights',
-	'pch_cicsidcase','lag_cicsidcase',
-	'pch_csettle','lag_csettle',
+vars <- c('pch_Investment.Profile',
+	'pch_cicsidtreaty_case', 'lag_cicsidtreaty_case',
+	# 'pch_cicsidcase','lag_cicsidcase',
+	# 'pch_csettle','lag_csettle',
 	# 'pch_disputesNoSettle','lag_disputesNoSettle',
 	# 'pch_cenergycase','lag_cenergycase',
 	
@@ -19,7 +20,7 @@ vars <- c('pch_Property.Rights',
 	# 'pch_sp_cenergycase','lag_sp_cenergycase',
 
 	'pch_signedbits','lag_signedbits',
-	'pch_ratifiedbits','lag_ratifiedbits',
+	# 'pch_ratifiedbits','lag_ratifiedbits',
 
 	# 'pch_sp_signedbits','lag_sp_signedbits',
 	# 'pch_sp_ratifiedbits','lag_sp_ratifiedbits',
@@ -43,9 +44,10 @@ dim(allData)
 dim(na.omit(allData[,vars]))
 
 # Play models
-model <- lmer(pch_Property.Rights ~ 
-	pch_cicsidcase + lag_cicsidcase +
-	pch_csettle + lag_csettle +
+model <- lmer(pch_Investment.Profile ~ 
+	# pch_cicsidcase + lag_cicsidcase +
+	pch_cicsidtreaty_case + lag_cicsidtreaty_case +
+	# pch_csettle + lag_csettle +
 	# pch_disputesNoSettle + lag_disputesNoSettle +
 	# pch_cenergycase + lag_cenergycase +
 	
@@ -55,7 +57,7 @@ model <- lmer(pch_Property.Rights ~
 	# pch_sp_cenergycase + lag_sp_cenergycase +
 
 	pch_signedbits + lag_signedbits +
-	pch_ratifiedbits + lag_ratifiedbits +
+	# pch_ratifiedbits + lag_ratifiedbits +
 
 	# pch_sp_signedbits + lag_sp_signedbits +
 	# pch_sp_ratifiedbits + lag_sp_ratifiedbits +
