@@ -216,7 +216,7 @@ vars <- list(
 
 	"USgdpDeflYr", 'USgdpDefl11', "population", "LNpopulation",
 
-	"debtGDP",  "exprop", "debt", 
+	"debtGDP",  "exprop", "debt", "inflation", 
 
 	"tradebalance", "kaopen",	
 
@@ -233,6 +233,11 @@ vars <- list(
 
 	"regQual",
 
+	"dbizRank", 'elecRank', 'elecTime', 'elecCost', 'invRank',
+	'invDisc', 'invDirecLiab', 'invSuits', 'invProtect', 'traR',
+	'traDocExp', 'traTimeExp', 'traCostExp', 'traDocImp', 'traTimeImp',
+	'traCostImp', 'enfRank', 'enfTime', 'enfCost', 'enfProc',
+
 	"overall.score", "property.rights", "fiscal.freedom",
 	"government.spending", "business.freedom", "labor.freedom",
 	"monetary.freedom", "trade.freedom", "investment.freedom",
@@ -240,6 +245,10 @@ vars <- list(
 
 	"X2C..Protection.of.property.rights",
 	"X2..Legal.System...Property.Rights",
+	"X2F.Legal.enforcement.of.contracts",
+	"X4Bii..Compliance.costs.of.importing.and.exporting",
+	"X4Dii..Capital.controls",
+	
 	"SUMMARY.INDEX"
 )
 
