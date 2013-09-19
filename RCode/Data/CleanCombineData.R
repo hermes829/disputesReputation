@@ -64,6 +64,7 @@ cleanWbData <- function(data, variable){
 	mdata$cyear <- paste(mdata$ccode, mdata$year, sep='')
 	mdata }
 
+WBinflationClean <- cleanWbData(WBinflation, 'inflation')
 WBinflDeflatorClean <- cleanWbData(WBinflDeflator, 'inflDeflator')
 WBgdpDeflatorClean <- cleanWbData(WBgdpDeflator, 'gdpDeflator')
 WBfdiClean <- cleanWbData(WBfdi, 'fdi')
@@ -75,6 +76,7 @@ WBdebtClean <- cleanWbData(WBdebt, 'debtGDP')
 
 # Make sure order matches
 sum(WBinflDeflatorClean$cyear!=WBgdpDeflatorClean$cyear)
+sum(WBinflDeflatorClean$cyear!=WBinflationClean$cyear)
 sum(WBinflDeflatorClean$cyear!=WBfdiClean$cyear)
 sum(WBinflDeflatorClean$cyear!=WBfdiGdpClean$cyear)
 sum(WBinflDeflatorClean$cyear!=WBgdpClean$cyear)
@@ -85,11 +87,33 @@ sum(WBinflDeflatorClean$cyear!=WBdebtClean$cyear)
 # combine data
 setwd(pathData)
 wbData <- data.frame(cbind(WBinflDeflatorClean,
+	inflation=WBinflationClean[,4],
 	gdpDeflator=WBgdpDeflatorClean[,4], fdi=WBfdiClean[,4],
 	fdiGdp=WBfdiGdpClean[,4], gdp=WBgdpClean[,4],
 	gdpCAP=WBgdpCapClean[,4]), population=WBpopClean[,4],
 	debtGDP=WBdebtClean[,4])
 save(wbData, file='wbData.rda')
+###############################################################
+
+###############################################################
+WBdbiz2 <- WBdbiz
+
+WBdbiz2$Economy <- as.character(WBdbiz2$Economy)
+
+WBdbiz2$Economy[WBdbiz2$Economy=="C\x99te d'Ivoire"] <- 'Ivory Coast'
+WBdbiz2$Economy[WBdbiz2$Economy=="S\x8bo Tom\x8e and Pr\x92ncipe"] <- 'Sao Tome'
+drop <- c('Hong Kong SAR, China', 'Puerto Rico (U.S.)', 'West Bank and Gaza')
+WBdbiz2 <- WBdbiz2[which(!WBdbiz2 %in% drop),]
+
+WBdbiz2$cname <- countrycode(WBdbiz2$Economy, 'country.name', 'country.name')
+WBdbiz2$cnameYear <- paste(WBdbiz2$cname, WBdbiz2$Year, sep='')
+
+table(WBdbiz2$cnameYear)[table(WBdbiz2$cnameYear)>1] # Dupe check
+
+# Adding in codes from panel
+WBdbiz2$ccode <- panel$ccode[match(WBdbiz2$cname, panel$cname)]
+WBdbiz2$cyear <- paste(WBdbiz2$ccode, WBdbiz2$Year, sep='')
+table(WBdbiz2$cyear)[table(WBdbiz2$cyear)>1] # Dupe check
 ###############################################################
 
 ###############################################################
@@ -479,7 +503,7 @@ colnames(bitsRatified)[2] <- 'ratifiedbitsSM'
 ###############################################################
 # Combining data
 setwd(pathData)
-save(disputes2,fraser3, WGIregQual2Clean, heritage2,icrg2,
+save(disputes2,fraser3, WGIregQual2Clean, heritage2,icrg2, WBdbiz2,
 	polity2, wbData, kaopen2, karenReput2, wrightExprop2, kaopen2,
 	bitsSigned, bitsRatified, constraints2, banks2, privatization2,
 	file='cleanedData.rda')
@@ -497,6 +521,8 @@ for(ii in 1:length(years)){
 dframe$cyear <- paste(dframe$ccode, dframe$year, sep='')
 dim(dframe)
 combData <- merge(dframe, wbData[,c(4,8:ncol(wbData))],by='cyear',all.x=T,all.y=F)
+unique(combData[is.na(combData$ccode), 1:5]); dim(combData)
+combData <- merge(dframe, WBdbiz2[,c(3:23,ncol(WBdbiz2))],by='cyear',all.x=T,all.y=F)
 unique(combData[is.na(combData$ccode), 1:5]); dim(combData)
 combData <- merge(combData, WGIregQual2Clean[,c(4,ncol(WGIregQual2Clean))],by='cyear',all.x=T,all.y=F)
 unique(combData[is.na(combData$ccode), 1:5]); dim(combData)

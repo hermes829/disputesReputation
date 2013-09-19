@@ -13,6 +13,9 @@ list.files()
 setwd(paste(pathData, '/Components', '/Controls', sep=''))
 list.files()
 
+WBdbiz <- read.csv('WBdbiz.csv')
+
+WBinflation <- read.csv('FP.CPI.TOTL.ZG_Indicator_MetaData_en_EXCEL.csv')
 WBinflDeflator <- read.csv('NY.GDP.DEFL.KD.ZG_Indicator_MetaData_en_EXCEL.csv')
 WBgdpDeflator <- read.csv('NY.GDP.DEFL.ZS_Indicator_MetaData_en_EXCEL.csv')
 WBgdp <- read.csv('NY.GDP.MKTP.CD_Indicator_MetaData_en_EXCEL.csv')
@@ -108,6 +111,7 @@ bits$ratifiedbitsSM <- ifelse(is.na(bits$Year_force), 0, 1)
 
 setwd(pathData)
 save(WBgdp, WBgdpCap, WBinflDeflator, WBgdpDeflator, WBpop, WBdebt,
+	WBinflation, WBdbiz,
 	kaopen, privatization, constraints, banks,
 	polity, disputes, WBfdi, WBfdiGdp, fraser, heritage, icrg, 
 	WGIregQual, karenReput, wrightExprop, bits,
