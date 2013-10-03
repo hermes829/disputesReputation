@@ -7,38 +7,35 @@ source('/Users/janus829/Desktop/Research/RemmerProjects/disputesReputation/RCode
 setwd(pathData)
 load('forAnalysis.rda')
 
-vars <- c('pch_Investment.Profile',
-	'pch_cicsidtreaty_case', 'lag_cicsidtreaty_case',
-	# 'pch_cicsidcase','lag_cicsidcase',
-	# 'pch_csettle','lag_csettle',
-	# 'pch_disputesNoSettle','lag_disputesNoSettle',
-	# 'pch_cenergycase','lag_cenergycase',
+dv='pch_Investment.Profile'
+covs <- c(,
+	'cicsidtreaty_case',
+	# 'cicsidcase',
+	# 'csettle',
+	# 'disputesNoSettle',
+	# 'cenergycase',
 	
-	# 'pch_sp_cicsidcase','''lag_sp_cicsidcase','
-	'pch_sp_csettle','lag_sp_csettle',		
-	# # 'pch_sp_disputesNoSettle','lag_sp_disputesNoSettle'
-	# 'pch_sp_cenergycase','lag_sp_cenergycase',
+	# 'sp_cicsidcase',
+	'sp_csettle',
+	# 'sp_disputesNoSettle',
+	# 'sp_cenergycase',
 
-	'pch_signedbits','lag_signedbits',
-	# 'pch_ratifiedbits','lag_ratifiedbits',
+	'signedbits',
+	# 'ratifiedbits',
 
-	# 'pch_sp_signedbits','lag_sp_signedbits',
-	# 'pch_sp_ratifiedbits','lag_sp_ratifiedbits',
+	# 'sp_signedbits',
+	# 'sp_ratifiedbits',
 
-	# 'pch_fdiGdp','lag_fdiGdp',
-	# 'pch_LNr_gdpCAP','lag_LNr_gdpCAP',
-	'pch_LNgdpCAP','lag_LNgdpCAP',
-
-	'pch_LNpopulation','lag_LNpopulation',
-
-	# 'pch_debtGDP','lag_debtGDP',
-	'pch_tradebalance','lag_tradebalance',
+	# 'fdiGdp',
+	# 'LNr_gdpCAP',
+	
+	# 'debtGDP',
+	'tradebalance',
 
 	# WB_Firms_Privatized,
+	'LNgdpCAP', 'LNpopulation',
+	'domestic9', 'polity')
 
-	'pch_domestic9','lag_domestic9',
-
-	'pch_polity','lag_polity', 'ccode')
 
 dim(allData)
 dim(na.omit(allData[,vars]))
