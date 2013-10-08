@@ -103,6 +103,10 @@ combData$polity[combData$polity==-88] <- -10
 combData$polity[combData$polity==-77] <- -10
 combData$polity[combData$polity==-66] <- -10
 combData$polity <- combData$polity + 10
+
+# Banks sum of conflicts
+domvs=paste('domestic',1:8,sep='')
+combData$domSUM=apply(combData[,domvs],1,function(x){FUN=sum(x,na.rm=T)})
 ################################################################################
 
 ################################################################################
@@ -222,7 +226,7 @@ vars <- list(
 
 	"WB_Firms_Privatized", "WB_Firms_Privatized_Energy", "WB_Firms_Privatized_Infra",
 
-	"Internal.Conflict", "domestic9",  "External.Conflict",
+	"Internal.Conflict", "domestic9",  "domSUM", "External.Conflict",
 
 	"polity", "xrreg", "xrcomp", "xropen", "xconst", "parreg",
 	"parcomp", "exrec", "exconst", "polcomp",

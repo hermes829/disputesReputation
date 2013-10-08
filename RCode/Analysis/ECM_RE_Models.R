@@ -9,8 +9,8 @@ load('forAnalysis.rda')
 
 dv='pch_Investment.Profile'
 covs <- c(,
-	'cicsidtreaty_case',
-	# 'cicsidcase',
+	# 'cicsidtreaty_case',
+	'cicsidcase',
 	# 'csettle',
 	# 'disputesNoSettle',
 	# 'cenergycase',
