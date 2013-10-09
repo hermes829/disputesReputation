@@ -119,6 +119,8 @@ combData$polity[combData$polity==-77] <- -10
 combData$polity[combData$polity==-66] <- -10
 combData$polity <- combData$polity + 10
 
+combData$democ=as.numeric(combData$polity>=16)
+
 combData$xconst[combData$xconst==-88] <- NA
 combData$xconst[combData$xconst==-77] <- NA
 combData$xconst[combData$xconst==-66] <- NA
@@ -211,31 +213,24 @@ untransVars <- c("cyear", "ccode", "cname", "country", "year", "icsidmember",
 				"oecd", 'upperincome',
 				"energycase", "settle")
 
-vars <- list(
-	"cicsidcase", "icsidcase",
-	'mva2_icsidcase', 'mva3_icsidcase', 
-	'mva4_icsidcase', 'mva5_icsidcase', 
+spLabs=function(x){paste(c('distC','distD','distD2'),x,sep='_')}
 
-	"distC_cicsidcase", "distC_icsidcase",
-	"distD_cicsidcase", "distD_icsidcase",	
-	"distD2_cicsidcase", "distD2_icsidcase",		
-	
+vars <- c(
+	"cicsidcase", "icsidcase",
+	paste('mva',2:5,'_icsidcase',sep=''),
+	spLabs('icsidcase'),spLabs('cicsidcase'),
+
 	"cicsidtreaty_case", "icsidtreaty_case",
-	"distC_cicsidtreaty_case", "distC_icsidtreaty_case",
-	"distD_cicsidtreaty_case", "distD_icsidtreaty_case",	
-	"distD2_cicsidtreaty_case", "distD2_icsidtreaty_case",		
+	spLabs('cicsidtreaty_case'), spLabs('icsidtreaty_case'),
 
 	"cunctadcase", 
 
 	"conc_disputes", "pend_disputes", "cp_disputes",
-	"distC_conc_disputes", "distC_pend_disputes", "distC_cp_disputes",
-	"distD_conc_disputes", "distD_pend_disputes", "distD_cp_disputes",
-	"distD2_conc_disputes", "distD2_pend_disputes", "distD2_cp_disputes",	
+	spLabs('conc_disputes'), spLabs('pend_disputes'), spLabs('cp_disputes'),
 
 	"signedbits", "ratifiedbits", "csignedbitsSM", "cratifiedbitsSM",
-	"distC_signedbits", "distC_ratifiedbits", "distC_csignedbitsSM", "distC_cratifiedbitsSM",
-	"distD_signedbits", "distD_ratifiedbits", "distD_csignedbitsSM", "distD_cratifiedbitsSM",			
-	"distD2_signedbits", "distD2_ratifiedbits", "distD2_csignedbitsSM", "distD2_cratifiedbitsSM",		
+	spLabs('signedbits'), spLabs('ratifiedbits'), 
+	spLabs('csignedbitsSM'), spLabs('cratifiedbitsSM'),
 
 	"fdiGdp", "fdi", "gdp", "gdpCAP", "r_fdi", "r_gdp", "r_gdpCAP", 
 	"LNfdi", "LNgdp", "LNgdpCAP", "LNr_fdi", "LNr_gdp", "LNr_gdpCAP", 
@@ -251,7 +246,7 @@ vars <- list(
 	"Internal.Conflict", "domestic9",  "domSUM", "External.Conflict",
 
 	"polity", "xrreg", "xrcomp", "xropen", "xconst", "parreg",
-	"parcomp", "exrec", "exconst", "polcomp",
+	"parcomp", "exrec", "exconst", "polcomp", 'democ',
 
 	"polconiii", 
 
@@ -277,6 +272,9 @@ vars <- list(
 	
 	"SUMMARY.INDEX"
 )
+
+vars2=list()
+for(ii in 1:length(vars)){vars2[[ii]]=vars[ii]}
 
 vars2 <- unlist(lapply(vars, function(x) FUN=paste(c('', 'pch_', 'lag_'), x,sep='')))
 finVars <- c(untransVars, vars2)
