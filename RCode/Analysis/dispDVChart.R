@@ -6,7 +6,7 @@ setwd(pathData)
 load('forAnalysis0.rda')
 
 ### Slicing to relevant vars
-repVars <- c('Investment.Profile', 'Property.Rights', 
+repVars <- c('Property.Rights', 'Investment.Profile', 
 	'property.rights', 
 	'investment.freedom',
 	'X2C..Protection.of.property.rights',
