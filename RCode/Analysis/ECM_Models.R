@@ -11,25 +11,30 @@ dirt=c('pch_','lag_','distC_','distD_','distD2_')
 for(ii in 1:length(dirt)){allVars=gsub(dirt[ii],'',allVars)}
 unique(allVars)
 
-dep='Investment.Profile'
-# dep='Property.Rights'
+# Adding democracy binary
+allData$democ=as.numeric(allData$polity>=16)
+
+# dep='Investment.Profile'
+dep='Property.Rights'
 dv=paste('pch_', dep, sep='')
 
 covs <- c(
 	'cicsidcase', 'signedbits',
 	'LNgdpCAP', 'LNpopulation',
 	'domSUM', 
+	'kaopen',
 	# 'polity',
 	'xconst',
-	'polconiii',
-	'kaopen')
+	'polconiii')
 covs=unlist(lapply(covs, function(x) FUN=paste(c('pch_', 'lag_'),x,sep='')))
 
 # Adding other covariates
 # Lagged DV
 covs=c(paste('lag_',dep,sep=''),covs)
-# # Developed Country Binary
+# Developed Country Binary
 covs=c('oecd',covs)
+# Democracy Binary
+# covs=c('democ',covs)
 
 ids=c('ccode','year')
 vars=c(dv, covs, ids)

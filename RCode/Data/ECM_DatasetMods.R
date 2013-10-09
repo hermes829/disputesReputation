@@ -38,6 +38,21 @@ combData[combData$cname=='EGYPT' & combData$year==2009,'icsidcase'] <- 1
 ################################################################################
 
 ################################################################################
+# ICSID cases by three and five years moving sums
+combData=moveAvgPanel(combData, 'ccode', 'year', 'icsidcase', 2)
+combData$mva2_icsidcase=combData$mva2_icsidcase*2
+
+combData=moveAvgPanel(combData, 'ccode', 'year', 'icsidcase', 3)
+combData$mva3_icsidcase=combData$mva3_icsidcase*3
+
+combData=moveAvgPanel(combData, 'ccode', 'year', 'icsidcase', 4)
+combData$mva4_icsidcase=combData$mva4_icsidcase*4
+
+combData=moveAvgPanel(combData, 'ccode', 'year', 'icsidcase', 5)
+combData$mva5_icsidcase=combData$mva5_icsidcase*5
+################################################################################
+
+################################################################################
 # Function to generate cumulative of TS variables
 setwd(pathData)
 vars <- c('settle', 'energycase', 'icsidcase', 'icsidtreaty_case',
@@ -103,6 +118,10 @@ combData$polity[combData$polity==-88] <- -10
 combData$polity[combData$polity==-77] <- -10
 combData$polity[combData$polity==-66] <- -10
 combData$polity <- combData$polity + 10
+
+combData$xconst[combData$xconst==-88] <- NA
+combData$xconst[combData$xconst==-77] <- NA
+combData$xconst[combData$xconst==-66] <- NA
 
 # Banks sum of conflicts
 domvs=paste('domestic',1:8,sep='')
@@ -194,6 +213,9 @@ untransVars <- c("cyear", "ccode", "cname", "country", "year", "icsidmember",
 
 vars <- list(
 	"cicsidcase", "icsidcase",
+	'mva2_icsidcase', 'mva3_icsidcase', 
+	'mva4_icsidcase', 'mva5_icsidcase', 
+
 	"distC_cicsidcase", "distC_icsidcase",
 	"distD_cicsidcase", "distD_icsidcase",	
 	"distD2_cicsidcase", "distD2_icsidcase",		
