@@ -10,15 +10,15 @@ dirt=c('pch_','lag_','distC_','distD_','distD2_')
 for(ii in 1:length(dirt)){allVars=gsub(dirt[ii],'',allVars)}
 unique(allVars)
 
-# dep='Investment.Profile'
-dep='Property.Rights'
+dep='Investment.Profile'
+# dep='Property.Rights'
 dv=paste('pch_', dep, sep='')
 
 covs = c(
-	'cicsidcase', 'signedbits',
+	'cicsidcase', 'ratifiedbits',
 	'LNgdpCAP', 'LNpopulation',
 	'domSUM', 'kaopen'
-	,'X2F.Legal.enforcement.of.contracts'
+	,'financial.freedom'
 	)
 covs=unlist(lapply(covs, function(x) FUN=paste(c('pch_', 'lag_'),x,sep='')))
 
