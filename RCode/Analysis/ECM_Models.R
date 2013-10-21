@@ -10,15 +10,16 @@ dirt=c('pch_','lag_','distC_','distD_','distD2_')
 for(ii in 1:length(dirt)){allVars=gsub(dirt[ii],'',allVars)}
 unique(allVars)
 
-dep='Investment.Profile'
-# dep='Property.Rights'
+# dep='Investment.Profile'
+dep='Property.Rights'
 dv=paste('pch_', dep, sep='')
 
 covs = c(
 	'cicsidcase', 'ratifiedbits',
 	'LNgdpCAP', 'LNpopulation',
 	'domSUM', 'kaopen'
-	,'financial.freedom'
+	,'inflation'
+	# ,'financial.freedom'
 	)
 covs=unlist(lapply(covs, function(x) FUN=paste(c('pch_', 'lag_'),x,sep='')))
 
@@ -44,6 +45,9 @@ reform=formula(paste(mform, ' + (1 | ccode)', sep=''))
 remodel = lmer(reform, data=allData )
 attributes(summary(remodel))$coefs
 sqrt(mean((resid(remodel))^2))
+
+dep=attributes(remodel)$y
+length(dep[dep==0])/length(dep)
 
 # FE Models
 feform=formula(paste(mform, ' + as.factor(ccode) - 1', sep=''))
