@@ -87,39 +87,31 @@ lagDataSM <- function(data, country_year, country, varsTOlag, lag)
   cbind(data, lagData)
 }
 
+# Order panel dataset
+orderTS=function(x, unit, time){ x=x[order(x[,time]),]; x=x[order(x[,unit]),]; x }
+
 # calculate moving averages for panel datasets
-moveAvgPanel <- function(data, ccode, timepd, vars, wdow){
+movePanel <- function(data, ccode, time, vars, wdow, sum=FALSE){
+	data=orderTS(data, ccode, time)
 	vars2 <- paste('mva',wdow,'_',vars,sep='')
+	vars3 <- paste('mvs',wdow,'_',vars,sep='')
 	rollmeanSM <- function(x){ as.vector(filter(x, rep(1/wdow, wdow), sides=1)) }
 	temp <- ddply(data[,c(ccode, vars)], .(ccode), numcolwise(rollmeanSM))
-	temp <- matrix(temp[,vars],ncol=length(vars)); colnames(temp) <- vars2
+	if(sum==FALSE){
+		temp <- temp[,vars]; colnames(temp) <- vars2 }else{
+		temp <- temp[,vars]*wdow; colnames(temp) <- vars3 }
 	cbind(data, temp)
 }
 
 # Calculate cumulative sum of var
-cumulTS <- function(
-	data=combData, cntry_var='cname', time_var='year', key='cyear', 
-		start=1960, end=2013, variable){
-	print(paste('Progress in calculating cumulative sum for ', variable))
-	cum_var <- paste('c',variable,sep='')
-	temp <- data[data[,time_var]>=start & data[,time_var]<end,c(key,cntry_var,time_var,variable)]
-	temp <- cbind(temp, 0)
-	names(temp) <- c('cyear', 'cntry', 'year', variable, cum_var)
-	
-	countries <- unique(data[,cntry_var]); years <- start:end; fullData <- NULL
-
-	for(ii in 1:length(countries)){
-		slice <- temp[temp$cntry==countries[ii],]
-		years <- min(slice$year):max(slice$year)
-			for(jj in 2:length(years)){
-				slice[slice$year==years[jj],cum_var] <- 
-					slice[slice$year==years[jj],variable] + 
-						slice[slice$year==(years[jj]-1),cum_var] }
-			fullData <- rbind(fullData, slice) 
-			if(ii==1 | ii%%20==0 | ii==length(countries)){
-				cat(paste(round(100*ii/length(countries),0),'% ',sep=''))}
-		}
-	print(' Completed '); fullData[,c(key, variable, cum_var)]
+cumulTS=function(data, ccode, time, vars){
+	data=orderTS(data, ccode, time)	
+	vars2=paste('C',vars,sep='')
+	cumsumSM=function(x){x[is.na(x)]=0; cumsum(x)}
+	temp=ddply(data[,c(ccode,vars)], .(ccode), cumsumSM)
+	temp=temp[,vars]; colnames(temp)=vars2
+	temp[which(is.na(data[,vars]),arr.ind=TRUE)]=NA
+	cbind(data, temp) 
 }
 
 # Create spatially weighted variables
@@ -175,4 +167,56 @@ spatialBuild <- function(spatList, varData, years, variable, sp_suffix,
 		'year','ccode')
 	spatData$cyear <- paste(spatData$ccode, spatData$year, sep='') 
 	spatData
+}
+
+# Table summaries for lm objects
+lmtableSM = function(coefs, vnames, modelResults, modelSumm, modelNames, digs=3){
+	noModels=length(modelSumm)
+	tableResults = matrix('', nrow=2*length(coefs), ncol=1+noModels)
+	tableResults[,1] = rep(coefs,2)
+	colnames(tableResults) = c('Variable',paste('Model',1:noModels))
+	for(ii in 2:ncol(tableResults)){
+		temp = modelSumm[[ii-1]]
+		df = summary(modelResults[[ii-1]])[['df']][2]
+		temp = temp[match(tableResults[,'Variable'], rownames(temp)),]
+		estims = temp[1:length(coefs),'Estimate']
+		estims = round(as.numeric(as.character(estims)),digs)
+		tvals = abs(temp[1:length(coefs),'t value'])
+		tvals = round(as.numeric(as.character(tvals)),digs)
+		estims = ifelse(tvals>=qt(0.95,df) & !is.na(tvals) & tvals<qt(0.975,df), 
+			paste('$', estims,'^{\\ast}$',sep=''), estims)
+		estims = ifelse(tvals>=qt(0.975,df) & !is.na(tvals), 
+			paste('$', estims,'^{\\ast\\ast}$',sep=''), estims)
+		tableResults[1:length(coefs),ii] = estims
+		serrors = temp[(length(coefs)+1):nrow(tableResults),'Std. Error']
+		serrors = round(as.numeric(as.character(serrors)),digs)
+		serrors = paste('(',serrors,')',sep='')
+		serrors = ifelse(serrors=='(NA)','',serrors)
+		tableResults[(length(coefs)+1):nrow(tableResults),ii] = serrors
+	}
+
+	# Reorganizing rows and variable labels
+	tableFinal = NULL
+	for(ii in 1:length(coefs)){
+		temp = cbind('', t(tableResults[ii+length(coefs),2:ncol(tableResults)]))
+		tableFinal = rbind(tableFinal, tableResults[ii,], temp) }
+	tableFinal[,'Variable'] = vnames[match(tableFinal[,'Variable'],coefs)]
+	tableFinal[,'Variable'][is.na(tableFinal[,'Variable'])] = ''
+
+	# Adding other info
+	sSize = cbind('n', t(as.vector(mapply(x=modelResults,
+			function(x) FUN=summary(x)[['df']][2] + summary(x)[['df']][1] ))))
+	gSize = cbind('N', t(as.vector(mapply(x=modelResults, function(x)
+		FUN=summary(x)[['df']][1]-length(attr(summary(x)[['terms']],'term.labels'))+1 ))))
+	rSQ = cbind('$R^{2}$', t(as.vector(mapply(x=modelResults,
+			function(x) FUN=round(summary(x)[['r.squared']],2) ))))
+	arSQ = cbind('Adj. $R^{2}$', t(as.vector(mapply(x=modelResults,
+			function(x) FUN=round(summary(x)[['adj.r.squared']],2) ))))
+	rmse = round(mapply(x=modelResults, function(x) 
+		FUN=sqrt(mean(summary(x)[['residuals']]^2))),2)
+	frmse = cbind('RMSE', t(rmse))
+
+	tableFinal = rbind(tableFinal, sSize, gSize, rSQ, arSQ, frmse)
+	colnames(tableFinal)[2:(noModels+1)] = modelNames
+	tableFinal
 }

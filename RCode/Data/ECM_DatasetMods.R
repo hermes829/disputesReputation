@@ -25,47 +25,17 @@ combData$WB_Firms_Privatized_Infra[is.na(combData$WB_Firms_Privatized_Infra)] <-
 ################################################################################
 
 ################################################################################
-# Fixed to icsid case variable
-# I figured out the ICSID case list. Two cases should go from the 
-# icsidcase: 
-# Gabon v.  Societe Serete 1976, and 
-# Govt of the Province of East Kalimantan v. PT Kaltim Coal and Others (Indonesia 2007).
-# Two cases should be added: Egypt 1984 and Egypt 2009.
-combData[combData$cname=='GABON' & combData$year==1976,'icsidcase'] <- 0
-combData[combData$cname=='INDONESIA' & combData$year==2007,'icsidcase'] <- 0
-combData[combData$cname=='EGYPT' & combData$year==1984,'icsidcase'] <- 1
-combData[combData$cname=='EGYPT' & combData$year==2009,'icsidcase'] <- 1
-################################################################################
-
-################################################################################
-# ICSID cases by three and five years moving sums
-combData=moveAvgPanel(combData, 'ccode', 'year', 'icsidcase', 2)
-combData$mva2_icsidcase=combData$mva2_icsidcase*2
-
-combData=moveAvgPanel(combData, 'ccode', 'year', 'icsidcase', 3)
-combData$mva3_icsidcase=combData$mva3_icsidcase*3
-
-combData=moveAvgPanel(combData, 'ccode', 'year', 'icsidcase', 4)
-combData$mva4_icsidcase=combData$mva4_icsidcase*4
-
-combData=moveAvgPanel(combData, 'ccode', 'year', 'icsidcase', 5)
-combData$mva5_icsidcase=combData$mva5_icsidcase*5
+# Disputes by three and five years moving sums
+dispVars=c('settle','kicsidcase','icsidtreaty_case','cunctadcase','unsettled_icsid_treaty')
+wdows=2:5
+for(ii in 1:length(wdows)){combData=movePanel(combData, 'ccode', 'year', dispVars, wdows[ii], sum=TRUE)} 
 ################################################################################
 
 ################################################################################
 # Function to generate cumulative of TS variables
 setwd(pathData)
-vars <- c('settle', 'energycase', 'icsidcase', 'icsidtreaty_case',
-	'signedbitsSM', 'ratifiedbitsSM')
-cumul_data <- lapply(vars, function(x) FUN=cumulTS(
-	data=combData, cntry_var='cname', time_var='year', key='cyear', 
-	start=1960, end=2012,variable=x))
-
-dim(combData)
-for(ii in 1:length(cumul_data)){
-	toMerge <- cumul_data[[ii]]
-	combData <- merge(combData, toMerge[,c(1,3)], by='cyear', all.x=T, all.y=F) }
-dim(combData)
+dispVars=c('settle','kicsidcase','icsidtreaty_case','cunctadcase','unsettled_icsid_treaty')
+combData=cumulTS(combData, 'ccode', 'year', dispVars)
 ################################################################################
 
 ################################################################################
@@ -82,18 +52,6 @@ combData$Property.Rights <- (Investment.ProfileRescale +
 ################################################################################
 
 ################################################################################
-# Dispute var modifications
-combData$cp_disputes <- combData$conc_disputes + combData$pend_disputes
-combData[combData$ccode==2,'cp_disputes'] <- combData[combData$ccode==2,'icsidcase']
-combData$cp_disputes_three <- combData$conc_disputes_three + combData$pend_disputes_three
-combData$cp_disputes_five <- combData$conc_disputes_five + combData$pend_disputes_five
-
-# Use data from Remmer since there are still differences between her 
-# and my icsid case variables
-combData$disputesNoSettle <- combData$cicsidcase - combData$csettle
-################################################################################
-
-################################################################################
 # Dividing current US$ variables by US GDP deflator to get 2011 real values
 # Vars to calc real values for: fdi, gdp, gdpCAP
 yearDefl <- na.omit(summaryBy(gdpDeflator ~ year, data=combData[combData$cname=='UNITED STATES',], na.rm=T))
@@ -106,7 +64,6 @@ combData$r_gdpCAP <- (combData$gdpCAP/combData$USgdpDeflYr)*combData$USgdpDefl11
 
 # Log transformations for GDP, GDP capita, FDI
 combData$LNfdi <- logNeg(combData$fdi); combData$LNr_fdi <- logNeg(combData$r_fdi)
-combData$LNtradebalance <- logNeg(combData$tradebalance)
 combData$LNgdp <- log(combData$gdp); combData$LNr_gdp <- log(combData$r_gdp)
 combData$LNgdpCAP <- log(combData$gdpCAP); combData$LNr_gdpCAP <- log(combData$r_gdpCAP)
 combData$LNpopulation <- log(combData$population)
@@ -139,10 +96,11 @@ load('DYADmat.rda')
 distMatsD <- lapply(distMats, function(x){
 	x <- ifelse(x<=200,1,0); diag(x) <- 0; x })
 
-vars <- c("cicsidcase", "icsidcase", 
-	"cicsidtreaty_case","icsidtreaty_case",
-	"conc_disputes", "pend_disputes", "cp_disputes",
-	"signedbits", "ratifiedbits", "csignedbitsSM", "cratifiedbitsSM")
+vars <- c("settle", "Csettle", 
+	"kicsidcase","Ckicsidcase",
+	"icsidtreaty_case", "Cicsidtreaty_case",
+	"cunctadcase", "Ccunctadcase",
+	"ratifiedbits")
 wghtMats <- list(distMats, distMatsD, distMatsD, exportMats, tradeTotMats)
 spNames <- c('distC_', 'distD_', 'distD2_', 'exp_', 'tra_')
 inv <- c(TRUE, FALSE, FALSE, FALSE, FALSE)
@@ -209,39 +167,41 @@ combData[which(combData$ccode %in% WBupperInc$ccode),'upperincome'] <- 1
 ################################################################################
 # Cleaning up dataset and throwing away variables unlikely to be used
 # in analysis
-untransVars <- c("cyear", "ccode", "cname", "country", "year", "icsidmember", 
-				"oecd", 'upperincome',
-				"energycase", "settle")
+untransVars <- c("cyear", "ccode", "cname", "country", "year",
+				"oecd", 'upperincome')
 
 spLabs=function(x){paste(c('distC','distD','distD2'),x,sep='_')}
 
 vars <- c(
-	"cicsidcase", "icsidcase",
-	paste('mva',2:5,'_icsidcase',sep=''),
-	spLabs('icsidcase'),spLabs('cicsidcase'),
+	"settle", "Csettle", 
+	paste('mvs',2:5,'_settle',sep=''),
+	spLabs('settle'),spLabs('Csettle'),
 
-	"cicsidtreaty_case", "icsidtreaty_case",
-	spLabs('cicsidtreaty_case'), spLabs('icsidtreaty_case'),
+	"kicsidcase", "Ckicsidcase",
+	paste('mvs',2:5,'_kicsidcase',sep=''),
+	spLabs('kicsidcase'),spLabs('Ckicsidcase'),
 
-	"cunctadcase", 
+	"icsidtreaty_case", "Cicsidtreaty_case",
+	paste('mvs',2:5,'_icsidtreaty_case',sep=''),	
+	spLabs('icsidtreaty_case'), spLabs('Cicsidtreaty_case'),
 
-	"conc_disputes", "pend_disputes", "cp_disputes",
-	spLabs('conc_disputes'), spLabs('pend_disputes'), spLabs('cp_disputes'),
+	"cunctadcase", "Ccunctadcase",
+	paste('mvs',2:5,'_cunctadcase',sep=''),	
+	spLabs('cunctadcase'), spLabs('Ccunctadcase'),
 
-	"signedbits", "ratifiedbits", "csignedbitsSM", "cratifiedbitsSM",
-	spLabs('signedbits'), spLabs('ratifiedbits'), 
-	spLabs('csignedbitsSM'), spLabs('cratifiedbitsSM'),
+	"ratifiedbits",
+	spLabs('ratifiedbits'), 
 
 	"fdiGdp", "fdi", "gdp", "gdpCAP", "r_fdi", "r_gdp", "r_gdpCAP", 
 	"LNfdi", "LNgdp", "LNgdpCAP", "LNr_fdi", "LNr_gdp", "LNr_gdpCAP", 
 
 	"USgdpDeflYr", 'USgdpDefl11', "population", "LNpopulation",
 
-	"debtGDP",  "exprop", "debt", "inflation", 
+	"debtGDP",  "exprop", "debt", "inflation", "lncinflation",
 
-	"tradebalance", "kaopen",	
+	"kaopen",	
 
-	"WB_Firms_Privatized", "WB_Firms_Privatized_Energy", "WB_Firms_Privatized_Infra",
+	# "WB_Firms_Privatized", "WB_Firms_Privatized_Energy", "WB_Firms_Privatized_Infra",
 
 	"Internal.Conflict", "domestic9",  "domSUM", "External.Conflict",
 
@@ -254,10 +214,10 @@ vars <- c(
 
 	"regQual",
 
-	"dbizRank", 'elecRank', 'elecTime', 'elecCost', 'invRank',
-	'invDisc', 'invDirecLiab', 'invSuits', 'invProtect', 'traR',
-	'traDocExp', 'traTimeExp', 'traCostExp', 'traDocImp', 'traTimeImp',
-	'traCostImp', 'enfRank', 'enfTime', 'enfCost', 'enfProc',
+	# "dbizRank", 'elecRank', 'elecTime', 'elecCost', 'invRank',
+	# 'invDisc', 'invDirecLiab', 'invSuits', 'invProtect', 'traR',
+	# 'traDocExp', 'traTimeExp', 'traCostExp', 'traDocImp', 'traTimeImp',
+	# 'traCostImp', 'enfRank', 'enfTime', 'enfCost', 'enfProc',
 
 	"overall.score", "property.rights", "fiscal.freedom",
 	"government.spending", "business.freedom", "labor.freedom",

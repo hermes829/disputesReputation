@@ -379,19 +379,20 @@ table(disputes2$cyear)[table(disputes2$cyear)>1] # Dupe check
 # Reputation Dataset
 karenReput2 <- karenReput
 
-karenReput2$cname <- countrycode(karenReput2$NationSM, 'country.name', 'country.name')
+karenReput2$cname <- countrycode(karenReput2$country, 'country.name', 'country.name')
 karenReput2$cname[karenReput2$cname=='Czechoslovakia'] <- 'CZECH REPUBLIC'
 karenReput2$cname[karenReput2$cname=='Yugoslavia'] <- 'SERBIA'
 
-karenReput2$cnameYear <- paste(karenReput2$cname, karenReput2$Year, sep='')
+karenReput2$cnameYear <- paste(karenReput2$cname, karenReput2$year, sep='')
 
 table(karenReput2$cnameYear)[table(karenReput2$cnameYear)>1] # Dupe check
-karenReput2 <- karenReput2[!is.na(karenReput2$cname),]
 
 # Adding in codes from panel
 karenReput2$ccode <- panel$ccode[match(karenReput2$cname,panel$cname)]
-karenReput2$cyear <- paste(karenReput2$ccode, karenReput2$Year, sep='')
+karenReput2$cyear <- paste(karenReput2$ccode, karenReput2$year, sep='')
 table(karenReput2$cyear)[table(karenReput2$cyear)>1] # Dupe check
+
+karenReput2=karenReput2[,c(1:8,11,22,25:27)]
 ###############################################################
 
 ###############################################################
@@ -538,7 +539,7 @@ combData <- merge(combData, polity2[,c(7:35,ncol(polity2))],by='cyear',all.x=T,a
 unique(combData[is.na(combData$ccode), 1:5]); dim(combData)
 combData <- merge(combData, icrg2[,c(5:16,ncol(icrg2))],by='cyear',all.x=T,all.y=F)
 unique(combData[is.na(combData$ccode), 1:5]); dim(combData)
-combData <- merge(combData, karenReput2[,c(5:20,ncol(karenReput2))],by='cyear',all.x=T,all.y=F)
+combData <- merge(combData, karenReput2[,c(4:10,ncol(karenReput2))],by='cyear',all.x=T,all.y=F)
 unique(combData[is.na(combData$ccode), 1:5]); dim(combData)
 combData <- merge(combData, wrightExprop2[,c(5:6,ncol(wrightExprop2))],by='cyear',all.x=T,all.y=F)
 unique(combData[is.na(combData$ccode), 1:5]); dim(combData)
