@@ -1,3 +1,19 @@
+Feb 6 2014
+===============
+
+### To Dos
+
+* Run fixed effects model with correction for autocorrelation
+
+	* Actually take some time to understand the diff between fixed effect and random effect and the benefits of using one over the other. make sure you pay attention to differences in the results
+
+* Run model on balanced panels, i.e., excluding countries that are not available for the full period 1984 to 2009
+
+* Run simulations with good macro-econ country vs bad macro-econ country and high disputes vs low disputes
+
+* Consider running non-ECM models if nothing else pans out
+
+
 June 11 2013
 ===============
 
