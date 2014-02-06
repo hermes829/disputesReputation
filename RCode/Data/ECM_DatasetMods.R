@@ -99,7 +99,8 @@ distMatsD <- lapply(distMats, function(x){
 vars <- c("settle", "Csettle", 
 	"kicsidcase","Ckicsidcase",
 	"icsidtreaty_case", "Cicsidtreaty_case",
-	"cunctadcase", "Ccunctadcase",
+	"cunctadcase", "Ccunctadcase", 
+	"unsettled_icsid_treaty", "Cunsettled_icsid_treaty",
 	"ratifiedbits")
 wghtMats <- list(distMats, distMatsD, distMatsD, exportMats, tradeTotMats)
 spNames <- c('distC_', 'distD_', 'distD2_', 'exp_', 'tra_')
@@ -188,6 +189,10 @@ vars <- c(
 	"cunctadcase", "Ccunctadcase",
 	paste('mvs',2:5,'_cunctadcase',sep=''),	
 	spLabs('cunctadcase'), spLabs('Ccunctadcase'),
+
+	"unsettled_icsid_treaty", "Cunsettled_icsid_treaty",
+	paste('mvs',2:5,'_unsettled_icsid_treaty',sep=''),	
+	spLabs('unsettled_icsid_treaty'), spLabs('Cunsettled_icsid_treaty'),
 
 	"ratifiedbits",
 	spLabs('ratifiedbits'), 
