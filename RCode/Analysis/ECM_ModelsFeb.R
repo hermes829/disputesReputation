@@ -22,8 +22,8 @@ modelData = allData[allData$upperincome==0,]
 # Setting up models
 
 # Choosing DV
-# dv='pch_Investment.Profile'
-dv='pch_Property.Rights'
+dv='pch_Investment.Profile'; dvName='Investment Profile'
+# dv='pch_Property.Rights'; dvName='Property Rights'
 ivDV=paste('lag',substr(dv, 4, nchar(dv)),sep='')
 
 # Cum. Dispute vars
@@ -34,35 +34,66 @@ ivOther=c(
 	'ratifiedbits',
 	'LNgdp', 'LNpopulation',
 	'kaopen', 'lncinflation',
-	'polity', 'Internal.Conflict'
+	'polity'
+	# , 'Internal.Conflict'
 	)
+
+# Untrans IVs
+ivs=c(ivDisp, ivOther)
 
 pchLab=function(x){ paste('pch_',x,sep='') }
 lagLab=function(x){ paste('lag_',x,sep='') }
 ivAll=lapply(ivDisp, function(x) FUN= c(ivDV ,lagLab(x), lagLab(ivOther), pchLab(x), pchLab(ivOther)) )
-modForm=lapply(ivAll, function(x) 
-	FUN=as.formula( paste(paste(dv, paste(x, collapse=' + '), sep=' ~ '), '+ (1|ccode)', collapse='') ))
 
 # Setting up variables names for display
-# dvName='Investment Profile'
-dvName='Property Rights'
 ivDispName=c('ICSID Treaty', 'ICSID Non-Treaty', 'Settled', 'Unsettled', 'UNCTAD' )
-ivOtherName=c('Ratif. BITs', 'Ln(GDP)', 'Ln(Pop.)', 'Capital Openness', 'Ln(Inflation)', 'Polity', 'Internal Stability')
+ivOtherName=c('Ratif. BITs', 'Ln(GDP)', 'Ln(Pop.)', 'Capital Openness', 'Ln(Inflation)', 'Polity'
+	# , 'Internal Stability'
+	)
+ivsName=c(ivDispName, ivOtherName)
 
-pchLabName=function(x){ paste('\\%$\\Delta$ Change',x,sep=' ') }
-lagLabName=function(x){ paste(x, '$_{t-1}$', sep='') }
-ivAllNames=lapply(ivDispName, function(x) FUN= c(lagLabName(dvName) ,
-	lagLabName(x), lagLabName(ivOtherName), pchLabName(x), pchLabName(ivOtherName)) )
+# pchLabName=function(x){ paste('\\%$\\Delta$ Change',x,sep=' ') }
+# lagLabName=function(x){ paste(x, '$_{t-1}$', sep='') }
+# ivAllNames=lapply(ivDispName, function(x) FUN= c(lagLabName(dvName) ,
+# 	lagLabName(x), lagLabName(ivOtherName), pchLabName(x), pchLabName(ivOtherName)) )
 ##########################################################################################
 
-##########################################################################################
-# Running random effect models
+### Create balanced panel based off
+# All vars used in model
+temp=na.omit(modelData[,c('cname','ccode','year', ivDV, ivDisp, ivOther)])
+# Just ICRG
+# temp=na.omit(modelData[,c('cname','ccode','year', 'Investment.Profile')])
+temp2=lapply(unique(temp$cname), function(x) FUN=nrow(temp[which(temp$cname %in% x), ]) )
+names(temp2)=unique(temp$cname); temp3=unlist(temp2)
+drop=names(temp3[temp3<max(temp3)])
+modelData = modelData[which(!modelData$cname %in% drop),]
+
+# ##########################################################################################
+## Running random effect models
+modForm=lapply(ivAll, function(x) 
+	FUN=as.formula( paste(paste(dv, paste(x, collapse=' + '), sep=' ~ '), '+ (1|ccode)', collapse='') ))
 modResults=lapply(modForm, function(x) FUN=lmer(x, data=modelData))
-##########################################################################################
 
-##########################################################################################
 # Saving results for further analysis
 setwd(pathResults)
-# save(modResults, ivAll, ivAllNames, dv, dvName, file='invProfRE.rda')
-save(modResults, ivAll, ivAllNames, dv, dvName, file='propRightsRE.rda')
+save(modResults, ivAll, dv, ivs, ivsName, dvName, file='invProfRE.rda')
+# save(modResults, ivAll, dv, ivs, ivsName, dvName, file='propRightsRE.rda')
+##########################################################################################
+
+##########################################################################################
+# Running fixed effect models with plm
+plmData=pdata.frame( modelData[,c(dv, unique(unlist(ivAll)), 'ccode', 'year') ], 
+			index=c('ccode','year') )
+
+modForm=lapply(ivAll, function(x) 
+	FUN=as.formula( paste(dv, paste(x, collapse=' + '), sep=' ~ ') ))
+
+modResults=lapply(modForm, function(x) FUN=plm(x, data=plmData, model='within') )
+modSumm=lapply(modResults, function(x) FUN=coeftest(x, 
+	vcov=function(x) vcovBK(x, type="HC1", cluster="time")))
+
+# Saving results for further analysis
+setwd(pathResults)
+save(modResults, modSumm, ivAll, dv, ivs, ivsName, dvName, file='invProfFE.rda')
+# save(modResults, modSumm, ivAll, dv, ivs, ivsName, dvName, file='propRightsFE.rda')
 ##########################################################################################
