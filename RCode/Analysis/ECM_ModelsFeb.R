@@ -22,8 +22,8 @@ modelData = allData[allData$upperincome==0,]
 # Setting up models
 
 # Choosing DV
-dv='pch_Investment.Profile'; dvName='Investment Profile'
-# dv='pch_Property.Rights'; dvName='Property Rights'
+# dv='pch_Investment.Profile'; dvName='Investment Profile'
+dv='pch_Property.Rights'; dvName='Property Rights'
 ivDV=paste('lag',substr(dv, 4, nchar(dv)),sep='')
 
 # Cum. Dispute vars
@@ -76,8 +76,8 @@ modResults=lapply(modForm, function(x) FUN=lmer(x, data=modelData))
 
 # Saving results for further analysis
 setwd(pathResults)
-save(modResults, ivAll, dv, ivs, ivsName, dvName, file='invProfRE.rda')
-# save(modResults, ivAll, dv, ivs, ivsName, dvName, file='propRightsRE.rda')
+# save(modResults, ivAll, dv, ivs, ivsName, dvName, file='invProfRE.rda')
+save(modResults, ivAll, dv, ivs, ivsName, dvName, file='propRightsRE.rda')
 ##########################################################################################
 
 ##########################################################################################
@@ -94,6 +94,6 @@ modSumm=lapply(modResults, function(x) FUN=coeftest(x,
 
 # Saving results for further analysis
 setwd(pathResults)
-save(modResults, modSumm, ivAll, dv, ivs, ivsName, dvName, file='invProfFE.rda')
-# save(modResults, modSumm, ivAll, dv, ivs, ivsName, dvName, file='propRightsFE.rda')
+# save(modResults, modSumm, ivAll, dv, ivs, ivsName, dvName, file='invProfFE.rda')
+save(modResults, modSumm, ivAll, dv, ivs, ivsName, dvName, file='propRightsFE.rda')
 ##########################################################################################
