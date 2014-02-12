@@ -6,8 +6,8 @@ source('/Users/janus829/Desktop/Research/RemmerProjects/disputesReputation/RCode
 ##########################################################################################
 # Loading model results
 setwd(pathResults)
-# load('invProfFE.rda')
-load('propRightsFE.rda')
+load('invProfFE.rda')
+# load('propRightsFE.rda')
 ##########################################################################################
 
 ##########################################################################################
@@ -84,8 +84,9 @@ print.xtable(xtable(tableFinal, align='llccccc',
 	# sanitize.text.function = function(x) x,
 	# sanitize.text.function=function(str)gsub("_","\\_",str,fixed=TRUE),
 	sanitize.text.function = identity,		
-	hline.after=c(0,0,46,51,51), 
+	# hline.after=c(0,0,46,51,51), 
+	hline.after=c(0,0,50,55,55), 	
 	size="footnotesize",	
-	# file='feResultsInvProfile.tex'
-	file='feResultsPropRights.tex'
+	file='feResultsInvProfile.tex'
+	# file='feResultsPropRights.tex'
 	)

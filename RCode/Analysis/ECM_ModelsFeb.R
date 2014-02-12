@@ -22,8 +22,8 @@ modelData = allData[allData$upperincome==0,]
 # Setting up models
 
 # Choosing DV
-# dv='pch_Investment.Profile'; dvName='Investment Profile'
-dv='pch_Property.Rights'; dvName='Property Rights'
+dv='pch_Investment.Profile'; dvName='Investment Profile'
+# dv='pch_Property.Rights'; dvName='Property Rights'
 ivDV=paste('lag',substr(dv, 4, nchar(dv)),sep='')
 
 # Cum. Dispute vars
@@ -35,7 +35,7 @@ ivOther=c(
 	'LNgdp', 'LNpopulation',
 	'kaopen', 'lncinflation',
 	'polity'
-	# , 'Internal.Conflict'
+	, 'Internal.Conflict'
 	)
 
 # Untrans IVs
@@ -48,7 +48,7 @@ ivAll=lapply(ivDisp, function(x) FUN= c(ivDV ,lagLab(x), lagLab(ivOther), pchLab
 # Setting up variables names for display
 ivDispName=c('ICSID Treaty', 'ICSID Non-Treaty', 'Settled', 'Unsettled', 'UNCTAD' )
 ivOtherName=c('Ratif. BITs', 'Ln(GDP)', 'Ln(Pop.)', 'Capital Openness', 'Ln(Inflation)', 'Polity'
-	# , 'Internal Stability'
+	, 'Internal Stability'
 	)
 ivsName=c(ivDispName, ivOtherName)
 
@@ -94,6 +94,6 @@ modSumm=lapply(modResults, function(x) FUN=coeftest(x,
 
 # Saving results for further analysis
 setwd(pathResults)
-# save(modResults, modSumm, ivAll, dv, ivs, ivsName, dvName, file='invProfFE.rda')
-save(modResults, modSumm, ivAll, dv, ivs, ivsName, dvName, file='propRightsFE.rda')
+save(modResults, modSumm, ivAll, dv, ivs, ivsName, dvName, file='invProfFE.rda')
+# save(modResults, modSumm, ivAll, dv, ivs, ivsName, dvName, file='propRightsFE.rda')
 ##########################################################################################
