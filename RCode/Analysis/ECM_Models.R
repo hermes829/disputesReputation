@@ -76,8 +76,8 @@ modResults=lapply(modForm, function(x) FUN=lmer(x, data=modelData))
 
 # Saving results for further analysis
 setwd(pathResults)
-# save(modResults, ivAll, dv, ivs, ivsName, dvName, file='invProfRE.rda')
-save(modResults, ivAll, dv, ivs, ivsName, dvName, file='propRightsRE.rda')
+save(modResults, ivAll, dv, ivs, ivsName, dvName, file='invProfRE.rda')
+# save(modResults, ivAll, dv, ivs, ivsName, dvName, file='propRightsRE.rda')
 ##########################################################################################
 
 ##########################################################################################

@@ -6,21 +6,17 @@ source('/Users/janus829/Desktop/Research/RemmerProjects/disputesReputation/RCode
 ##########################################################################################
 # Loading model results
 setwd(pathResults)
-# load('invProfFE.rda')
-load('propRightsFE.rda')
+# load('LinvProfFE.rda')
+load('LpropRightsFE.rda')
 ##########################################################################################
 
 ##########################################################################################
 # matrix of vars and their names
 modelSumm = lapply(modResults, function(x) FUN=attributes(summary(x))[['coefs']])
-varsTable=unlist(lapply(ivs, function(x) FUN=paste( c('lag_','pch_'), x, sep='' )))
-varsTable=c(varsTable[1:10], gsub('pch','lag',dv), varsTable[11:length(varsTable)])
+varsTable=unlist(lapply(ivs, function(x) FUN=paste( c('lag_'), x, sep='' )))
 
-pchLabName=function(x){ paste('\\%$\\Delta$ Change',x,sep=' ') }
 lagLabName=function(x){ paste(x, '$_{t-1}$', sep='') }
-varsTableNames=unlist( lapply(ivsName, function(x) FUN= c(lagLabName(x), pchLabName(x))) )
-varsTableNames=c(varsTableNames[1:10], lagLabName(dvName), 
-	varsTableNames[11:length(varsTableNames)])
+varsTableNames=unlist( lapply(ivsName, function(x) FUN= c(lagLabName(x))) )
 
 varDef=cbind(varsTable, varsTableNames)
 ##########################################################################################
@@ -78,15 +74,14 @@ tableFinal[,'Variable']=temp
 
 setwd(pathResults)
 print.xtable(xtable(tableFinal, align='llccccc',
-	# caption='Fixed effects ECM regression on investment profile with standard errors in parentheses. $^{**}$ and $^{*}$ indicate significance at $p< 0.05 $ and $p< 0.10 $, respectively.'
-	caption='Fixed effects ECM regression on the protection of property rights with standard errors in parentheses. $^{**}$ and $^{*}$ indicate significance at $p< 0.05 $ and $p< 0.10 $, respectively.'
+	# caption='Fixed effects regression on investment profile with standard errors in parentheses. $^{**}$ and $^{*}$ indicate significance at $p< 0.05 $ and $p< 0.10 $, respectively.'
+	caption='Fixed effects regression on the protection of property rights with standard errors in parentheses. $^{**}$ and $^{*}$ indicate significance at $p< 0.05 $ and $p< 0.10 $, respectively.'
 	), include.rownames=FALSE,
 	# sanitize.text.function = function(x) x,
 	# sanitize.text.function=function(str)gsub("_","\\_",str,fixed=TRUE),
 	sanitize.text.function = identity,		
-	# hline.after=c(0,0,46,51,51), 
-	hline.after=c(0,0,50,55,55), 	
+	hline.after=c(0,0,24,29,29), 
 	size="footnotesize",	
-	# file='feResultsInvProfile.tex'
-	file='feResultsPropRights.tex'
-	)
+	# file='LfeResultsInvProfile.tex'
+	file='LfeResultsPropRights.tex'
+	)# Creating tables
