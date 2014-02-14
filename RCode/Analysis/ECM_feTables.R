@@ -6,13 +6,12 @@ source('/Users/janus829/Desktop/Research/RemmerProjects/disputesReputation/RCode
 ##########################################################################################
 # Loading model results
 setwd(pathResults)
-# load('invProfFE.rda')
-load('propRightsFE.rda')
+# load('invProfFE.rda'); fileTable='feResultsInvProfile.tex'; captionTable='Fixed effects ECM regression on investment profile with standard errors in parentheses. $^{**}$ and $^{*}$ indicate significance at $p< 0.05 $ and $p< 0.10 $, respectively.'
+load('propRightsFE.rda'); fileTable='feResultsPropRights.tex'; captionTable='Fixed effects ECM regression on the protection of property rights with standard errors in parentheses. $^{**}$ and $^{*}$ indicate significance at $p< 0.05 $ and $p< 0.10 $, respectively.'
 ##########################################################################################
 
 ##########################################################################################
 # matrix of vars and their names
-modelSumm = lapply(modResults, function(x) FUN=attributes(summary(x))[['coefs']])
 varsTable=unlist(lapply(ivs, function(x) FUN=paste( c('lag_','pch_'), x, sep='' )))
 varsTable=c(varsTable[1:10], gsub('pch','lag',dv), varsTable[11:length(varsTable)])
 
@@ -78,8 +77,7 @@ tableFinal[,'Variable']=temp
 
 setwd(pathResults)
 print.xtable(xtable(tableFinal, align='llccccc',
-	# caption='Fixed effects ECM regression on investment profile with standard errors in parentheses. $^{**}$ and $^{*}$ indicate significance at $p< 0.05 $ and $p< 0.10 $, respectively.'
-	caption='Fixed effects ECM regression on the protection of property rights with standard errors in parentheses. $^{**}$ and $^{*}$ indicate significance at $p< 0.05 $ and $p< 0.10 $, respectively.'
+	caption=captionTable
 	), include.rownames=FALSE,
 	# sanitize.text.function = function(x) x,
 	# sanitize.text.function=function(str)gsub("_","\\_",str,fixed=TRUE),
@@ -87,6 +85,5 @@ print.xtable(xtable(tableFinal, align='llccccc',
 	# hline.after=c(0,0,46,51,51), 
 	hline.after=c(0,0,50,55,55), 	
 	size="footnotesize",	
-	# file='feResultsInvProfile.tex'
-	file='feResultsPropRights.tex'
+	file=fileTable
 	)

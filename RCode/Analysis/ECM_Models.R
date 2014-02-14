@@ -7,6 +7,7 @@ load('forAnalysis.rda')
 
 ### Throw out upper income countries
 modelData = allData[allData$upperincome==0,]
+modelData = modelData[modelData$year>=1986,]
 
 #### Most recent code from Remmer
 	# xtpcse pch_Investment_Profile
@@ -22,8 +23,8 @@ modelData = allData[allData$upperincome==0,]
 # Setting up models
 
 # Choosing DV
-dv='pch_Investment.Profile'; dvName='Investment Profile'
-# dv='pch_Property.Rights'; dvName='Property Rights'
+# dv='pch_Investment.Profile'; dvName='Investment Profile'; fileRE='invProfRE.rda'; fileFE='invProfFE.rda'
+dv='pch_Property.Rights'; dvName='Property Rights'; fileRE='propRightsRE.rda'; fileFE='propRightsFE.rda'
 ivDV=paste('lag',substr(dv, 4, nchar(dv)),sep='')
 
 # Cum. Dispute vars
@@ -58,15 +59,15 @@ ivsName=c(ivDispName, ivOtherName)
 # 	lagLabName(x), lagLabName(ivOtherName), pchLabName(x), pchLabName(ivOtherName)) )
 ##########################################################################################
 
-### Create balanced panel based off
-# All vars used in model
-temp=na.omit(modelData[,c('cname','ccode','year', ivDV, ivDisp, ivOther)])
-# Just ICRG
-# temp=na.omit(modelData[,c('cname','ccode','year', 'Investment.Profile')])
-temp2=lapply(unique(temp$cname), function(x) FUN=nrow(temp[which(temp$cname %in% x), ]) )
-names(temp2)=unique(temp$cname); temp3=unlist(temp2)
-drop=names(temp3[temp3<max(temp3)])
-modelData = modelData[which(!modelData$cname %in% drop),]
+# ### Create balanced panel based off
+# # All vars used in model
+# temp=na.omit(modelData[,c('cname','ccode','year', ivDV, ivDisp, ivOther)])
+# # Just ICRG
+# # temp=na.omit(modelData[,c('cname','ccode','year', 'Investment.Profile')])
+# temp2=lapply(unique(temp$cname), function(x) FUN=nrow(temp[which(temp$cname %in% x), ]) )
+# names(temp2)=unique(temp$cname); temp3=unlist(temp2)
+# drop=names(temp3[temp3<max(temp3)])
+# modelData = modelData[which(!modelData$cname %in% drop),]
 
 # ##########################################################################################
 ## Running random effect models
@@ -76,8 +77,7 @@ modResults=lapply(modForm, function(x) FUN=lmer(x, data=modelData))
 
 # Saving results for further analysis
 setwd(pathResults)
-save(modResults, ivAll, dv, ivs, ivsName, dvName, file='invProfRE.rda')
-# save(modResults, ivAll, dv, ivs, ivsName, dvName, file='propRightsRE.rda')
+save(modResults, ivAll, dv, ivs, ivsName, dvName, file=fileRE)
 ##########################################################################################
 
 ##########################################################################################
@@ -94,6 +94,5 @@ modSumm=lapply(modResults, function(x) FUN=coeftest(x,
 
 # Saving results for further analysis
 setwd(pathResults)
-save(modResults, modSumm, ivAll, dv, ivs, ivsName, dvName, file='invProfFE.rda')
-# save(modResults, modSumm, ivAll, dv, ivs, ivsName, dvName, file='propRightsFE.rda')
+save(modResults, modSumm, ivAll, dv, ivs, ivsName, dvName, file=fileFE)
 ##########################################################################################

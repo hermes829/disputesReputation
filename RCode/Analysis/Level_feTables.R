@@ -6,8 +6,8 @@ source('/Users/janus829/Desktop/Research/RemmerProjects/disputesReputation/RCode
 ##########################################################################################
 # Loading model results
 setwd(pathResults)
-# load('LinvProfFE.rda')
-load('LpropRightsFE.rda')
+# load('LinvProfFE.rda'); fileTable='LfeResultsInvProfile.tex'; captionTable='Fixed effects regression on investment profile with standard errors in parentheses. $^{**}$ and $^{*}$ indicate significance at $p< 0.05 $ and $p< 0.10 $, respectively.'
+load('LpropRightsFE.rda'); fileTable='LfeResultsPropRights.tex'; captionTable='Fixed effects regression on the protection of property rights with standard errors in parentheses. $^{**}$ and $^{*}$ indicate significance at $p< 0.05 $ and $p< 0.10 $, respectively.'
 ##########################################################################################
 
 ##########################################################################################
@@ -74,14 +74,12 @@ tableFinal[,'Variable']=temp
 
 setwd(pathResults)
 print.xtable(xtable(tableFinal, align='llccccc',
-	# caption='Fixed effects regression on investment profile with standard errors in parentheses. $^{**}$ and $^{*}$ indicate significance at $p< 0.05 $ and $p< 0.10 $, respectively.'
-	caption='Fixed effects regression on the protection of property rights with standard errors in parentheses. $^{**}$ and $^{*}$ indicate significance at $p< 0.05 $ and $p< 0.10 $, respectively.'
+	caption=captionTable
 	), include.rownames=FALSE,
 	# sanitize.text.function = function(x) x,
 	# sanitize.text.function=function(str)gsub("_","\\_",str,fixed=TRUE),
 	sanitize.text.function = identity,		
 	hline.after=c(0,0,24,29,29), 
 	size="footnotesize",	
-	# file='LfeResultsInvProfile.tex'
-	file='LfeResultsPropRights.tex'
+	file=fileTable
 	)# Creating tables
