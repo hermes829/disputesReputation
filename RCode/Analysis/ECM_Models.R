@@ -7,7 +7,7 @@ load('forAnalysis.rda')
 
 ### Throw out upper income countries
 modelData = allData[allData$upperincome==0,]
-modelData = modelData[modelData$year>=1986,]
+modelData = modelData[modelData$year>1986,]
 
 #### Most recent code from Remmer
 	# xtpcse pch_Investment_Profile
@@ -90,7 +90,7 @@ modForm=lapply(ivAll, function(x)
 
 modResults=lapply(modForm, function(x) FUN=plm(x, data=plmData, model='within') )
 modSumm=lapply(modResults, function(x) FUN=coeftest(x, 
-	vcov=function(x) vcovBK(x, type="HC1", cluster="time")))
+	vcov=function(x) vcovBK(x, type="HC1", cluster="group")))
 
 # Saving results for further analysis
 setwd(pathResults)

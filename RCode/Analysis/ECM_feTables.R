@@ -15,7 +15,7 @@ load('propRightsFE.rda'); fileTable='feResultsPropRights.tex'; captionTable='Fix
 varsTable=unlist(lapply(ivs, function(x) FUN=paste( c('lag_','pch_'), x, sep='' )))
 varsTable=c(varsTable[1:10], gsub('pch','lag',dv), varsTable[11:length(varsTable)])
 
-pchLabName=function(x){ paste('\\%$\\Delta$ Change',x,sep=' ') }
+pchLabName=function(x){ paste('\\%$\\Delta$',x,sep=' ') }
 lagLabName=function(x){ paste(x, '$_{t-1}$', sep='') }
 varsTableNames=unlist( lapply(ivsName, function(x) FUN= c(lagLabName(x), pchLabName(x))) )
 varsTableNames=c(varsTableNames[1:10], lagLabName(dvName), 

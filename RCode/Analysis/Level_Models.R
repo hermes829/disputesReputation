@@ -7,7 +7,7 @@ load('forAnalysis.rda')
 
 ### Throw out upper income countries
 modelData = allData[allData$upperincome==0,]
-modelData = modelData[modelData$year>=1986,]
+modelData = modelData[modelData$year>1986,]
 
 #### Most recent code from Remmer
 	# xtpcse pch_Investment_Profile
@@ -23,8 +23,8 @@ modelData = modelData[modelData$year>=1986,]
 # Setting up models
 
 # Choosing DV
-dv='pch_Investment.Profile'; dvName='Investment Profile'; fileRE='LinvProfRE.rda'; fileFE='LinvProfFE.rda'
-# dv='pch_Property.Rights'; dvName='Property Rights'; fileRE='LpropRightsRE.rda'; fileFE='LpropRightsFE.rda'
+# dv='pch_Investment.Profile'; dvName='Investment Profile'; fileRE='LinvProfRE.rda'; fileFE='LinvProfFE.rda'
+dv='pch_Property.Rights'; dvName='Property Rights'; fileRE='LpropRightsRE.rda'; fileFE='LpropRightsFE.rda'
 
 # Cum. Dispute vars
 ivDisp=c('Cicsidtreaty_case','Ckicsidcase','Csettle', 'Cunsettled_icsid_treaty', 'Ccunctadcase')
