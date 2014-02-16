@@ -4,6 +4,8 @@ source('/Users/janus829/Desktop/Research/RemmerProjects/disputesReputation/RCode
 ### load data
 setwd(pathData)
 load('forAnalysis.rda')
+karenData=read.dta('Dispute Data.dta')
+karenData$cyear=paste(karenData$ccode, karenData$year, sep='')
 
 ### Throw out upper income countries
 modelData = allData[allData$upperincome==0,]
@@ -23,8 +25,8 @@ modelData = modelData[modelData$year>1986,]
 # Setting up models
 
 # Choosing DV
-# dv='pch_Investment.Profile'; dvName='Investment Profile'; fileRE='invProfRE.rda'; fileFE='invProfFE.rda'
-dv='pch_Property.Rights'; dvName='Property Rights'; fileRE='propRightsRE.rda'; fileFE='propRightsFE.rda'
+# dv='pch_Investment.Profile'; dvName='Investment Profile'; fileRE='invProfRE.rda'; fileFE='invProfFE.rda'; fileAR1='invProfAR1.rda'
+dv='pch_Property.Rights'; dvName='Property Rights'; fileRE='propRightsRE.rda'; fileFE='propRightsFE.rda'; fileAR1='propRightsAR1.rda'
 ivDV=paste('lag',substr(dv, 4, nchar(dv)),sep='')
 
 # Cum. Dispute vars
@@ -59,18 +61,22 @@ ivsName=c(ivDispName, ivOtherName)
 # 	lagLabName(x), lagLabName(ivOtherName), pchLabName(x), pchLabName(ivOtherName)) )
 ##########################################################################################
 
-# ### Create balanced panel based off
-# # All vars used in model
-# temp=na.omit(modelData[,c('cname','ccode','year', ivDV, ivDisp, ivOther)])
-# # Just ICRG
-# # temp=na.omit(modelData[,c('cname','ccode','year', 'Investment.Profile')])
-# temp2=lapply(unique(temp$cname), function(x) FUN=nrow(temp[which(temp$cname %in% x), ]) )
-# names(temp2)=unique(temp$cname); temp3=unlist(temp2)
-# drop=names(temp3[temp3<max(temp3)])
-# modelData = modelData[which(!modelData$cname %in% drop),]
+### Check balance of panel
+panelBalance(ivs=ivAll[[1]], dv=dv, group='cname', time='year', regData=modelData)
 
-# ##########################################################################################
-## Running random effect models
+## Create balanced panel based off
+# All vars used in model
+temp=na.omit(modelData[,c('cname','ccode','year', ivDV, ivDisp, ivOther)])
+# Just ICRG
+# temp=na.omit(modelData[,c('cname','ccode','year', 'Investment.Profile')])
+temp2=lapply(unique(temp$cname), function(x) FUN=nrow(temp[which(temp$cname %in% x), ]) )
+names(temp2)=unique(temp$cname); temp3=unlist(temp2)
+drop=names(temp3[temp3<max(temp3)])
+modelData = modelData[which(!modelData$cname %in% drop),]
+
+panelBalance(ivs=ivAll[[1]], dv=dv, group='cname', time='year', regData=modelData)
+##########################################################################################
+# Running random effect models
 modForm=lapply(ivAll, function(x) 
 	FUN=as.formula( paste(paste(dv, paste(x, collapse=' + '), sep=' ~ '), '+ (1|ccode)', collapse='') ))
 modResults=lapply(modForm, function(x) FUN=lmer(x, data=modelData))
@@ -81,13 +87,25 @@ save(modResults, ivAll, dv, ivs, ivsName, dvName, file=fileRE)
 ##########################################################################################
 
 ##########################################################################################
+# Running PCSE models with p-specific AR1 autocorr structure
+modForm=lapply(ivAll, function(x) 
+	FUN=as.formula( paste(paste(dv, paste(x, collapse=' + '), sep=' ~ '), '+ factor(ccode)-1', collapse='') ))
+modResults=lapply(modForm, function(x) FUN=panelAR(x, modelData, 'ccode', 'year', 
+	autoCorr = c("psar1"), panelCorrMethod="pcse",rhotype='breg', complete.case=TRUE  ) )
+modSumm=lapply(modResults, function(x) FUN=coeftest(x) )
+
+# Saving results for further analysis
+setwd(pathResults)
+save(modResults, modSumm, ivAll, dv, ivs, ivsName, dvName, file=fileAR1)
+##########################################################################################
+
+##########################################################################################
 # Running fixed effect models with plm
 plmData=pdata.frame( modelData[,c(dv, unique(unlist(ivAll)), 'ccode', 'year') ], 
 			index=c('ccode','year') )
 
 modForm=lapply(ivAll, function(x) 
 	FUN=as.formula( paste(dv, paste(x, collapse=' + '), sep=' ~ ') ))
-
 modResults=lapply(modForm, function(x) FUN=plm(x, data=plmData, model='within') )
 modSumm=lapply(modResults, function(x) FUN=coeftest(x, 
 	vcov=function(x) vcovBK(x, type="HC1", cluster="group")))

@@ -26,6 +26,7 @@ require(plyr)
 require(doBy)
 require(doBy)
 require(WDI)
+require(panelAR)
 require(lme4)
 require(plm)
 require(lmtest)
@@ -115,6 +116,16 @@ cumulTS=function(data, ccode, time, vars){
 	temp=temp[,vars]; colnames(temp)=vars2
 	temp[which(is.na(data[,vars]),arr.ind=TRUE)]=NA
 	cbind(data, temp) 
+}
+
+# Check balance of a panel
+panelBalance=function(ivs, dv, group, time, regData){
+	Avars=c(ivs, dv, group, time)
+	data=na.omit(regData[,Avars])[,c(group, time)]
+	obsGroup=by(data, data[,group], nrow)
+	obsGroup=data.frame(cbind(ccode=names(obsGroup), obs=as.vector(obsGroup)))
+	obsGroup$obs=numSM(obsGroup$obs)
+	obsGroup[order(obsGroup[,2], decreasing=F),]	
 }
 
 # Create spatially weighted variables
