@@ -25,8 +25,8 @@ modelData = modelData[modelData$year>1986,]
 # Setting up models
 
 # Choosing DV
-# dv='pch_Investment.Profile'; dvName='Investment Profile'; fileRE='invProfRE.rda'; fileFE='invProfFE.rda'; fileAR1='invProfAR1.rda'
-dv='pch_Property.Rights'; dvName='Property Rights'; fileRE='propRightsRE.rda'; fileFE='propRightsFE.rda'; fileAR1='propRightsAR1.rda'
+dv='pch_Investment.Profile'; dvName='Investment Profile'; fileRE='invProfRE.rda'; fileFE='invProfFE.rda'; fileAR1='invProfAR1.rda'
+# dv='pch_Property.Rights'; dvName='Property Rights'; fileRE='propRightsRE.rda'; fileFE='propRightsFE.rda'; fileAR1='propRightsAR1.rda'
 ivDV=paste('lag',substr(dv, 4, nchar(dv)),sep='')
 
 # Cum. Dispute vars
@@ -75,6 +75,10 @@ drop=names(temp3[temp3<max(temp3)])
 modelData = modelData[which(!modelData$cname %in% drop),]
 
 panelBalance(ivs=ivAll[[1]], dv=dv, group='cname', time='year', regData=modelData)
+
+# Check in stata
+setwd(pathData)
+write.dta(modelData, file='temp.dta')
 ##########################################################################################
 # Running random effect models
 modForm=lapply(ivAll, function(x) 

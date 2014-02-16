@@ -12,7 +12,7 @@ length(unique(karenData$ccode)); length(unique(allData$ccode))
 setdiff(allData$cyear, karenData$cyear)
 
 modelData=allData[allData$upperincome!=1,]
-modelForm=formula(pch_Investment.Profile ~ pch_Internal.Conflict + factor(ccode)-1)
+modelForm=formula(pch_Investment.Profile ~ pch_Internal.Conflict + as.factor(ccode)-1)
 
 karenData2=karenData[karenData$upperincome!=1,]
 gKdata=na.omit( karenData2[,c('pch_Investment_Profile', 'pch_Internal_Conflict', 'ccode', 'year')] )

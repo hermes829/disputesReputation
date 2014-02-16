@@ -6,8 +6,8 @@ source('/Users/janus829/Desktop/Research/RemmerProjects/disputesReputation/RCode
 ##########################################################################################
 # Loading model results
 setwd(pathResults)
-load('invProfRE.rda')
-# load('propRightsRE.rda')
+load('invProfRE.rda'); fileTable='reResultsInvProfile.tex'; captionTable='Random effects ECM regression on investment profile with standard errors in parentheses. $^{**}$ and $^{*}$ indicate significance at $p< 0.05 $ and $p< 0.10 $, respectively.'
+# load('propRightsRE.rda'); fileTable='reResultsPropRights.tex'; captionTable='Random effects ECM regression on the protection of property rights with standard errors in parentheses. $^{**}$ and $^{*}$ indicate significance at $p< 0.05 $ and $p< 0.10 $, respectively.'
 ##########################################################################################
 
 ##########################################################################################
@@ -75,6 +75,7 @@ fRmse = cbind('RMSE', t(rmse))
 tableFinal = rbind(tableFinal, sSize, gSize,
  # fit, 
  fRmse)
+nStats=3
 
 temp=varDef[match(tableFinal[,'Variable'], varDef[,1]),2]
 temp[which(is.na(temp))]=tableFinal[,'Variable'][which(is.na(temp))]
@@ -83,14 +84,12 @@ tableFinal[,'Variable']=temp
 
 setwd(pathResults)
 print.xtable(xtable(tableFinal, align='llccccc',
-	caption='Random effects ECM regression on investment profile with standard errors in parentheses. $^{**}$ and $^{*}$ indicate significance at $p< 0.05 $ and $p< 0.10 $, respectively.'
-	# caption='Random effects ECM regression on the protection of property rights with standard errors in parentheses. $^{**}$ and $^{*}$ indicate significance at $p< 0.05 $ and $p< 0.10 $, respectively.'
+	caption=captionTable
 	), include.rownames=FALSE,
 	# sanitize.text.function = function(x) x,
 	# sanitize.text.function=function(str)gsub("_","\\_",str,fixed=TRUE),
 	sanitize.text.function = identity,	
-	hline.after=c(0,0,46,49,49), 
+	hline.after=c(0,0,nrow(varDef)*2,nrow(varDef)*2+nStats,nrow(varDef)*2+nStats), 	
 	size="footnotesize",	
-	file='reResultsInvProfile.tex'
-	# file='reResultsPropRights.tex'
+	file=fileTable
 	)
