@@ -19,8 +19,11 @@ gKdata=na.omit( karenData2[,c('pch_Investment_Profile', 'pch_Internal_Conflict',
 kmodelForm=formula(pch_Investment_Profile ~ pch_Internal_Conflict + factor(ccode)-1)
 
 require(panelAR)
-temp=panelAR(modelForm, modelData, 'ccode', 'year', 
+pcseAR1=panelAR(modelForm, modelData, 'ccode', 'year', 
 	autoCorr = c("psar1"), panelCorrMethod="pcse",
 	rhotype='breg', complete.case=TRUE  )
-temp$coefficients[1]
-sqrt(diag(temp$vcov)[1])
+pcseAR1$coefficients[1]
+sqrt(diag(pcseAR1$vcov)[1])
+pcseAR1$r2
+nrow(pcseAR1$panelStructure$Sigma)
+length(pcseAR1$residual)
