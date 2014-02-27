@@ -462,6 +462,19 @@ table(wrightExprop2$cyear)[table(wrightExprop2$cyear)>1] # Dupe check
 ###############################################################
 
 ###############################################################
+# IMF data
+imfData$cname = countrycode(imfData$country, 'country.name', 'country.name')
+imfData$cnameYear = paste(imfData$cname, imfData$year, sep='')
+
+names(table(imfData$cnameYear)[table(imfData$cnameYear)>1])
+
+# Adding in codes from panel
+imfData$ccode = panel$ccode[match(imfData$cname, panel$cname)]
+imfData$cyear <- paste(imfData$ccode, imfData$year, sep='')
+table(imfData$cyear)[table(imfData$cyear)>1] # Dupe check
+###############################################################
+
+###############################################################
 bitsReporter <- bits[,c('Reporter','ReporterClean','ccodeRep',
 	'Year_Signature','Year_force','signedbitsSM', 'ratifiedbitsSM', 
 	'PartnerClean', 'ccodePar')]
@@ -507,6 +520,7 @@ setwd(pathData)
 save(disputes2,fraser3, WGIregQual2Clean, heritage2,icrg2, WBdbiz2,
 	polity2, wbData, kaopen2, karenReput2, wrightExprop2, kaopen2,
 	bitsSigned, bitsRatified, constraints2, banks2, privatization2,
+	imfData,
 	file='cleanedData.rda')
 
 ### Load setup
@@ -548,6 +562,8 @@ unique(combData[is.na(combData$ccode), 1:5]); dim(combData)
 combData <- merge(combData, privatization2[,c(5:16,ncol(privatization2))],by='cyear',all.x=T,all.y=F)
 unique(combData[is.na(combData$ccode), 1:5]); dim(combData)
 combData <- merge(combData, constraints2[,c(7:9,ncol(constraints2))],by='cyear',all.x=T,all.y=F)
+unique(combData[is.na(combData$ccode), 1:5]); dim(combData)
+combData = merge(combData, imfData[,c(4:25,29)],by='cyear',all.x=T,all.y=F)
 unique(combData[is.na(combData$ccode), 1:5]); dim(combData)
 
 combData <- merge(combData, bitsSigned,by='cyear',all.x=T,all.y=F)

@@ -6,8 +6,8 @@ source('/Users/janus829/Desktop/Research/RemmerProjects/disputesReputation/RCode
 ##########################################################################################
 # Loading model results
 setwd(pathResults)
-# load('invProfAR1.rda'); fileTable='ar1ResultsInvProfile.tex'; captionTable='Fixed effects ECM regression on investment profile with panel-specific AR1 autocorrelation structure. Standard errors in parentheses. $^{**}$ and $^{*}$ indicate significance at $p< 0.05 $ and $p< 0.10 $, respectively.'
-load('propRightsAR1.rda'); fileTable='ar1ResultsPropRights.tex'; captionTable='Fixed effects ECM regression on the protection of property rights  with panel-specific AR1 autocorrelation structure. Standard errors in parentheses. $^{**}$ and $^{*}$ indicate significance at $p< 0.05 $ and $p< 0.10 $, respectively.'
+load('invProfAR1.rda'); fileTable='ar1ResultsInvProfile.tex'; captionTable='Fixed effects ECM regression on investment profile with panel-specific AR1 autocorrelation structure. Standard errors in parentheses. $^{**}$ and $^{*}$ indicate significance at $p< 0.05 $ and $p< 0.10 $, respectively.'
+# load('propRightsAR1.rda'); fileTable='ar1ResultsPropRights.tex'; captionTable='Fixed effects ECM regression on the protection of property rights  with panel-specific AR1 autocorrelation structure. Standard errors in parentheses. $^{**}$ and $^{*}$ indicate significance at $p< 0.05 $ and $p< 0.10 $, respectively.'
 ##########################################################################################
 
 ##########################################################################################

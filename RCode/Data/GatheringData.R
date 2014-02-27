@@ -88,6 +88,7 @@ WGIregQual <- read.csv('wgi_regQual.csv')
 ################################################################################
 setwd(paste(pathData, '/Components', sep=''))
 wrightExprop <- read.dta('TomzWright2010.dta')
+imfData = read.dta("IMFFinReform.dta")
 ################################################################################
 
 ################################################################################
@@ -109,7 +110,7 @@ save(WBgdp, WBgdpCap, WBinflDeflator, WBgdpDeflator, WBpop, WBdebt,
 	WBinflation, WBdbiz,
 	kaopen, privatization, constraints, banks,
 	polity, disputes, WBfdi, WBfdiGdp, fraser, heritage, icrg, 
-	WGIregQual, karenReput, wrightExprop, bits,
+	WGIregQual, karenReput, wrightExprop, imfData, bits,
 	 file='allData.rda')
 
 # ################################################################################

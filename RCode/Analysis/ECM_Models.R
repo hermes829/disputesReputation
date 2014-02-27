@@ -10,23 +10,12 @@ karenData$cyear=paste(karenData$ccode, karenData$year, sep='')
 ### Throw out upper income countries
 modelData = allData[allData$upperincome==0,]
 modelData = modelData[modelData$year>1986,]
-
-#### Most recent code from Remmer
-	# xtpcse pch_Investment_Profile
-		# lag_Investment_Profile pch_cum_icsidtreaty L.cum_icsidtreaty
-		# pch_ratifiedbits L.ratifiedbits pch_LNgdp lag_LNgdp
-		# pch_LNpopulation lag_LNpopulation pch_kaopen lag_kaopen
-		# pch_polity lag_polity
-		# pch_lncinflation lag_lncinflation
-		# lag_LNgdpCAP 
-			# i.ccode if upperincome~=1, pairwise corr (psar1)
-
 ##########################################################################################
 # Setting up models
 
 # Choosing DV
-dv='pch_Investment.Profile'; dvName='Investment Profile'; fileRE='invProfRE.rda'; fileFE='invProfFE.rda'; fileAR1='invProfAR1.rda'
-# dv='pch_Property.Rights'; dvName='Property Rights'; fileRE='propRightsRE.rda'; fileFE='propRightsFE.rda'; fileAR1='propRightsAR1.rda'
+# dv='pch_Investment.Profile'; dvName='Investment Profile'; fileRE='invProfRE.rda'; fileFE='invProfFE.rda'; fileAR1='invProfAR1.rda'
+dv='pch_Property.Rights'; dvName='Property Rights'; fileRE='propRightsRE.rda'; fileFE='propRightsFE.rda'; fileAR1='propRightsAR1.rda'
 ivDV=paste('lag',substr(dv, 4, nchar(dv)),sep='')
 
 # Cum. Dispute vars
@@ -36,9 +25,10 @@ ivDisp=c('Cicsidtreaty_case','Ckicsidcase','Csettle', 'Cunsettled_icsid_treaty',
 ivOther=c(
 	'ratifiedbits',
 	'LNgdp', 'LNpopulation',
-	'kaopen', 'lncinflation',
-	'polity'
-	, 'Internal.Conflict'
+	'kaopen', 'lncinflation'
+	# , 'polity'
+	,'polconiii', 'polconiii2'
+	# , 'Internal.Conflict'
 	)
 
 # Untrans IVs
@@ -50,8 +40,10 @@ ivAll=lapply(ivDisp, function(x) FUN= c(ivDV ,lagLab(x), lagLab(ivOther), pchLab
 
 # Setting up variables names for display
 ivDispName=c('ICSID Treaty', 'ICSID Non-Treaty', 'Settled', 'Unsettled', 'UNCTAD' )
-ivOtherName=c('Ratif. BITs', 'Ln(GDP)', 'Ln(Pop.)', 'Capital Openness', 'Ln(Inflation)', 'Polity'
-	, 'Internal Stability'
+ivOtherName=c('Ratif. BITs', 'Ln(GDP)', 'Ln(Pop.)', 'Capital Openness', 'Ln(Inflation)'
+	# , 'Polity'
+	, 'Veto Points','Veto Points$^{2}$'
+	# , 'Internal Stability'
 	)
 ivsName=c(ivDispName, ivOtherName)
 
@@ -62,7 +54,7 @@ ivsName=c(ivDispName, ivOtherName)
 ##########################################################################################
 
 ### Check balance of panel
-panelBalance(ivs=ivAll[[1]], dv=dv, group='cname', time='year', regData=modelData)
+# panelBalance(ivs=ivAll[[1]], dv=dv, group='cname', time='year', regData=modelData)
 
 ## Create balanced panel based off
 # All vars used in model
@@ -74,11 +66,11 @@ names(temp2)=unique(temp$cname); temp3=unlist(temp2)
 drop=names(temp3[temp3<max(temp3)])
 modelData = modelData[which(!modelData$cname %in% drop),]
 
-panelBalance(ivs=ivAll[[1]], dv=dv, group='cname', time='year', regData=modelData)
+# panelBalance(ivs=ivAll[[1]], dv=dv, group='cname', time='year', regData=modelData)
 
 # Check in stata
-setwd(pathData)
-write.dta(modelData, file='temp.dta')
+# setwd(pathData)
+# write.dta(modelData, file='temp.dta')
 ##########################################################################################
 # Running random effect models
 modForm=lapply(ivAll, function(x) 

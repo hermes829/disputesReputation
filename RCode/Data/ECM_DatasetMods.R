@@ -175,27 +175,27 @@ spLabs=function(x){paste(c('distC','distD','distD2'),x,sep='_')}
 
 vars <- c(
 	"settle", "Csettle", 
-	paste('mvs',2:5,'_settle',sep=''),
-	spLabs('settle'),spLabs('Csettle'),
+	# paste('mvs',2:5,'_settle',sep=''),
+	# spLabs('settle'),spLabs('Csettle'),
 
 	"kicsidcase", "Ckicsidcase",
-	paste('mvs',2:5,'_kicsidcase',sep=''),
-	spLabs('kicsidcase'),spLabs('Ckicsidcase'),
+	# paste('mvs',2:5,'_kicsidcase',sep=''),
+	# spLabs('kicsidcase'),spLabs('Ckicsidcase'),
 
 	"icsidtreaty_case", "Cicsidtreaty_case",
-	paste('mvs',2:5,'_icsidtreaty_case',sep=''),	
-	spLabs('icsidtreaty_case'), spLabs('Cicsidtreaty_case'),
+	# paste('mvs',2:5,'_icsidtreaty_case',sep=''),	
+	# spLabs('icsidtreaty_case'), spLabs('Cicsidtreaty_case'),
 
 	"cunctadcase", "Ccunctadcase",
-	paste('mvs',2:5,'_cunctadcase',sep=''),	
-	spLabs('cunctadcase'), spLabs('Ccunctadcase'),
+	# paste('mvs',2:5,'_cunctadcase',sep=''),	
+	# spLabs('cunctadcase'), spLabs('Ccunctadcase'),
 
 	"unsettled_icsid_treaty", "Cunsettled_icsid_treaty",
-	paste('mvs',2:5,'_unsettled_icsid_treaty',sep=''),	
-	spLabs('unsettled_icsid_treaty'), spLabs('Cunsettled_icsid_treaty'),
+	# paste('mvs',2:5,'_unsettled_icsid_treaty',sep=''),	
+	# spLabs('unsettled_icsid_treaty'), spLabs('Cunsettled_icsid_treaty'),
 
 	"ratifiedbits",
-	spLabs('ratifiedbits'), 
+	# spLabs('ratifiedbits'), 
 
 	"fdiGdp", "fdi", "gdp", "gdpCAP", "r_fdi", "r_gdp", "r_gdpCAP", 
 	"LNfdi", "LNgdp", "LNgdpCAP", "LNr_fdi", "LNr_gdp", "LNr_gdpCAP", 
@@ -215,20 +215,30 @@ vars <- c(
 
 	"polconiii", 
 
+	# ICRG data
 	"Investment.Profile", "Corruption", "Law.and.Order", "Bureaucracy.Quality", "Property.Rights",
 
 	"regQual",
 
+	# WB biz data
 	# "dbizRank", 'elecRank', 'elecTime', 'elecCost', 'invRank',
 	# 'invDisc', 'invDirecLiab', 'invSuits', 'invProtect', 'traR',
 	# 'traDocExp', 'traTimeExp', 'traCostExp', 'traDocImp', 'traTimeImp',
 	# 'traCostImp', 'enfRank', 'enfTime', 'enfCost', 'enfProc',
 
+	# IMF data
+	'directedcredit', 'creditceilings', 'creditcontrols', 'intratecontrols',
+	'entrybarriers', 'bankingsuperv', 'privatization', 'intlcapital',
+	'securitymarkets', 'finreform', 'finreform_n', 'large_reversal',
+	'reversal','reform','large_reform','status_quo',
+
+	# Heritage data
 	"overall.score", "property.rights", "fiscal.freedom",
 	"government.spending", "business.freedom", "labor.freedom",
 	"monetary.freedom", "trade.freedom", "investment.freedom",
 	"financial.freedom",
 
+	# Fraser data
 	"X2C..Protection.of.property.rights",
 	"X2..Legal.System...Property.Rights",
 	"X2F.Legal.enforcement.of.contracts",
