@@ -101,7 +101,19 @@ bits$ratifiedbitsSM <- ifelse(is.na(bits$Year_force), 0, 1)
 ################################################################################
 # Karen updated data on disputes
 setwd(paste(pathData, '/Components', sep=''))
-karenReput = read.dta('updated data for SM.dta')
+
+karenTradeBalance=read.dta('trade_balance.dta')[,1:4]
+karenDisputes=read.dta('Investment Profile Data.3.dta')[ ,c('cbdcrisis',
+ 'icsidmember', 'settle','kicsidcase','icsidtreaty_case','cunctadcase',
+ 'unsettled_icsid_treaty', 'alltreaty', 
+ 'ratifiedbits','lncinflation', 'icsidmember', 'upperincome',
+ 'country', 'ccode', 'year')]
+karenDisputes$icsidmember=karenDisputes$icsidmember.1 # WTF!!!!!!!
+
+karenTradeBalance$temp=paste(karenTradeBalance$ccode, karenTradeBalance$year, sep='')
+karenDisputes$temp=paste(karenDisputes$ccode, karenDisputes$year, sep='')
+
+karenReput=merge(karenDisputes,karenTradeBalance[,c(3,5)], by='temp',all.x=T,all.y=F)
 ################################################################################
 
 
