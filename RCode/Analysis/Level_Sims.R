@@ -4,11 +4,6 @@
 source('/Users/janus829/Desktop/Research/RemmerProjects/disputesReputation/RCode/setup.R')
 
 ##########################################################################################
-# Loading model results
-setwd(pathResults)
-load('LinvProfFE.rda'); dv='Investment Profile'
-# load('LpropRightsFE.rda'); dv='Property Rights'
-
 # Load data
 setwd(pathData)
 load('forAnalysis.rda')
@@ -17,15 +12,33 @@ modelData = allData[allData$upperincome==0,]
 modelData = modelData[modelData$year>1986,]
 ##########################################################################################
 
+# ##########################################################################################
+# setwd(pathResults)
+# load('LinvProfFE.rda'); dv='Investment Profile'
+# # load('LpropRightsFE.rda'); dv='Property Rights'
+
+# x=modResults[[1]] # model results for vars similar across dispute variables
+# coefs=ivAll[[1]]; coefName=ivsName
+# estimates=x$coefficient
+# varcov=vcovHC(x, method="arellano", cluster="time")
+# colnames(varcov)=rownames(varcov)=names(estimates)
+# serrors=sqrt(diag( varcov ))
+# # error = sqrt(sum(x$residuals^2)/x$df.residual)
+# error = sqrt(mean(x$residuals^2))
+# ##########################################################################################
+
 ##########################################################################################
+setwd(pathResults)
+load('LinvProfRE.rda'); dv='Investment Profile'
+# load('LpropRightsRE.rda'); dv='Property Rights'
 x=modResults[[1]] # model results for vars similar across dispute variables
 coefs=ivAll[[1]]; coefName=ivsName
-estimates=x$coefficient
-varcov=vcovHC(x, method="arellano", cluster="time")
-colnames(varcov)=rownames(varcov)=names(estimates)
+estimates=x@fixef
+varcov=vcov(x); colnames(varcov)=rownames(varcov)=names(estimates)
 serrors=sqrt(diag( varcov ))
-# error = sqrt(sum(x$residuals^2)/x$df.residual)
-error = sqrt(mean(x$residuals^2))
+RSS = sum(x@resid^2)
+dfResid = x@dims['n']-length(x@fixef) - length(x@ranef) + 1
+error = sqrt(RSS/dfResid)
 ##########################################################################################
 
 ##########################################################################################
