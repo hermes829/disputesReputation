@@ -67,6 +67,7 @@ arSQ = cbind('Adj. $R^{2}$', t(as.vector(mapply(x=modResults,
 rmse = round(mapply(x=modResults, function(x) FUN=sqrt(mean(x$residuals^2))),2)
 fRmse = cbind('RMSE', t(rmse))
 tableFinal = rbind(tableFinal, sSize, gSize, rSQ, arSQ, fRmse)
+nStats=5
 
 temp=varDef[match(tableFinal[,'Variable'], varDef[,1]),2]
 temp[which(is.na(temp))]=tableFinal[,'Variable'][which(is.na(temp))]
@@ -79,7 +80,7 @@ print.xtable(xtable(tableFinal, align='llccccc',
 	# sanitize.text.function = function(x) x,
 	# sanitize.text.function=function(str)gsub("_","\\_",str,fixed=TRUE),
 	sanitize.text.function = identity,		
-	hline.after=c(0,0,24,29,29), 
+	hline.after=c(0,0,nrow(varDef)*2,nrow(varDef)*2+nStats,nrow(varDef)*2+nStats), 	
 	size="footnotesize",	
 	file=fileTable
 	)# Creating tables

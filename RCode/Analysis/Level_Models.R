@@ -23,18 +23,18 @@ modelData = modelData[modelData$year>1986,]
 # Setting up models
 
 # Choosing DV
-# dv='pch_Investment.Profile'; dvName='Investment Profile'; fileRE='LinvProfRE.rda'; fileFE='LinvProfFE.rda'
-dv='pch_Property.Rights'; dvName='Property Rights'; fileRE='LpropRightsRE.rda'; fileFE='LpropRightsFE.rda'
+dv='Investment.Profile'; dvName='Investment Profile'; fileRE='LinvProfRE.rda'; fileFE='LinvProfFE.rda'
+# dv='Property.Rights'; dvName='Property Rights'; fileRE='LpropRightsRE.rda'; fileFE='LpropRightsFE.rda'
 
 # Cum. Dispute vars
 ivDisp=c('Cicsidtreaty_case','Ckicsidcase','Csettle', 'Cunsettled_icsid_treaty', 'Ccunctadcase')
 
 # Other covariates
 ivOther=c(
-	'ratifiedbits',
-	'LNgdp', 'LNpopulation',
-	'kaopen', 'lncinflation',
-	'polity'
+	'ratifiedbits'
+	,'LNgdp', 'LNpopulation'
+	,'kaopen', 'lncinflation'
+	,'polity', 'polconiii'
 	, 'Internal.Conflict'
 	)
 
@@ -46,7 +46,9 @@ ivAll=lapply(ivDisp, function(x) FUN= c( lagLab(x), lagLab(ivOther) ) )
 
 # Setting up variables names for display
 ivDispName=c('ICSID Treaty', 'ICSID Non-Treaty', 'Settled', 'Unsettled', 'UNCTAD' )
-ivOtherName=c('Ratif. BITs', 'Ln(GDP)', 'Ln(Pop.)', 'Capital Openness', 'Ln(Inflation)', 'Polity'
+ivOtherName=c('Ratif. BITs', 'Ln(GDP)', 'Ln(Pop.)'
+	,'Capital Openness', 'Ln(Inflation)'
+	,'Polity', 'Veto Points'
 	, 'Internal Stability'
 	)
 ivsName=c(ivDispName, ivOtherName)
@@ -87,10 +89,31 @@ modForm=lapply(ivAll, function(x)
 	FUN=as.formula( paste(dv, paste(x, collapse=' + '), sep=' ~ ') ))
 
 modResults=lapply(modForm, function(x) FUN=plm(x, data=plmData, model='within') )
+# modSumm=lapply(modResults, function(x) FUN=coeftest(x, 
+# 	vcov=function(x) vcovBK(x, type="HC1", cluster="time")))
 modSumm=lapply(modResults, function(x) FUN=coeftest(x, 
-	vcov=function(x) vcovBK(x, type="HC1", cluster="time")))
+	vcov=function(x) vcovHC(x, method="arellano", cluster="time")))
 
 # Saving results for further analysis
 setwd(pathResults)
 save(modResults, modSumm, ivAll, dv, ivs, ivsName, dvName, file=fileFE)
+##########################################################################################
+
+##########################################################################################
+# Model checks
+
+# Random vs. fixed
+fePLM=lapply(modForm, function(x) FUN=plm(x, data=plmData, model='within') )
+rePLM=lapply(modForm, function(x) FUN=plm(x, data=plmData, model='random') )
+mapply(function(x,y) phtest(x,y), x=fePLM, y=rePLM) # Indicates use fixed effects
+
+# Serial correlation
+mapply(function(x) pbgtest(x), x=fePLM) # Serial correlation present
+
+# Heteroskedasticity
+bpForm=lapply(ivAll, function(x) 
+	FUN=as.formula( paste(paste(dv, paste(x, collapse=' + '), sep=' ~ '), '+ factor(ccode)', collapse='') ))
+mapply(function(x) bptest(x, data=modelData, studentize=F), x=bpForm) # Hetero present
+
+# Both serial corerlation & hetero: so we use arellano ses
 ##########################################################################################

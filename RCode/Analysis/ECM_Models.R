@@ -30,7 +30,7 @@ ivOther=c(
 	, 'polity'
 	# ,'polconiii'
 	, 'Internal.Conflict'
-	,'privatization'
+	,'tradebalance'
 	)
 
 # Untrans IVs
@@ -48,7 +48,7 @@ ivOtherName=c('Ratif. BITs', 'Ln(GDP)', 'Ln(Pop.)'
 	, 'Polity'
 	# , 'Veto Points'
 	, 'Internal Stability'
-	,'IMF Entry Barriers'
+	,'Trade Balance'
 	)
 ivsName=c(ivDispName, ivOtherName)
 
