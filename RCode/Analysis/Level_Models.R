@@ -107,6 +107,7 @@ fePLM=lapply(modForm, function(x) FUN=plm(x, data=plmData, model='within') )
 rePLM=lapply(modForm, function(x) FUN=plm(x, data=plmData, model='random') )
 mapply(function(x,y) phtest(x,y), x=fePLM, y=rePLM) # Indicates use fixed effects
 
+# Both serial corerlation & hetero: so we use arellano ses
 # Serial correlation
 mapply(function(x) pbgtest(x), x=fePLM) # Serial correlation present
 
@@ -114,6 +115,4 @@ mapply(function(x) pbgtest(x), x=fePLM) # Serial correlation present
 bpForm=lapply(ivAll, function(x) 
 	FUN=as.formula( paste(paste(dv, paste(x, collapse=' + '), sep=' ~ '), '+ factor(ccode)', collapse='') ))
 mapply(function(x) bptest(x, data=modelData, studentize=F), x=bpForm) # Hetero present
-
-# Both serial corerlation & hetero: so we use arellano ses
 ##########################################################################################
