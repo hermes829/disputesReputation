@@ -49,7 +49,8 @@ cleanWbData <- function(data, variable){
 		 "New Caledonia",             "Northern Mariana Islands", 
 		 "Puerto Rico",               "Sint Maarten (Dutch part)",
 		 "St. Martin (French part)",  "Turks and Caicos Islands", 
-		 "Virgin Islands (U.S.)",     "West Bank and Gaza")
+		 "Virgin Islands (U.S.)",     "West Bank and Gaza",
+		 "Netherlands Antilles", "Macao, China")
 	mdata <- mdata[which(!mdata$Country.Name %in% drop),]
 
 	# Setting standardized countryname for WB data
@@ -93,6 +94,40 @@ wbData <- data.frame(cbind(WBinflDeflatorClean,
 	gdpCAP=WBgdpCapClean[,4]), population=WBpopClean[,4],
 	debtGDP=WBdebtClean[,4])
 save(wbData, file='wbData.rda')
+###############################################################
+
+###############################################################
+# KOF
+colnames(KOFflows)[2]='Country.Name'; KOFflowsClean=cleanWbData(KOFflows, 'actFlows')
+colnames(KOFcult)[2]='Country.Name'; KOFcultClean=cleanWbData(KOFcult, 'cultProx')
+colnames(KOFinf)[2]='Country.Name'; KOFinfClean=cleanWbData(KOFinf, 'infFlows')
+colnames(KOFpers)[2]='Country.Name'; KOFpersClean=cleanWbData(KOFpers, 'persContact')
+colnames(KOFecon)[2]='Country.Name'; KOFeconClean=cleanWbData(KOFecon, 'econGlob')
+colnames(KOFind)[2]='Country.Name'; KOFindClean=cleanWbData(KOFind, 'indexGlob')
+colnames(KOFpol)[2]='Country.Name'; KOFpolClean=cleanWbData(KOFpol, 'polGlob')
+colnames(KOFres)[2]='Country.Name'; KOFresClean=cleanWbData(KOFres, 'restrictions')
+colnames(KOFsoc)[2]='Country.Name'; KOFsocClean=cleanWbData(KOFsoc, 'socGlob')
+
+# Convert data to numeric
+KOFflowsClean[,4]=numSM(KOFflowsClean[,4])
+KOFcultClean[,4]=numSM(KOFcultClean[,4])
+KOFinfClean[,4]=numSM(KOFinfClean[,4])
+KOFpersClean[,4]=numSM(KOFpersClean[,4])
+KOFeconClean[,4]=numSM(KOFeconClean[,4])
+KOFindClean[,4]=numSM(KOFindClean[,4])
+KOFpolClean[,4]=numSM(KOFpolClean[,4])
+KOFresClean[,4]=numSM(KOFresClean[,4])
+KOFsocClean[,4]=numSM(KOFsocClean[,4])
+
+# Make sure order matches
+sum(KOFsocClean$cyear!=KOFpolClean$cyear)
+
+# Combine data
+kofData= data.frame(cbind(KOFflowsClean,
+	cultProx=KOFcultClean[,4], infFlows=KOFinfClean[,4],
+	persContact=KOFpersClean[,4], econGlob=KOFeconClean[,4],
+	indexGlob=KOFindClean[,4], polGlob=KOFpolClean[,4],
+	restrictions=KOFresClean[,4], socGlob=KOFsocClean[,4]))
 ###############################################################
 
 ###############################################################
@@ -520,7 +555,7 @@ setwd(pathData)
 save(disputes2,fraser3, WGIregQual2Clean, heritage2,icrg2, WBdbiz2,
 	polity2, wbData, kaopen2, karenReput2, wrightExprop2, kaopen2,
 	bitsSigned, bitsRatified, constraints2, banks2, privatization2,
-	imfData,
+	imfData,kofData,
 	file='cleanedData.rda')
 
 ### Load setup
@@ -564,6 +599,8 @@ unique(combData[is.na(combData$ccode), 1:5]); dim(combData)
 combData <- merge(combData, constraints2[,c(7:9,ncol(constraints2))],by='cyear',all.x=T,all.y=F)
 unique(combData[is.na(combData$ccode), 1:5]); dim(combData)
 combData = merge(combData, imfData[,c(4:25,29)],by='cyear',all.x=T,all.y=F)
+unique(combData[is.na(combData$ccode), 1:5]); dim(combData)
+combData = merge(combData, kofData[,c(4,8:ncol(kofData))], by='cyear', all.x=T, all.y=F)
 unique(combData[is.na(combData$ccode), 1:5]); dim(combData)
 
 combData <- merge(combData, bitsSigned,by='cyear',all.x=T,all.y=F)

@@ -31,6 +31,20 @@ banks <- read.csv('CNTSDATA.csv')
 ################################################################################
 
 ################################################################################
+# KOF
+setwd(paste(pathData, '/Components', '/KoF', sep=''))
+KOFflows=read.csv('Actual Flows.csv')
+KOFcult=read.csv('Data on Cultural Proximity.csv')
+KOFinf=read.csv('Data on Information Flows.csv')
+KOFpers=read.csv('Data on Personal Contact.csv')
+KOFecon=read.csv('Economic Globalization.csv')
+KOFind=read.csv('Index of Globalization.csv')
+KOFpol=read.csv('Political Globalization.csv')
+KOFres=read.csv('Restrictions.csv')
+KOFsoc=read.csv('Social Globalization.csv')
+################################################################################
+
+################################################################################
 setwd(paste(pathData, '/Components', '/Disputes', sep=''))
 list.files()
 disputes <- read.csv('Dispute_Data.csv')
@@ -123,6 +137,8 @@ save(WBgdp, WBgdpCap, WBinflDeflator, WBgdpDeflator, WBpop, WBdebt,
 	kaopen, privatization, constraints, banks,
 	polity, disputes, WBfdi, WBfdiGdp, fraser, heritage, icrg, 
 	WGIregQual, karenReput, wrightExprop, imfData, bits,
+	KOFflows, KOFcult, KOFinf, KOFpers, KOFecon, KOFind,
+	KOFpol, KOFres, KOFsoc,
 	 file='allData.rda')
 
 # ################################################################################

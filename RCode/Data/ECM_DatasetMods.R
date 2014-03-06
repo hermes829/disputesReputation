@@ -36,6 +36,9 @@ for(ii in 1:length(wdows)){combData=movePanel(combData, 'ccode', 'year', dispVar
 setwd(pathData)
 dispVars=c('settle','kicsidcase','icsidtreaty_case','cunctadcase','unsettled_icsid_treaty','alltreaty')
 combData=cumulTS(combData, 'ccode', 'year', dispVars)
+
+otherVars=c('large_reversal','reversal','reform','large_reform','status_quo')
+combData=cumulTS(combData, 'ccode', 'year', otherVars)
 ################################################################################
 
 ################################################################################
@@ -232,22 +235,27 @@ vars <- c(
 	# IMF data
 	'directedcredit', 'creditceilings', 'creditcontrols', 'intratecontrols',
 	'entrybarriers', 'bankingsuperv', 'privatization', 'intlcapital',
-	'securitymarkets', 'finreform', 'finreform_n', 'large_reversal',
-	'reversal','reform','large_reform','status_quo',
+	'securitymarkets', 'finreform', 'finreform_n', 
+	'large_reversal','reversal','reform','large_reform','status_quo',
+	'Clarge_reversal','Creversal','Creform','Clarge_reform','Cstatus_quo',
 
-	# Heritage data
-	"overall.score", "property.rights", "fiscal.freedom",
-	"government.spending", "business.freedom", "labor.freedom",
-	"monetary.freedom", "trade.freedom", "investment.freedom",
-	"financial.freedom",
+	# # Heritage data
+	# "overall.score", "property.rights", "fiscal.freedom",
+	# "government.spending", "business.freedom", "labor.freedom",
+	# "monetary.freedom", "trade.freedom", "investment.freedom",
+	# "financial.freedom",
 
-	# Fraser data
-	"X2C..Protection.of.property.rights",
-	"X2..Legal.System...Property.Rights",
-	"X2F.Legal.enforcement.of.contracts",
-	"X4Bii..Compliance.costs.of.importing.and.exporting",
-	"X4Dii..Capital.controls",	
-	"SUMMARY.INDEX"
+	# # Fraser data
+	# "X2C..Protection.of.property.rights",
+	# "X2..Legal.System...Property.Rights",
+	# "X2F.Legal.enforcement.of.contracts",
+	# "X4Bii..Compliance.costs.of.importing.and.exporting",
+	# "X4Dii..Capital.controls",	
+	# "SUMMARY.INDEX",
+
+	# KoF data
+	'actFlows','cultProx','infFlows','persContact',
+	'econGlob','indexGlob','polGlob','restrictions','socGlob'
 )
 
 vars2=list()
