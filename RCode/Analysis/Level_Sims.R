@@ -46,13 +46,16 @@ varsTable=unlist(lapply(ivs, function(x) FUN=paste( c('lag_'), x, sep='' )))
 lagLabName=function(x){ paste(x, '$_{t-1}$', sep='') }
 varsTableNames=unlist( lapply(ivsName, function(x) FUN= c(lagLabName(x))) )
 varDef=cbind(varsTable, varsTableNames)
-varDef=varDef[c(1,6:13),]
+varDef=varDef[c(1,6:nrow(varDef)),]
 ##########################################################################################
 
 ##########################################################################################
 setwd(pathGraphics)
 ggPlots=list()
-tSeqCuts=c(5, 10, 2, 3, 1, 2, 4, .05, 3)
+
+tSeqCuts=round(
+	(apply(modelData[,varDef[,1]],2,function(x) FUN=max(x,na.rm=T))-
+		apply(modelData[,varDef[,1]],2,function(x) FUN=min(x,na.rm=T)))/10, 1)
 
 for(ii in 1:nrow(varDef)){
 	toTest = varDef[ii,1]; toTestName=varDef[ii,1]
