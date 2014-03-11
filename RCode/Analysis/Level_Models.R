@@ -39,7 +39,7 @@ ivOther=c(
 	,'polity'
 	, 'Internal.Conflict'
 	, 'restrictions'
-	,'finreform'
+	# ,'finreform'
 	)
 
 # Untrans IVs
@@ -49,7 +49,7 @@ lagLab=function(x){ paste('lag_',x,sep='') }
 ivAll=lapply(ivDisp, function(x) FUN= c( lagLab(x), lagLab(ivOther) ) )
 
 # Setting up variables names for display
-ivDispName=c('ICSID Treaty', 'ICSID Non-Treaty', 'Settled', 'Unsettled', 'UNCTAD' )
+ivDispName=c('ICSID Treaty', 'ICSID Non-Treaty', 'Settled', 'UNCTAD','All Treaties' )
 ivOtherName=c(
 	'Ratif. BITs'
 	, 'Ln(GDP)'
@@ -58,8 +58,8 @@ ivOtherName=c(
 	, 'Ln(Inflation)'
 	,'Polity'
 	, 'Internal Stability'
-	, 'Economic Globalization'
-	, 'IMF reform'
+	, 'Restrictions'
+	# , 'IMF reform'
 	)
 ivsName=c(ivDispName, ivOtherName)
 
