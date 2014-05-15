@@ -114,56 +114,58 @@ specX=FALSE
 specY=TRUE
 # ylabel="Inv. Profile$_{t}$"; ggybreaks=seq(0,12,2); ggylims=c(2,12)
 
-# Set up scenario
-scenCol = length(vars); scenRow = length(vRange)
-scenario = matrix(NA, nrow=scenRow, ncol=scenCol)
-colnames(scenario) = c(vars)
-scenario[,vi] = vRange
+# # Set up scenario
+# scenCol = length(vars); scenRow = length(vRange)
+# scenario = matrix(NA, nrow=scenRow, ncol=scenCol)
+# colnames(scenario) = c(vars)
+# scenario[,vi] = vRange
 
-viPos = which(vi==vars)
-ovals = apply(simData[,vars[-viPos]], 2, ostat)
-scenario[,vars[-viPos]] = matrix(rep(ovals,scenRow),nrow=scenRow,byrow=TRUE)
-if(intercept){scenario = cbind('(Intercept)'=1, scenario)}
-vars2 = colnames(scenario)
+# viPos = which(vi==vars)
+# ovals = apply(simData[,vars[-viPos]], 2, ostat)
+# scenario[,vars[-viPos]] = matrix(rep(ovals,scenRow),nrow=scenRow,byrow=TRUE)
+# if(intercept){scenario = cbind('(Intercept)'=1, scenario)}
+# vars2 = colnames(scenario)
 
-draws = mvrnorm(n = sims, betas[vars2], vcov[vars2,vars2])
-modelPreds = draws %*% t(scenario)
-modelExp = apply(modelPreds, 2, function(x) FUN=rnorm(sims, x, sigma))
+# draws = mvrnorm(n = sims, betas[vars2], vcov[vars2,vars2])
+# modelPreds = draws %*% t(scenario)
+# modelExp = apply(modelPreds, 2, function(x) FUN=rnorm(sims, x, sigma))
 
-colnames(modelExp)=1:ncol(modelExp)
-modelExp2=melt(modelExp)[,-1]
-ggMeans = ddply(modelExp2, .(X2), summarise, sMean=mean(value))
-ggDensity = ddply(modelExp2, .(X2), .fun=function(x){
-  tmp = density(x$value); x1 = tmp$x; y1 = tmp$y
-  q95 = x1 >= quantile(x$value,0.025) & x1 <= quantile(x$value,0.975)
-  q90 = x1 >= quantile(x$value,0.05) & x1 <= quantile(x$value,0.95)
-  data.frame(x=x1,y=y1,q95=q95, q90=q90) } )
+# colnames(modelExp)=1:ncol(modelExp)
+# modelExp2=melt(modelExp)[,-1]
+# ggMeans = ddply(modelExp2, .(X2), summarise, sMean=mean(value))
+# ggDensity = ddply(modelExp2, .(X2), .fun=function(x){
+#   tmp = density(x$value); x1 = tmp$x; y1 = tmp$y
+#   q95 = x1 >= quantile(x$value,0.025) & x1 <= quantile(x$value,0.975)
+#   q90 = x1 >= quantile(x$value,0.05) & x1 <= quantile(x$value,0.95)
+#   data.frame(x=x1,y=y1,q95=q95, q90=q90) } )
 
-ggMeans$X2 = as.factor(ggMeans$X2)
-ggDensity$X2 = as.factor(ggDensity$X2)
+# ggMeans$X2 = as.factor(ggMeans$X2)
+# ggDensity$X2 = as.factor(ggDensity$X2)
 
-temp = ggplot()
-temp = temp + geom_line(data=ggDensity, aes(x=x,y=y,color=X2,linetype=X2),size=1.5)
-temp = temp + geom_vline(data=ggMeans,
-  aes(xintercept=sMean, color=X2),linetype='solid',size=1)
-temp = temp + geom_ribbon(data=subset(ggDensity,q95),
-  aes(x=x,ymax=y,fill=X2),ymin=0,alpha=0.3)
-temp = temp + geom_ribbon(data=subset(ggDensity,q90),
-  aes(x=x,ymax=y,fill=X2),ymin=0,alpha=0.6)
-temp = temp + xlab(ylabel) + ylab('Density')
-# temp = temp + scale_x_continuous(limits=ggylims, breaks=ggybreaks)
-temp = temp + theme(legend.position='none', legend.title=element_blank(),
-  axis.ticks = element_blank(), 
-  panel.grid.major=element_blank(), panel.grid.minor=element_blank(), 
-  axis.title.x = element_text(vjust=-0.2), 
-  axis.title.y = element_text(vjust=0.2),
-  panel.border = element_blank(), axis.line = element_line(color='black'))
-temp
+# temp = ggplot()
+# temp = temp + geom_line(data=ggDensity, aes(x=x,y=y,color=X2,linetype=X2),size=1.5)
+# temp = temp + geom_vline(data=ggMeans,
+#   aes(xintercept=sMean, color=X2),linetype='solid',size=1)
+# temp = temp + geom_ribbon(data=subset(ggDensity,q95),
+#   aes(x=x,ymax=y,fill=X2),ymin=0,alpha=0.3)
+# temp = temp + geom_ribbon(data=subset(ggDensity,q90),
+#   aes(x=x,ymax=y,fill=X2),ymin=0,alpha=0.6)
+# temp = temp + xlab(ylabel) + ylab('Density')
+# # temp = temp + scale_x_continuous(limits=ggylims, breaks=ggybreaks)
+# temp = temp + theme(legend.position='none', legend.title=element_blank(),
+#   axis.ticks = element_blank(), 
+#   panel.grid.major=element_blank(), panel.grid.minor=element_blank(), 
+#   axis.title.x = element_text(vjust=-0.2), 
+#   axis.title.y = element_text(vjust=0.2),
+#   panel.border = element_blank(), axis.line = element_line(color='black'))
+# temp
 
 # One difference distribution
-modelExp2=modelExp[,2]-modelExp[,1]
+modelExp2=data.frame(modelExp[,1]-modelExp[,2])
+colnames(modelExp2)=c('value')
 modelExp2$X2=1
 
+ggMean=mean(modelExp2$value)
 ggMeans = ddply(modelExp2, .(X2), summarise, sMean=mean(value))
 ggDensity = ddply(modelExp2, .(X2), .fun=function(x){
   tmp = density(x$value); x1 = tmp$x; y1 = tmp$y
@@ -177,13 +179,12 @@ ggDensity$X2 = as.factor(ggDensity$X2)
 temp = ggplot()
 temp = temp + geom_line(data=ggDensity, aes(x=x,y=y),size=1.5)
 temp = temp + geom_vline(data=ggMeans,
-  aes(xintercept=sMean, color=X2),linetype='solid',size=1)
+  aes(xintercept=sMean),linetype='solid',size=1)
 temp = temp + geom_ribbon(data=subset(ggDensity,q95),
-  aes(x=x,ymax=y,fill=X2),ymin=0,alpha=0.3)
+  aes(x=x,ymax=y),ymin=0,alpha=0.3)
 temp = temp + geom_ribbon(data=subset(ggDensity,q90),
-  aes(x=x,ymax=y,fill=X2),ymin=0,alpha=0.6)
+  aes(x=x,ymax=y),ymin=0,alpha=0.6)
 temp = temp + xlab(ylabel) + ylab('Density')
-# temp = temp + scale_x_continuous(limits=ggylims, breaks=ggybreaks)
 temp = temp + theme(legend.position='none', legend.title=element_blank(),
   axis.ticks = element_blank(), 
   panel.grid.major=element_blank(), panel.grid.minor=element_blank(), 
