@@ -20,7 +20,6 @@ modelData = modelData[modelData$year>1986,]
 # Setting up models
 
 dv='Investment_Profile'; dvName='Investment Profile'; fileRE='LinvProfRE.rda'; fileFE='LinvProfFE.rda'
-# dv='Property_Rights'; dvName='Property Rights'; fileRE='LpropRightsRE.rda'; fileFE='LpropRightsFE.rda'
 
 ivDisp=c('cum_kicsidcase','cum_icsidtreaty_case',
 	'cumunsettled_icsid_treaty','cumcunctadcase','cum_alltreaty' )
