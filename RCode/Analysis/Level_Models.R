@@ -4,8 +4,6 @@ source('/Users/janus829/Desktop/Research/RemmerProjects/disputesReputation/RCode
 # Directly loading in Karen's data
 setwd(paste(pathData, '/Components', sep=''))
 modelData=read.dta('Investment Profile Data.7.dta')
-# setwd('~/Desktop')
-# write.csv(names(modelData), file='temp.csv')
 colnames(modelData)[colnames(modelData)=='lagcumcunctadcase']='lag_cumcunctadcase'
 colnames(modelData)[colnames(modelData)=='lagcum_icsidtreaty_case']='lag_cum_icsidtreaty_case'
 colnames(modelData)[colnames(modelData)=='lagcum_kicsidcase']='lag_cum_kicsidcase'
@@ -45,9 +43,8 @@ lagLab=function(x){ paste('lag_',x,sep='') }
 ivAll=lapply(ivDisp, function(x) FUN= c( lagLab(x), lagLab(ivOther) ) )
 
 # Setting up variables names for display
-ivDispName=c('ICSID Treaty', 'ICSID Non-Treaty', 'Unsettled', 'UNCTAD','All Treaties' )
+ivDispName=c('All ICSID Disputes', 'ICSID Treaty-Based', 'Unsettled ICSID', 'UNCTAD','ICSID-UNCTAD' )
 ivOtherName=c(
-	# 'Ln(GDP)'
 	'\\%$\\Delta$ GDP'
 	, 'Ln(Pop.)'
 	, 'Ln(Inflation)'	
@@ -55,8 +52,6 @@ ivOtherName=c(
 	,'Ratif. BITs'	
 	,'Capital Openness'	
 	,'Polity'
-	# , 'Restrictions'
-	# , 'IMF reform'
 	)
 ivsName=c(ivDispName, ivOtherName)
 
@@ -97,19 +92,12 @@ modForm=lapply(ivAll, function(x)
 
 modResults=lapply(modForm, function(x) FUN=plm(x, data=plmData, model='within') )
 modSumm=lapply(modResults, function(x) FUN=coeftest(x, 
-	vcov=function(x) vcovHC(x, method="arellano", cluster="group")))
+	vcov=vcovHC(x,method='arellano',cluster="group")))
 
 # Saving results for further analysis
 setwd(pathResults)
 save(modResults, modSumm, ivAll, dv, ivs, ivsName, dvName, file=fileFE)
 ##########################################################################################
-
-plmData=pdata.frame(modelData, index=c('ccode','year'))
-mf=formula(Investment_Profile~lag_cum_kicsidcase+lag_pch_gdp+lag_LNpopulation+
-	lag_lncinflation+lag_Internal_Conflict+lag_ratifiedbits+lag_kaopen+lag_polity)
-temp=plm( mf, data=plmData, model='within'  )
-coeftest(temp, 
-	vcov=function(x) vcovHC(x, method="arellano", cluster="group"))
 
 # ##########################################################################################
 # # Model checks
