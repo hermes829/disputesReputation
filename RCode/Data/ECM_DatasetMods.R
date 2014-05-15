@@ -261,7 +261,7 @@ vars <- c(
 vars2=list()
 for(ii in 1:length(vars)){vars2[[ii]]=vars[ii]}
 
-vars2 <- unlist(lapply(vars, function(x) FUN=paste(c('', 'pch_', 'lag_'), x,sep='')))
+vars2 <- unlist(lapply(vars, function(x) FUN=paste(c('', 'pch_','dch_', 'lag_'), x,sep='')))
 finVars <- c(untransVars, vars2)
 
 dim(combData)

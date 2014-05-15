@@ -1,46 +1,41 @@
 ### Load setup
 source('/Users/janus829/Desktop/Research/RemmerProjects/disputesReputation/RCode/setup.R')
 
-### load data
-setwd(pathData)
-load('forAnalysis.rda')
+# Directly loading in Karen's data
+setwd(paste(pathData, '/Components', sep=''))
+modelData=read.dta('Investment Profile Data.7.dta')
+# setwd('~/Desktop')
+# write.csv(names(modelData), file='temp.csv')
+colnames(modelData)[colnames(modelData)=='lagcumcunctadcase']='lag_cumcunctadcase'
+colnames(modelData)[colnames(modelData)=='lagcum_icsidtreaty_case']='lag_cum_icsidtreaty_case'
+colnames(modelData)[colnames(modelData)=='lagcum_kicsidcase']='lag_cum_kicsidcase'
+colnames(modelData)[colnames(modelData)=='lagpch_gdp']='lag_pch_gdp'
 
-### Throw out upper income countries
-modelData = allData[allData$upperincome==0,]
-modelData = modelData[modelData$year>1986 & anData$year<2007,]
+lagVars=c('cumunsettled_icsid_treaty','cum_alltreaty')
+modelData$cyear=numSM(modelData$cyear)
+modelData=lagDataSM(modelData, 'cyear', 'ccode', lagVars, 1)
+colnames(modelData)[(ncol(modelData)-1):ncol(modelData)]=paste0('lag_',lagVars)
 
-#### Most recent code from Remmer
-	# xtpcse pch_Investment_Profile
-		# lag_Investment_Profile pch_cum_icsidtreaty L.cum_icsidtreaty
-		# pch_ratifiedbits L.ratifiedbits pch_LNgdp lag_LNgdp
-		# pch_LNpopulation lag_LNpopulation pch_kaopen lag_kaopen
-		# pch_polity lag_polity
-		# pch_lncinflation lag_lncinflation
-		# lag_LNgdpCAP 
-			# i.ccode if upperincome~=1, pairwise corr (psar1)
-
+modelData = modelData[modelData$upperincome==0,]
+modelData = modelData[modelData$year>1986,]
 ##########################################################################################
 # Setting up models
 
-# Choosing DV
-dv='Investment.Profile'; dvName='Investment Profile'; fileRE='LinvProfRE.rda'; fileFE='LinvProfFE.rda'
-# dv='Property.Rights'; dvName='Property Rights'; fileRE='LpropRightsRE.rda'; fileFE='LpropRightsFE.rda'
+dv='Investment_Profile'; dvName='Investment Profile'; fileRE='LinvProfRE.rda'; fileFE='LinvProfFE.rda'
+# dv='Property_Rights'; dvName='Property Rights'; fileRE='LpropRightsRE.rda'; fileFE='LpropRightsFE.rda'
 
-# Cum. Dispute vars
-ivDisp=c('Cicsidtreaty_case','Ckicsidcase','unsettled_icsid_treaty', 'Ccunctadcase', 'Calltreaty')
+ivDisp=c('cum_kicsidcase','cum_icsidtreaty_case',
+	'cumunsettled_icsid_treaty','cumcunctadcase','cum_alltreaty' )
 
 # Other covariates
 ivOther=c(
-	'ratifiedbits'
-	,'LNgdp'
-	# ,'pch_gdp'
+	'pch_gdp'
 	,'LNpopulation'
-	# ,'kaopen',
 	,'lncinflation'
+	, 'Internal_Conflict'	
+	,'ratifiedbits'	
+	,'kaopen'	
 	,'polity'
-	, 'Internal.Conflict'
-	# , 'restrictions'
-	# ,'finreform'
 	)
 
 # Untrans IVs
@@ -52,13 +47,14 @@ ivAll=lapply(ivDisp, function(x) FUN= c( lagLab(x), lagLab(ivOther) ) )
 # Setting up variables names for display
 ivDispName=c('ICSID Treaty', 'ICSID Non-Treaty', 'Unsettled', 'UNCTAD','All Treaties' )
 ivOtherName=c(
-	'Ratif. BITs'
-	, 'Ln(GDP)'
+	# 'Ln(GDP)'
+	'\\%$\\Delta$ GDP'
 	, 'Ln(Pop.)'
-	# ,'Capital Openness'
-	, 'Ln(Inflation)'
+	, 'Ln(Inflation)'	
+	, 'Internal Stability'	
+	,'Ratif. BITs'	
+	,'Capital Openness'	
 	,'Polity'
-	, 'Internal Stability'
 	# , 'Restrictions'
 	# , 'IMF reform'
 	)
@@ -100,15 +96,20 @@ modForm=lapply(ivAll, function(x)
 	FUN=as.formula( paste(dv, paste(x, collapse=' + '), sep=' ~ ') ))
 
 modResults=lapply(modForm, function(x) FUN=plm(x, data=plmData, model='within') )
-# modSumm=lapply(modResults, function(x) FUN=coeftest(x, 
-# 	vcov=function(x) vcovBK(x, type="HC1", cluster="time")))
 modSumm=lapply(modResults, function(x) FUN=coeftest(x, 
-	vcov=function(x) vcovHC(x, method="arellano", cluster="time")))
+	vcov=function(x) vcovHC(x, method="arellano", cluster="group")))
 
 # Saving results for further analysis
 setwd(pathResults)
 save(modResults, modSumm, ivAll, dv, ivs, ivsName, dvName, file=fileFE)
 ##########################################################################################
+
+plmData=pdata.frame(modelData, index=c('ccode','year'))
+mf=formula(Investment_Profile~lag_cum_kicsidcase+lag_pch_gdp+lag_LNpopulation+
+	lag_lncinflation+lag_Internal_Conflict+lag_ratifiedbits+lag_kaopen+lag_polity)
+temp=plm( mf, data=plmData, model='within'  )
+coeftest(temp, 
+	vcov=function(x) vcovHC(x, method="arellano", cluster="group"))
 
 # ##########################################################################################
 # # Model checks

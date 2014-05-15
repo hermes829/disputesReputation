@@ -71,13 +71,8 @@ numSM <- function(x){ as.numeric(as.character(x)) }
 # The varsTOlag should be inputted as a vector
 # And lag is just a numeric specifying how many years to lag the variable
 lagTS <- function(x,l){
-  if(l>0){
-	cuts <- (length(x)-(l-1)):length(x)
-	c(rep(NA,l), x[ -cuts ] )
-    	} else {
-		cuts <- (1:abs(l))
-	    c( x[ -cuts ], rep(NA,abs(l)) )
-    	}  
+  cuts <- (length(x)-(l-1)):length(x)
+  c(rep(NA,l), x[ -cuts ] )
 }
 
 lagDataSM <- function(data, country_year, country, varsTOlag, lag)
