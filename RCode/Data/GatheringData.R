@@ -117,7 +117,12 @@ bits$ratifiedbitsSM <- ifelse(is.na(bits$Year_force), 0, 1)
 setwd(paste(pathData, '/Components', sep=''))
 
 karenTradeBalance=read.dta('trade_balance.dta')[,1:4]
-karenDisputes=read.dta('Investment Profile Data.3.dta')[ ,c('cbdcrisis',
+# karenDisputes=read.dta('Investment Profile Data.3.dta')[ ,c('cbdcrisis',
+#  'icsidmember', 'settle','kicsidcase','icsidtreaty_case','cunctadcase',
+#  'unsettled_icsid_treaty', 'alltreaty', 
+#  'ratifiedbits','lncinflation', 'icsidmember', 'upperincome',
+#  'country', 'ccode', 'year')]
+karenDisputes=read.dta('Investment Profile Data.5.dta')[ ,c('cbdcrisis',
  'icsidmember', 'settle','kicsidcase','icsidtreaty_case','cunctadcase',
  'unsettled_icsid_treaty', 'alltreaty', 
  'ratifiedbits','lncinflation', 'icsidmember', 'upperincome',

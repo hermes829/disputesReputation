@@ -7,7 +7,7 @@ load('forAnalysis.rda')
 
 ### Throw out upper income countries
 modelData = allData[allData$upperincome==0,]
-modelData = modelData[modelData$year>1986,]
+modelData = modelData[modelData$year>1986 & anData$year<2007,]
 
 #### Most recent code from Remmer
 	# xtpcse pch_Investment_Profile
@@ -27,18 +27,19 @@ dv='Investment.Profile'; dvName='Investment Profile'; fileRE='LinvProfRE.rda'; f
 # dv='Property.Rights'; dvName='Property Rights'; fileRE='LpropRightsRE.rda'; fileFE='LpropRightsFE.rda'
 
 # Cum. Dispute vars
-ivDisp=c('Cicsidtreaty_case','Ckicsidcase','Csettle', 'Ccunctadcase', 'Calltreaty')
+ivDisp=c('Cicsidtreaty_case','Ckicsidcase','unsettled_icsid_treaty', 'Ccunctadcase', 'Calltreaty')
 
 # Other covariates
 ivOther=c(
 	'ratifiedbits'
 	,'LNgdp'
+	# ,'pch_gdp'
 	,'LNpopulation'
 	# ,'kaopen',
 	,'lncinflation'
 	,'polity'
 	, 'Internal.Conflict'
-	, 'restrictions'
+	# , 'restrictions'
 	# ,'finreform'
 	)
 
@@ -49,7 +50,7 @@ lagLab=function(x){ paste('lag_',x,sep='') }
 ivAll=lapply(ivDisp, function(x) FUN= c( lagLab(x), lagLab(ivOther) ) )
 
 # Setting up variables names for display
-ivDispName=c('ICSID Treaty', 'ICSID Non-Treaty', 'Settled', 'UNCTAD','All Treaties' )
+ivDispName=c('ICSID Treaty', 'ICSID Non-Treaty', 'Unsettled', 'UNCTAD','All Treaties' )
 ivOtherName=c(
 	'Ratif. BITs'
 	, 'Ln(GDP)'
@@ -58,7 +59,7 @@ ivOtherName=c(
 	, 'Ln(Inflation)'
 	,'Polity'
 	, 'Internal Stability'
-	, 'Restrictions'
+	# , 'Restrictions'
 	# , 'IMF reform'
 	)
 ivsName=c(ivDispName, ivOtherName)
@@ -79,7 +80,7 @@ ivsName=c(ivDispName, ivOtherName)
 # drop=names(temp3[temp3<max(temp3)])
 # modelData = modelData[which(!modelData$cname %in% drop),]
 
-# ##########################################################################################
+##########################################################################################
 ## Running random effect models
 modForm=lapply(ivAll, function(x) 
 	FUN=as.formula( paste(paste(dv, paste(x, collapse=' + '), sep=' ~ '), '+ (1|ccode)', collapse='') ))

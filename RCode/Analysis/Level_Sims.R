@@ -31,14 +31,15 @@ modelData = modelData[modelData$year>1986,]
 setwd(pathResults)
 load('LinvProfRE.rda'); dv='Investment Profile'
 # load('LpropRightsRE.rda'); dv='Property Rights'
-x=modResults[[3]] # model results for vars similar across dispute variables
-coefs=ivAll[[3]] ; coefName=ivsName
+x=modResults[[1]] # model results for vars similar across dispute variables
+coefs=ivAll[[1]] ; coefName=ivsName
 estimates=x@fixef
 varcov=vcov(x); colnames(varcov)=rownames(varcov)=names(estimates)
 serrors=sqrt(diag( varcov ))
 RSS = sum(x@resid^2)
 dfResid = x@dims['n']-length(x@fixef) - length(x@ranef) + 1
 error = sqrt(RSS/dfResid)
+error = 0
 ##########################################################################################
 
 ##########################################################################################
@@ -46,7 +47,7 @@ varsTable=unlist(lapply(ivs, function(x) FUN=paste( c('lag_'), x, sep='' )))
 lagLabName=function(x){ paste(x, '$_{t-1}$', sep='') }
 varsTableNames=unlist( lapply(ivsName, function(x) FUN= c(lagLabName(x))) )
 varDef=cbind(varsTable, varsTableNames)
-varDef=varDef[c(3,6:nrow(varDef)),]
+varDef=varDef[c(1,6:nrow(varDef)),]
 ##########################################################################################
 
 ##########################################################################################
