@@ -1,61 +1,117 @@
-### Run ECM analysis
 ### Load setup
 source('/Users/janus829/Desktop/Research/RemmerProjects/disputesReputation/RCode/setup.R')
 
 ### load data
 setwd(pathData)
 load('forAnalysis.rda')
-allVars=names(allData)
-dirt=c('pch_','lag_','distC_','distD_','distD2_')
-for(ii in 1:length(dirt)){allVars=gsub(dirt[ii],'',allVars)}
-unique(allVars)
+karenData=read.dta('Dispute Data.dta')
+karenData$cyear=paste(karenData$ccode, karenData$year, sep='')
 
-# dep='Investment.Profile'
-dep='Property.Rights'
-dv=paste('pch_', dep, sep='')
+### Throw out upper income countries
+modelData = allData[allData$upperincome==0,]
+modelData = modelData[modelData$year>1986,]
+##########################################################################################
+# Setting up models
 
-covs = c(
-	'cicsidcase', 'ratifiedbits',
-	'LNgdpCAP', 'LNpopulation',
-	'domSUM', 'kaopen'
-	,'inflation'
-	# ,'financial.freedom'
+# Choosing DV
+dv='pch_Investment.Profile'; dvName='Investment Profile'; fileRE='invProfRE.rda'; fileFE='invProfFE.rda'; fileAR1='invProfAR1.rda'
+# dv='pch_Property.Rights'; dvName='Property Rights'; fileRE='propRightsRE.rda'; fileFE='propRightsFE.rda'; fileAR1='propRightsAR1.rda'
+ivDV=paste('lag',substr(dv, 4, nchar(dv)),sep='')
+
+# Cum. Dispute vars
+ivDisp=c('Cicsidtreaty_case','Ckicsidcase','Csettle', 'Cunsettled_icsid_treaty', 'Ccunctadcase')
+
+# Other covariates
+ivOther=c(
+	'ratifiedbits',
+	'LNgdp', 'LNpopulation'
+	# ,'kaopen'
+	, 'lncinflation'
+	, 'polity'
+	# ,'polconiii'
+	, 'Internal.Conflict'
+	,'tradebalance'
 	)
-covs=unlist(lapply(covs, function(x) FUN=paste(c('pch_', 'lag_'),x,sep='')))
 
-# Adding other covariates
-# Lagged DV
-covs=c(paste('lag_',dep,sep=''),covs)
-# Upper Income Binary
-covs=c('upperincome',covs)
-# Democracy Binary
-covs=c('democ',covs)
+# Untrans IVs
+ivs=c(ivDisp, ivOther)
 
-# Adding ids & combining list of vars
-ids=c('ccode','year'); vars=c(dv, covs, ids)
+pchLab=function(x){ paste('pch_',x,sep='') }
+lagLab=function(x){ paste('lag_',x,sep='') }
+ivAll=lapply(ivDisp, function(x) FUN= c(ivDV ,lagLab(x), lagLab(ivOther), pchLab(x), pchLab(ivOther)) )
 
-# Sample size stats
-dim(allData); length(unique(allData$ccode)); length(unique(allData$year))
-dim(na.omit(allData[,vars])); length(unique(na.omit(allData[,vars])[,'ccode'])); length(unique(na.omit(allData[,vars])[,'year']))
+# Setting up variables names for display
+ivDispName=c('ICSID Treaty', 'ICSID Non-Treaty', 'Settled', 'Unsettled', 'UNCTAD' )
+ivOtherName=c('Ratif. BITs', 'Ln(GDP)', 'Ln(Pop.)'
+	# , 'Capital Openness'
+	, 'Ln(Inflation)'
+	, 'Polity'
+	# , 'Veto Points'
+	, 'Internal Stability'
+	,'Trade Balance'
+	)
+ivsName=c(ivDispName, ivOtherName)
 
-mform=paste(paste(dv, paste(covs,collapse=' + '), sep=' ~ ') )
+# pchLabName=function(x){ paste('\\%$\\Delta$ Change',x,sep=' ') }
+# lagLabName=function(x){ paste(x, '$_{t-1}$', sep='') }
+# ivAllNames=lapply(ivDispName, function(x) FUN= c(lagLabName(dvName) ,
+# 	lagLabName(x), lagLabName(ivOtherName), pchLabName(x), pchLabName(ivOtherName)) )
+##########################################################################################
 
-# RE Models
-reform=formula(paste(mform, ' + (1 | ccode)', sep=''))
-remodel = lmer(reform, data=allData )
-attributes(summary(remodel))$coefs
-sqrt(mean((resid(remodel))^2))
+### Check balance of panel
+panelBalance(ivs=ivAll[[1]], dv=dv, group='cname', time='year', regData=modelData)
 
-dep=attributes(remodel)$y
-length(dep[dep==0])/length(dep)
+## Create balanced panel based off
+# All vars used in model
+temp=na.omit(modelData[,c('cname','ccode','year', ivDV, ivDisp, ivOther)])
+# Just ICRG
+# temp=na.omit(modelData[,c('cname','ccode','year', 'Investment.Profile')])
+temp2=lapply(unique(temp$cname), function(x) FUN=nrow(temp[which(temp$cname %in% x), ]) )
+names(temp2)=unique(temp$cname); temp3=unlist(temp2)
+drop=names(temp3[temp3<max(temp3)])
+modelData = modelData[which(!modelData$cname %in% drop),]
 
-# FE Models
-feform=formula(paste(mform, ' + as.factor(ccode) - 1', sep=''))
-femodel = lm(feform, data=allData )
-summary(femodel)$coefficients[1:(length(covs)+1),]
-sqrt(mean(femodel$residuals^2))
-summary(femodel)$r.squared
-summary(femodel)$adj.r.squared
+panelBalance(ivs=ivAll[[1]], dv=dv, group='cname', time='year', regData=modelData)
 
-# trade sig for inv profile not prop rights
-# inv sig for proprights but not inv prof
+# Check in stata
+# setwd(pathData)
+# write.dta(modelData, file='temp.dta')
+##########################################################################################
+# Running random effect models
+modForm=lapply(ivAll, function(x) 
+	FUN=as.formula( paste(paste(dv, paste(x, collapse=' + '), sep=' ~ '), '+ (1|ccode)', collapse='') ))
+modResults=lapply(modForm, function(x) FUN=lmer(x, data=modelData))
+
+# Saving results for further analysis
+setwd(pathResults)
+save(modResults, ivAll, dv, ivs, ivsName, dvName, file=fileRE)
+##########################################################################################
+
+##########################################################################################
+# Running PCSE models with p-specific AR1 autocorr structure
+modForm=lapply(ivAll, function(x) 
+	FUN=as.formula( paste(paste(dv, paste(x, collapse=' + '), sep=' ~ '), '+ factor(ccode)-1', collapse='') ))
+modResults=lapply(modForm, function(x) FUN=panelAR(x, modelData, 'ccode', 'year', 
+	autoCorr = c("psar1"), panelCorrMethod="pcse",rhotype='breg', complete.case=TRUE  ) )
+modSumm=lapply(modResults, function(x) FUN=coeftest(x) )
+
+# Saving results for further analysis
+setwd(pathResults)
+save(modResults, modSumm, ivAll, dv, ivs, ivsName, dvName, file=fileAR1)
+##########################################################################################
+
+##########################################################################################
+# Running fixed effect models with plm
+plmData=pdata.frame( modelData[,c(dv, unique(unlist(ivAll)), 'ccode', 'year') ], 
+			index=c('ccode','year') )
+
+modForm=lapply(ivAll, function(x) 
+	FUN=as.formula( paste(dv, paste(x, collapse=' + '), sep=' ~ ') ))
+modResults=lapply(modForm, function(x) FUN=plm(x, data=plmData, model='within') )
+modSumm=lapply(modResults, function(x) FUN=coeftest(x, 
+	vcov=function(x) vcovBK(x, type="HC1", cluster="group")))
+
+# Saving results for further analysis
+setwd(pathResults)
+save(modResults, modSumm, ivAll, dv, ivs, ivsName, dvName, file=fileFE)
+##########################################################################################
