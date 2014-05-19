@@ -6,19 +6,26 @@ source('/Users/janus829/Desktop/Research/RemmerProjects/disputesReputation/RCode
 ##########################################################################################
 # Loading model results
 setwd(pathResults)
-load('LinvProfFE.rda'); fileTable='LfeResultsInvProfile.tex'; captionTable='Fixed effects regression on investment profile with standard errors in parentheses. $^{**}$ and $^{*}$ indicate significance at $p< 0.05 $ and $p< 0.10 $, respectively.'
-# load('LpropRightsFE.rda'); fileTable='LfeResultsPropRights.tex'; captionTable='Fixed effects regression on the protection of property rights with standard errors in parentheses. $^{**}$ and $^{*}$ indicate significance at $p< 0.05 $ and $p< 0.10 $, respectively.'
+load('LinvProfFE.rda'); fileTable='LfeResultsInvProfile.tex'; captionTable='Fixed effects regression on investment profile with robust standard errors in parentheses. $^{**}$ and $^{*}$ indicate significance at $p< 0.05 $ and $p< 0.10 $, respectively.'
 ##########################################################################################
 
 ##########################################################################################
 # matrix of vars and their names
-modelSumm = lapply(modResults, function(x) FUN=attributes(summary(x))[['coefs']])
 varsTable=unlist(lapply(ivs, function(x) FUN=paste( c('lag_'), x, sep='' )))
 
 lagLabName=function(x){ paste(x, '$_{t-1}$', sep='') }
 varsTableNames=unlist( lapply(ivsName, function(x) FUN= c(lagLabName(x))) )
 
+# Mods to match table to Karen's style
+modNames=ivsName[1:5]
+
+varsTable[1:5]='lag_disputes'; varsTable=unique(varsTable)
+varsTableNames[1:5]=lagLabName('Registered Disputes'); varsTableNames=unique(varsTableNames)
+
 varDef=cbind(varsTable, varsTableNames)
+
+# Changing name of each dispute measure in results to disputes
+modSumm=lapply(modSumm, function(x) FUN={rownames(x)[1]='lag_disputes'; x})
 ##########################################################################################
 
 ##########################################################################################
@@ -27,7 +34,8 @@ digs=3; noModels=length(modSumm)
 tableResults = matrix('', nrow=2*length(varsTable), ncol=1+noModels)
 
 tableResults[,1] = rep(varsTable,2)
-colnames(tableResults) = c('Variable',paste('Model',1:noModels))
+# colnames(tableResults) = c('Variable',paste('Model',1:noModels))
+colnames(tableResults) = c('Variable',modNames)
 for(ii in 2:ncol(tableResults)){
 	temp = modSumm[[ii-1]]
 	n = modResults[[ii-1]]$df.residual
@@ -72,8 +80,9 @@ nStats=5
 temp=varDef[match(tableFinal[,'Variable'], varDef[,1]),2]
 temp[which(is.na(temp))]=tableFinal[,'Variable'][which(is.na(temp))]
 tableFinal[,'Variable']=temp
+tableFinal
 
-setwd(pathResults)
+setwd(pathPaper)
 print.xtable(xtable(tableFinal, align='llccccc',
 	caption=captionTable
 	), include.rownames=FALSE,
