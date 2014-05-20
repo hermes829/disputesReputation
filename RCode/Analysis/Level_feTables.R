@@ -6,7 +6,8 @@ source('/Users/janus829/Desktop/Research/RemmerProjects/disputesReputation/RCode
 ##########################################################################################
 # Loading model results
 setwd(pathResults)
-load('LinvProfFE.rda'); fileTable='LfeResultsInvProfile.tex'; captionTable='Fixed effects regression on investment profile with robust standard errors in parentheses. $^{**}$ and $^{*}$ indicate significance at $p< 0.05 $ and $p< 0.10 $, respectively.'
+# load('LinvProfFE.rda'); fileTable='LfeResultsInvProfile.tex'; captionTable='Fixed effects regression on investment profile with robust standard errors in parentheses. $^{**}$ and $^{*}$ indicate significance at $p< 0.05 $ and $p< 0.10 $, respectively.'
+load('BLinvProfFE.rda'); fileTable='BLfeResultsInvProfile.tex'; captionTable='Fixed effects regression on investment profile using balanced panel with robust standard errors in parentheses. $^{**}$ and $^{*}$ indicate significance at $p< 0.05 $ and $p< 0.10 $, respectively.'
 ##########################################################################################
 
 ##########################################################################################
@@ -34,7 +35,6 @@ digs=3; noModels=length(modSumm)
 tableResults = matrix('', nrow=2*length(varsTable), ncol=1+noModels)
 
 tableResults[,1] = rep(varsTable,2)
-# colnames(tableResults) = c('Variable',paste('Model',1:noModels))
 colnames(tableResults) = c('Variable',modNames)
 for(ii in 2:ncol(tableResults)){
 	temp = modSumm[[ii-1]]
@@ -44,10 +44,12 @@ for(ii in 2:ncol(tableResults)){
 	estims = round(as.numeric(as.character(estims)),digs)
 	tvals = abs(temp[1:length(varsTable),'t value'])
 	tvals = round(as.numeric(as.character(tvals)),digs)
-	estims = ifelse(tvals>=qt(0.95,n) & !is.na(tvals) & tvals<qt(0.975,n), 
+	estims = ifelse(tvals>=qt(0.975,n) & !is.na(tvals) & tvals<qt(0.995,n), 
 		paste('$', estims,'^{\\ast}$',sep=''), estims)
-	estims = ifelse(tvals>=qt(0.975,n) & !is.na(tvals), 
+	estims = ifelse(tvals>=qt(0.995,n) & !is.na(tvals) & tvals<qt(0.9995,n), 
 		paste('$', estims,'^{\\ast\\ast}$',sep=''), estims)
+	estims = ifelse(tvals>=qt(0.9995,n) & !is.na(tvals), 
+		paste('$', estims,'^{\\ast\\ast\\ast}$',sep=''), estims)			
 	estims = ifelse(is.na(estims),'',estims)
 	tableResults[1:length(varsTable),ii] = estims
 	serrors = temp[(length(varsTable)+1):nrow(tableResults),'Std. Error']
@@ -84,7 +86,7 @@ tableFinal
 
 setwd(pathPaper)
 print.xtable(xtable(tableFinal, align='llccccc',
-	caption=captionTable
+	# caption=captionTable
 	), include.rownames=FALSE,
 	# sanitize.text.function = function(x) x,
 	# sanitize.text.function=function(str)gsub("_","\\_",str,fixed=TRUE),
