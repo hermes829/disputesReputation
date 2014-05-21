@@ -16,9 +16,9 @@ colnames(modelData)[(ncol(modelData)-1):ncol(modelData)]=paste0('lag_',lagVars)
 
 modelData = modelData[modelData$upperincome==0,]
 modelData = modelData[modelData$year>1986,]
-##########################################################################################
+#############################################################################
 
-##########################################################################################
+#############################################################################
 # Subsetting to vars of interest
 dv='Investment_Profile'
 
@@ -54,9 +54,9 @@ varNames=c(dvName, ivDispName, ivOtherName)
 
 # Subsetting dataset
 anData=modelData[,c(vars,'year','ccode')]
-##########################################################################################
+#############################################################################
 
-##########################################################################################
+#############################################################################
 # Running desc stats
 summSM=function(var,group,data){
 	slice=na.omit(data[,c(var,group)])
@@ -73,15 +73,57 @@ results=matrix(unlist(lapply(vars, function(x) FUN=summSM(x, 'ccode', anData))),
 round(results,2)
 
 setwd(pathPaper)
-print.xtable(xtable(round(results,2), align='llccccc', 
-	digits=c(0,0,0,2,2,2,2),
-	# caption=captionTable
-	), include.rownames=TRUE,
-	# sanitize.text.function = function(x) x,
-	# sanitize.text.function=function(str)gsub("_","\\_",str,fixed=TRUE),
-	sanitize.text.function = identity,		
-	hline.after=c(0,0,nrow(results),nrow(results)), 	
-	size="footnotesize",	
-	file='descTable.tex'
+# print.xtable(xtable(round(results,2), align='llccccc', 
+# 	digits=c(0,0,0,2,2,2,2),
+# 	# caption=captionTable
+# 	), include.rownames=TRUE,
+# 	# sanitize.text.function = function(x) x,
+# 	# sanitize.text.function=function(str)gsub("_","\\_",str,fixed=TRUE),
+# 	sanitize.text.function = identity,		
+# 	hline.after=c(0,0,nrow(results),nrow(results)), 	
+# 	size="footnotesize",	
+# 	file='descTable.tex'
+# 	)
+#############################################################################
+
+#############################################################################
+# Geographic distribution of BITs
+mapData <- cshp(date = as.Date("2011-12-30"), useGW=TRUE)
+
+mapData$CNTRY_NAME=as.character(mapData$CNTRY_NAME)
+mapData$CNTRY_NAME[mapData$CNTRY_NAME=='Congo, DRC']="Congo, Democratic Republic of"
+mData=data.frame( cbind(
+	cntry=as.character(mapData$CNTRY_NAME),
+	oid=mapData$GWCODE,
+	ccode=panel$ccode[match(mapData$CNTRY_NAME,panel$CNTRY_NAME)] ) )
+
+slice=modelData[modelData$year==max(modelData$year),]
+mData$bits=slice$ratifiedbits[match(mData$ccode,slice$ccode)]
+mData$cum_alltreaty=slice$cum_alltreaty[match(mData$ccode,slice$ccode)]
+
+# Creating map
+gpclibPermit()
+require(RColorBrewer)
+mColors <- brewer.pal(9, 'Blues')
+ggMap = fortify(mapData, region="GWCODE")
+ggMap=merge(ggMap, mData, by.x='id',by.y='oid',all.x=T)
+
+temp <- ggplot(ggMap, aes(long,lat,group=group,fill=bits))
+temp <- temp + geom_polygon() 
+temp <- temp + scale_fill_gradient(
+	limits=c(0,135),
+	# limits=c(0,20),    
+	low=mColors[1],high=mColors[9], 
+	space = "Lab", na.value = "grey50", guide = "colourbar")
+temp <- temp + labs(x='',y='',
+	title='Cumul. BITs Ratified: 2011')
+temp <- temp + theme(
+	axis.text=element_blank(), axis.ticks = element_blank(),
+	panel.border = element_blank(), 
+	panel.grid.major=element_blank(), panel.grid.minor=element_blank(),     
+	legend.position="top", legend.title=element_blank(),
+	panel.background = element_rect(fill="gray85")
+	# ,legend.key.width=unit(3,'cm')
 	)
-##########################################################################################
+temp
+#############################################################################
