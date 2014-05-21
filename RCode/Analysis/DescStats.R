@@ -14,8 +14,8 @@ modelData$cyear=numSM(modelData$cyear)
 modelData=lagDataSM(modelData, 'cyear', 'ccode', lagVars, 1)
 colnames(modelData)[(ncol(modelData)-1):ncol(modelData)]=paste0('lag_',lagVars)
 
-modelData = modelData[modelData$upperincome==0,]
-modelData = modelData[modelData$year>1986,]
+anData = modelData[modelData$upperincome==0,]
+anData = anData[anData$year>1986,]
 #############################################################################
 
 #############################################################################
@@ -53,7 +53,7 @@ ivOtherName=c(
 varNames=c(dvName, ivDispName, ivOtherName)
 
 # Subsetting dataset
-anData=modelData[,c(vars,'year','ccode')]
+anData=anData[,c(vars,'year','ccode')]
 #############################################################################
 
 #############################################################################
@@ -109,20 +109,19 @@ ggMap = fortify(mapData, region="GWCODE")
 ggMap=merge(ggMap, mData, by.x='id',by.y='oid',all.x=T)
 
 temp <- ggplot(ggMap, aes(long,lat,group=group,fill=bits))
-temp <- temp + geom_polygon() 
+temp <- temp + geom_polygon(colour='black',lwd=1e-2) 
 temp <- temp + scale_fill_gradient(
-	limits=c(0,135),
-	# limits=c(0,20),    
+	limits=c(0,105),
 	low=mColors[1],high=mColors[9], 
 	space = "Lab", na.value = "grey50", guide = "colourbar")
 temp <- temp + labs(x='',y='',
-	title='Cumul. BITs Ratified: 2011')
+	title='Cumul. BITs Ratified by 2011')
 temp <- temp + theme(
 	axis.text=element_blank(), axis.ticks = element_blank(),
 	panel.border = element_blank(), 
 	panel.grid.major=element_blank(), panel.grid.minor=element_blank(),     
 	legend.position="top", legend.title=element_blank(),
-	panel.background = element_rect(fill="gray85")
+	panel.background = element_rect(fill="white")
 	# ,legend.key.width=unit(3,'cm')
 	)
 temp
