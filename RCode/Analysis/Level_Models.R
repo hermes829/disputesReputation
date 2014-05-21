@@ -60,17 +60,17 @@ ivsName=c(ivDispName, ivOtherName)
 # 	lagLabName(x), lagLabName(ivOtherName), pchLabName(x), pchLabName(ivOtherName)) )
 ##########################################################################################
 
-#########################################################################################
-### Create balanced panel based off
-# All vars used in model
-temp=na.omit(modelData[,c('cname','ccode','year', ivDisp, ivOther)])
-# Just ICRG
-# temp=na.omit(modelData[,c('cname','ccode','year', 'Investment.Profile')])
-temp2=lapply(unique(temp$cname), function(x) FUN=nrow(temp[which(temp$cname %in% x), ]) )
-names(temp2)=unique(temp$cname); temp3=unlist(temp2)
-drop=names(temp3[temp3<max(temp3)])
-modelData = modelData[which(!modelData$cname %in% drop),]
-#########################################################################################
+# #########################################################################################
+# ### Create balanced panel based off
+# # All vars used in model
+# temp=na.omit(modelData[,c('cname','ccode','year', ivDisp, ivOther)])
+# # Just ICRG
+# # temp=na.omit(modelData[,c('cname','ccode','year', 'Investment.Profile')])
+# temp2=lapply(unique(temp$cname), function(x) FUN=nrow(temp[which(temp$cname %in% x), ]) )
+# names(temp2)=unique(temp$cname); temp3=unlist(temp2)
+# drop=names(temp3[temp3<max(temp3)])
+# modelData = modelData[which(!modelData$cname %in% drop),]
+# #########################################################################################
 
 ##########################################################################################
 # Running fixed effect models with plm
@@ -86,8 +86,8 @@ modSumm=lapply(modResults, function(x) FUN=coeftest(x,
 
 # Saving results for further analysis
 setwd(pathResults)
-# save(modResults, modSumm, ivAll, dv, ivs, ivsName, dvName, file=fileFE)
-save(modResults, modSumm, ivAll, dv, ivs, ivsName, dvName, file=paste0('B',fileFE))
+save(modResults, modSumm, ivAll, dv, ivs, ivsName, dvName, file=fileFE)
+# save(modResults, modSumm, ivAll, dv, ivs, ivsName, dvName, file=paste0('B',fileFE))
 ##########################################################################################
 
 # ##########################################################################################
