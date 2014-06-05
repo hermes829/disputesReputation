@@ -28,55 +28,6 @@ modelData = modelData[modelData$year>1986,]
 #######################################################################################
 
 #######################################################################################
-# Detrending
-modelData$year1=modelData$year; modelData$year2=modelData$year^2
-modelData$year3=modelData$year^3; modelData$year4=modelData$year^4
-
-t=lm(kaopen ~ year1 + year2 + factor(ccode)-1, data=modelData)
-t=lm(kaopen ~ poly(year, 4) + factor(ccode)-1, data=modelData)
-summary(t)
-summary(t)$'coefficients'[paste0('year',1:4),]
-
-t=lm(Investment_Profile ~ year1 + year2  + year3 + factor(ccode)-1, data=modelData)
-t=lm(Investment_Profile ~ poly(year, 3, raw=TRUE) + factor(ccode)-1, data=modelData)
-# summary(t)$'coefficients'[paste0('year',1:3),]
-modelData$resid=t$residuals
-
-temp=summaryBy(Investment_Profile + resid ~ year, data=modelData, FUN=mean,na.rm=T)
-plot(temp$year,temp$resid.mean, type='l')
-plot(temp$year,temp$Investment_Profile.mean, type='l')
-
-fm=function(var,time,roots){formula(paste0(
-	paste0(var, '~'), paste0(time,1:roots,collapse='+'),'+factor(ccode)-1'))}
-sumLM=function(x,data){summary(lm(x,data))$'coefficients'}
-retSig=function(lmS, sig=0.05){lmS[which(lmS[,4]<=sig),]}
-
-dv='kaopen'
-roots=4
-time='year'
-data=modelData
-
-# qDetrend=function(data,dv,time)
-
-o=lapply(1:roots,function(x) FUN=retSig(sumLM(fm(dv,time,x), modelData)))
-
-root=roots
-while(root>0){
-
-	x=try( o[[root]][paste0(time,1:root),], silent=T )
-	if(class(x) =='try-error'){ 
-		resid=lm(fm(dv,time,root), data=modelData  )$residuals		
-		root=root-1  
-	}
-	 else { 
-	 resid=lm(fm(dv,time,root), data=modelData  )$residuals
-	 root=0
-	  }
-}
-
-#######################################################################################
-
-#######################################################################################
 # Setting up models
 
 dv='Investment_Profile'; dvName='Investment Profile'; fileRE='LinvProfRE.rda'; fileFE='LinvProfFE.rda'
