@@ -90,8 +90,9 @@ summPreds$disp=modNames
 temp=ggplot(summPreds, aes(x=factor(scen), y=mean,ymax=hi,ymin=lo,group=disp))
 temp=temp+geom_linerange() + geom_point() + facet_wrap(~ disp)
 temp=temp+ylab('Predicted Investment Profile Rating')
-temp=temp+scale_x_discrete('',labels=c('A'='Low Dispute(s)',
-  'B'='High Dispute(s)'))
+temp=temp+scale_x_discrete('',labels=c(
+  'A'='Low Dispute(s)', 'B'='High Dispute(s)'))
+  # 'A'='Low', 'B'='High'))
 temp = temp + theme(
   # legend.position='none', legend.title=element_blank(),
   axis.ticks=element_blank(), panel.grid.major=element_blank(),
@@ -99,51 +100,4 @@ temp = temp + theme(
   # ,panel.border = element_blank() ,axis.line = element_line(color = 'black')
   )
 temp
-setwd(pathPaper)
-pdf(file='simResults.pdf',width=8,height=6)
-temp
-dev.off()
-
-#   # One difference distribution
-#   diff=data.frame(modelPreds[,1]-modelPreds[,2]); colnames(diff)='value';diff$X2=1
-#   # diff=data.frame(modelExp[,1]-modelExp[,2]); colnames(diff)='value';diff$X2=1
-#   diffList[[ii]]=diff
-
-#   # Dist for each scenario
-#   # diff=melt(modelPreds)[,-1]
-
-#   ggMeans = ddply(diff, .(X2), summarise, sMean=mean(value))
-#   ggDensity = ddply(diff, .(X2), .fun=function(x){
-#     tmp = density(x$value); x1 = tmp$x; y1 = tmp$y
-#     q95 = x1 >= quantile(x$value,0.025) & x1 <= quantile(x$value,0.975)
-#     q90 = x1 >= quantile(x$value,0.05) & x1 <= quantile(x$value,0.95)
-#     data.frame(x=x1,y=y1,q95=q95, q90=q90) } )
-
-#   ggMeans$X2 = as.factor(ggMeans$X2)
-#   ggDensity$X2 = as.factor(ggDensity$X2)
-
-#   temp = ggplot()
-#   temp = temp + geom_line(data=ggDensity, aes(x=x,y=y),size=1.5)
-#   # temp = temp + geom_line(data=ggDensity, aes(x=x,y=y,fill=X2,color=X2,linetype=X2),size=1.5)
-#   temp = temp + geom_vline(data=ggMeans,
-#     aes(xintercept=sMean),linetype='solid',size=1)
-#     # aes(xintercept=sMean,color=X2),linetype='solid',size=1)
-#   temp = temp + geom_ribbon(data=subset(ggDensity,q95),
-#     aes(x=x,ymax=y),ymin=0,alpha=0.3)
-#     # aes(x=x,ymax=y,fill=X2),ymin=0,alpha=0.3)
-#   temp = temp + geom_ribbon(data=subset(ggDensity,q90),
-#     aes(x=x,ymax=y),ymin=0,alpha=0.6)
-#     # aes(x=x,ymax=y,fill=X2),ymin=0,alpha=0.6)
-#   temp = temp + xlab(ylabel) + ylab('Density')
-#   temp = temp + theme(legend.position='none', legend.title=element_blank(),
-#     axis.ticks = element_blank(), 
-#     panel.grid.major=element_blank(), panel.grid.minor=element_blank(), 
-#     axis.title.x = element_text(vjust=-0.2), 
-#     axis.title.y = element_text(vjust=0.2),
-#     panel.border = element_blank(), axis.line = element_line(color='black'))
-#   # temp
-#   diffPlots[[ii]]=temp
-# }
-
-# multiplot(diffPlots, 2)
-# #########################################################################################
+#########################################################################################

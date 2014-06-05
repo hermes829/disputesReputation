@@ -99,30 +99,33 @@ mData=data.frame( cbind(
 
 slice=modelData[modelData$year==max(modelData$year),]
 mData$bits=slice$ratifiedbits[match(mData$ccode,slice$ccode)]
-mData$cum_alltreaty=slice$cum_alltreaty[match(mData$ccode,slice$ccode)]
+mData$disputes=slice$cum_alltreaty[match(mData$ccode,slice$ccode)]
 
 # Creating map
 gpclibPermit()
-require(RColorBrewer)
-mColors <- brewer.pal(9, 'Blues')
+require(RColorBrewer); require(grid)
+mColors <- brewer.pal(9, 'Greys')
 ggMap = fortify(mapData, region="GWCODE")
 ggMap=merge(ggMap, mData, by.x='id',by.y='oid',all.x=T)
 
 temp <- ggplot(ggMap, aes(long,lat,group=group,fill=bits))
+# temp <- ggplot(ggMap, aes(long,lat,group=group,fill=disputes))
 temp <- temp + geom_polygon(colour='black',lwd=1e-2) 
 temp <- temp + scale_fill_gradient(
-	limits=c(0,105),
+	limits=c(0,max(mData$bits,na.rm=T)),
+	# limits=c(0,max(mData$disputes,na.rm=T)),
 	low=mColors[1],high=mColors[9], 
 	space = "Lab", na.value = "grey50", guide = "colourbar")
 temp <- temp + labs(x='',y='',
-	title='Cumul. BITs Ratified by 2011')
+	title='BITs Ratified by 2011')
+	# title='Disputes by 2011')
 temp <- temp + theme(
 	axis.text=element_blank(), axis.ticks = element_blank(),
 	panel.border = element_blank(), 
 	panel.grid.major=element_blank(), panel.grid.minor=element_blank(),     
 	legend.position="top", legend.title=element_blank(),
 	panel.background = element_rect(fill="white")
-	# ,legend.key.width=unit(3,'cm')
+	,legend.key.width=unit(3,'cm')
 	)
 temp
 #############################################################################
