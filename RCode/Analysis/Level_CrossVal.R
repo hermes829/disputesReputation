@@ -24,6 +24,48 @@ modelData = modelData[modelData$upperincome==0,]
 modelData = modelData[modelData$year>1986,]
 ###############################################################################
 
+#######################################################################################
+# Detrend
+t=lm(Investment_Profile ~ poly(year,3, raw=TRUE) + factor(ccode)-1, data=modelData)
+modelData$Investment_Profile[!is.na(modelData$Investment_Profile)]=t$residuals
+
+t=lm(pch_gdp ~ poly(year,3, raw=TRUE) + factor(ccode)-1, data=modelData)
+modelData$pch_gdp[!is.na(modelData$pch_gdp)]=t$residuals
+
+t=lm(LNpopulation ~ poly(year,2, raw=TRUE) + factor(ccode)-1, data=modelData)
+modelData$LNpopulation[!is.na(modelData$LNpopulation)]=t$residuals
+
+t=lm(lncinflation ~ poly(year,4, raw=TRUE) + factor(ccode)-1, data=modelData)
+modelData$lncinflation[!is.na(modelData$lncinflation)]=t$residuals
+
+t=lm(Internal_Conflict ~ poly(year,3, raw=TRUE) + factor(ccode)-1, data=modelData)
+modelData$Internal_Conflict[!is.na(modelData$Internal_Conflict)]=t$residuals
+
+t=lm(ratifiedbits ~ poly(year,3, raw=TRUE) + factor(ccode)-1, data=modelData)
+modelData$ratifiedbits[!is.na(modelData$ratifiedbits)]=t$residuals
+
+t=lm(kaopen ~ poly(year,2, raw=TRUE) + factor(ccode)-1, data=modelData)
+modelData$kaopen[!is.na(modelData$kaopen)]=t$residuals
+
+t=lm(polity ~ poly(year,3, raw=TRUE) + factor(ccode)-1, data=modelData)
+modelData$polity[!is.na(modelData$polity)]=t$residuals
+
+t=lm(cum_kicsidcase ~ poly(year,2, raw=TRUE) + factor(ccode)-1, data=modelData)
+modelData$cum_kicsidcase[!is.na(modelData$cum_kicsidcase)]=t$residuals
+
+t=lm(cum_icsidtreaty_case ~ poly(year,2, raw=TRUE) + factor(ccode)-1, data=modelData)
+modelData$cum_icsidtreaty_case[!is.na(modelData$cum_icsidtreaty_case)]=t$residuals
+
+t=lm(cumunsettled_icsid_treaty ~ poly(year,2, raw=TRUE) + factor(ccode)-1, data=modelData)
+modelData$cumunsettled_icsid_treaty[!is.na(modelData$cumunsettled_icsid_treaty)]=t$residuals
+
+t=lm(cumcunctadcase ~ poly(year,2, raw=TRUE) + factor(ccode)-1, data=modelData)
+modelData$cumcunctadcase[!is.na(modelData$cumcunctadcase)]=t$residuals
+
+t=lm(cum_alltreaty ~ poly(year,2, raw=TRUE) + factor(ccode)-1, data=modelData)
+modelData$cum_alltreaty[!is.na(modelData$cum_alltreaty)]=t$residuals
+#######################################################################################
+
 ###############################################################################
 # Model setup
 # Set up models
@@ -53,10 +95,22 @@ modForm=lapply(ivAll, function(x)
 
 ###############################################################################
 # Run cross val models
+
+# Cross val by cuts of inv prof var
+# avgRat=summaryBy(Investment_Profile ~ ccode, FUN=mean, na.rm=T, data=modelData)
+# # slice=na.omit(modelData[,c('ccode','year','Investment_Profile')])
+# # cyrs=numSM(paste0(unique(slice$ccode),ddply(slice, .(ccode), summarize, min(year))[,2]))
+
+# avgRat=modelData[which(modelData$cyear %in% cyrs),c('ccode','Investment_Profile')]
+# avgRat=avgRat[order(avgRat[,2]),]
+# avgRat$rand=c(1,rep(1:5,each=18))
+# modelData$rand=avgRat$rand[match(modelData$ccode,avgRat$ccode)]
+
+# Random cross val
 modelCntries=unique(modelData$ccode)
 set.seed(round(runif(1,100,10000),0))
 randSamp=data.frame(cbind(ccode=modelCntries, 
-	rand=sample(1:5,length(modelCntries),replace=T)))
+	rand=sample(1:9,length(modelCntries),replace=T)))
 modelData$rand=randSamp$rand[match(modelData$ccode,randSamp$ccode)]
 
 rands=sort(unique(na.omit(modelData[,'rand'])))
@@ -98,8 +152,8 @@ temp = ggcoefplot(coefData=coefCross,
   facetBreaks=NULL, facetLabs=NULL
   )
 temp
-setwd(pathPaper)
-tikz(file='crossVal.tex',width=8,height=6,standAlone=T)
-temp
-dev.off()
-###############################################################################
+# setwd(pathPaper)
+# tikz(file='crossVal.tex',width=8,height=6,standAlone=T)
+# temp
+# dev.off()
+# ###############################################################################
