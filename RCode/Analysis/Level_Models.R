@@ -43,14 +43,15 @@ for(jj in 1:length(detVars)){
 	detVar=NULL
 
 	for(ii in cntries){
-		varSlice$dv=varSlice[,detVars[jj]]
 
+		varSlice$dv=varSlice[,detVars[jj]]
 		r=lapply(1:4, function(x) FUN=
 			lm(dv ~ poly(year,x,raw=TRUE), 
 				data=varSlice[which(varSlice$ccode==ii),]) )
 
 		# remove list items that had errors
-		roots=unlist(lapply(r, function(x) FUN=nrow(coeftest(x))-1))
+		sig=0
+		roots=unlist(lapply(r, function(x) FUN=nrow(na.omit(coeftest(x)))-1 ))
 		if(roots[4]==4) { s=r[[4]]; ro=4
 			} else {
 				if(roots[3]==3) { s=r[[3]]; ro=3
@@ -58,12 +59,13 @@ for(jj in 1:length(detVars)){
 				if(roots[2]==2) {s=r[[2]]; ro=2
 			} else {
 				if(roots[1]==1) {s=r[[1]]; ro=1
-			} 
-		} } } 
+			} else {
+				if(roots[1]!=1) {sig=1; ro=0
+			}
+		} } } } 
 
 		# check sig
 		coefs=lapply(r, function(x) FUN=coeftest(x))
-		sig=0
 		while(sig==0){
 
 			if(ro!=1){
@@ -84,7 +86,14 @@ for(jj in 1:length(detVars)){
 	detDat[[jj]]=varSlice
 }
 
+# Unpack results into original dataframe
+names(detDat)=detVars
+for(ii in detVars){
+	modelData[,ii] = detDat[[ii]][,'detVar'][match( modelData$cyear, detDat[[ii]][,'cyear']  )]
+}
+#######################################################################################
 
+#######################################################################################
 # Detrend with fixed effects
 t=lm(Investment_Profile ~ poly(year,3, raw=TRUE) + factor(ccode)-1, data=modelData)
 modelData$Investment_Profile[!is.na(modelData$Investment_Profile)]=t$residuals
