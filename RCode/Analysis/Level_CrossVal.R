@@ -26,9 +26,10 @@ modelData = modelData[modelData$year>1986,]
 
 # #######################################################################################
 # # Detrend by country
-# detVars=c('Investment_Profile', 'pch_gdp' ,'LNpopulation' ,'lncinflation' , 'Internal_Conflict', 
-# 'ratifiedbits' ,'kaopen' ,'polity', 'cum_kicsidcase','cum_icsidtreaty_case', 
-# 'cumunsettled_icsid_treaty','cumcunctadcase','cum_alltreaty')
+# detVars=c('Investment_Profile', 'lag_pch_gdp' ,'lag_LNpopulation', 
+# 	'lag_lncinflation' , 'lag_Internal_Conflict', 'lag_ratifiedbits', 
+# 	'lag_kaopen' ,'lag_polity', 'lag_cum_kicsidcase','lag_cum_icsidtreaty_case', 
+# 	'lag_cumunsettled_icsid_treaty','lag_cumcunctadcase','lag_cum_alltreaty')
 
 # detDat=list()
 
@@ -176,7 +177,7 @@ modForm=lapply(ivAll, function(x)
 modelCntries=unique(modelData$ccode)
 set.seed(round(runif(1,100,10000),0))
 randSamp=data.frame(cbind(ccode=modelCntries, 
-	rand=sample(1:5,length(modelCntries),replace=T)))
+	rand=sample(1:6,length(modelCntries),replace=T)))
 modelData$rand=randSamp$rand[match(modelData$ccode,randSamp$ccode)]
 
 rands=sort(unique(na.omit(modelData[,'rand'])))

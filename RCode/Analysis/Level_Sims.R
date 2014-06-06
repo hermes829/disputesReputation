@@ -25,6 +25,7 @@ modelData = modelData[modelData$year>1986,]
 ##########################################################################################
 setwd(pathResults)
 load('LinvProfFE.rda'); dv='Investment Profile'; modNames=ivsName[1:5]
+# load('detLinvProfFE.rda'); dv='Investment Profile'; modNames=ivsName[1:5]
 
 # diffPlots=list()
 preds=NULL
@@ -52,24 +53,38 @@ for(ii in 1:length(modResults)){
   # Plotting density distributions
   vi=varDef[1,1]
   sims=10000
-  simData=na.omit(modelData)
-  # vRange=quantile(simData[,vi],probs=seq(0,1,.1))[c(2,10)]
-  vRange=quantile(simData[,vi],probs=seq(0,1,.1))[c(1,11)]
+  simData=na.omit(modelData[,c(varDef[,1],'Investment_Profile')])
+  vRange=quantile(simData[,vi],probs=seq(0,1,.01))[c('0%','99%')]
+  # print(cbind(table(simData[,vi]), round(table(simData[,vi])/sum(table(simData[,vi])),3)*100))
+  # vrange=c(0,10)
   intercept=FALSE
   specX=FALSE
   specY=TRUE
   ylabel="Inv. Profile$_{t}$"
 
-  # Set up scenario
-  scenCol = length(vars); scenRow = length(vRange)
-  scenario = matrix(NA, nrow=scenRow, ncol=scenCol)
-  colnames(scenario) = c(vars)
-  scenario[,vi] = vRange
+  # # Set up disputes scenario
+  # scenCol = length(vars); scenRow = length(vRange)
+  # scenario = matrix(NA, nrow=scenRow, ncol=scenCol)
+  # colnames(scenario) = c(vars)
+  # scenario[,vi] = vRange
 
+  # viPos = which(vi==vars)
+  # ovals = apply(simData[,vars[-viPos]], 2, median)
+  # scenario[,vars[-viPos]] = matrix(rep(ovals,scenRow),nrow=scenRow,byrow=TRUE)
+  # if(intercept){scenario = cbind('(Intercept)'=1, scenario)}
+  # vars2 = colnames(scenario)
+
+  # Macro econ scenario
   viPos = which(vi==vars)
-  ovals = apply(simData[,vars[-viPos]], 2, median)
-  scenario[,vars[-viPos]] = matrix(rep(ovals,scenRow),nrow=scenRow,byrow=TRUE)
-  if(intercept){scenario = cbind('(Intercept)'=1, scenario)}
+  qtS=function(x,p=0.9){quantile(x,probs=p)}
+  scenario=rbind(
+   apply(simData[,vars[-viPos]], 2, function(x) FUN=qtS(x,0.1)),
+   apply(simData[,vars[-viPos]], 2, function(x) FUN=qtS(x,0.9))
+    )
+  scenario[,5]=median(simData$lag_ratifiedbits)
+  scenario[,4]=rev(scenario[,4]) # inflation
+  scenario=cbind(vRange, scenario)
+  colnames(scenario)[1]=vi
   vars2 = colnames(scenario)
 
   draws = mvrnorm(n = sims, estimates[vars2], varcov[vars2,vars2])
@@ -86,13 +101,16 @@ summPreds=apply(preds, 2, function(x) FUN= rbind(mean(x), qSM(x))  )
 summPreds=data.frame(t(summPreds)); colnames(summPreds)=c('mean','lo','hi')
 summPreds$scen=rep(LETTERS[1:2],nrow(summPreds)/2)
 summPreds$disp=modNames
+summPreds = summPreds[which(!summPreds$disp %in% c('UNCTAD','ICSID-UNCTAD')),]
 
 temp=ggplot(summPreds, aes(x=factor(scen), y=mean,ymax=hi,ymin=lo,group=disp))
 temp=temp+geom_linerange() + geom_point() + facet_wrap(~ disp)
 temp=temp+ylab('Predicted Investment Profile Rating')
 temp=temp+scale_x_discrete('',labels=c(
-  'A'='Low Dispute(s)', 'B'='High Dispute(s)'))
+  # 'A'='Zero Disputes', 'B'='High Disputes'))  
+  'A'='Zero Disputes \n & Weak \n Fundamentals', 'B'='High Disputes \n & Strong \n Fundamentals'))
   # 'A'='Low', 'B'='High'))
+temp=temp+scale_y_continuous(breaks=c(0,4,8,12),labels=c(0,4,8,12))
 temp = temp + theme(
   # legend.position='none', legend.title=element_blank(),
   axis.ticks=element_blank(), panel.grid.major=element_blank(),
@@ -100,4 +118,13 @@ temp = temp + theme(
   # ,panel.border = element_blank() ,axis.line = element_line(color = 'black')
   )
 temp
+
+
+#########################################################################################
+
+#########################################################################################
+# check if they exist
+scenario
+slice=unique(modelData[ which(modelData$lag_cum_alltreaty > 7), 'cname' ])
+modelData[modelData$cname=='ROMANIA', colnames(scenario)]
 #########################################################################################
