@@ -24,47 +24,113 @@ modelData = modelData[modelData$upperincome==0,]
 modelData = modelData[modelData$year>1986,]
 ###############################################################################
 
-#######################################################################################
-# Detrend
-t=lm(Investment_Profile ~ poly(year,3, raw=TRUE) + factor(ccode)-1, data=modelData)
-modelData$Investment_Profile[!is.na(modelData$Investment_Profile)]=t$residuals
+# #######################################################################################
+# # Detrend by country
+# detVars=c('Investment_Profile', 'pch_gdp' ,'LNpopulation' ,'lncinflation' , 'Internal_Conflict', 
+# 'ratifiedbits' ,'kaopen' ,'polity', 'cum_kicsidcase','cum_icsidtreaty_case', 
+# 'cumunsettled_icsid_treaty','cumcunctadcase','cum_alltreaty')
 
-t=lm(pch_gdp ~ poly(year,3, raw=TRUE) + factor(ccode)-1, data=modelData)
-modelData$pch_gdp[!is.na(modelData$pch_gdp)]=t$residuals
+# detDat=list()
 
-t=lm(LNpopulation ~ poly(year,2, raw=TRUE) + factor(ccode)-1, data=modelData)
-modelData$LNpopulation[!is.na(modelData$LNpopulation)]=t$residuals
+# for(jj in 1:length(detVars)){
 
-t=lm(lncinflation ~ poly(year,4, raw=TRUE) + factor(ccode)-1, data=modelData)
-modelData$lncinflation[!is.na(modelData$lncinflation)]=t$residuals
+# 	varSlice=na.omit(modelData[,c(detVars[jj], 'year', 'ccode', 'cyear')])
+# 	cntries=unique(varSlice$ccode)
 
-t=lm(Internal_Conflict ~ poly(year,3, raw=TRUE) + factor(ccode)-1, data=modelData)
-modelData$Internal_Conflict[!is.na(modelData$Internal_Conflict)]=t$residuals
+# 	detVar=NULL
 
-t=lm(ratifiedbits ~ poly(year,3, raw=TRUE) + factor(ccode)-1, data=modelData)
-modelData$ratifiedbits[!is.na(modelData$ratifiedbits)]=t$residuals
+# 	for(ii in cntries){
 
-t=lm(kaopen ~ poly(year,2, raw=TRUE) + factor(ccode)-1, data=modelData)
-modelData$kaopen[!is.na(modelData$kaopen)]=t$residuals
+# 		varSlice$dv=varSlice[,detVars[jj]]
+# 		r=lapply(1:4, function(x) FUN=
+# 			lm(dv ~ poly(year,x,raw=TRUE), 
+# 				data=varSlice[which(varSlice$ccode==ii),]) )
 
-t=lm(polity ~ poly(year,3, raw=TRUE) + factor(ccode)-1, data=modelData)
-modelData$polity[!is.na(modelData$polity)]=t$residuals
+# 		# remove list items that had errors
+# 		sig=0
+# 		roots=unlist(lapply(r, function(x) FUN=nrow(na.omit(coeftest(x)))-1 ))
+# 		if(roots[4]==4) { s=r[[4]]; ro=4
+# 			} else {
+# 				if(roots[3]==3) { s=r[[3]]; ro=3
+# 			} else {
+# 				if(roots[2]==2) {s=r[[2]]; ro=2
+# 			} else {
+# 				if(roots[1]==1) {s=r[[1]]; ro=1
+# 			} else {
+# 				if(roots[1]!=1) {sig=1; ro=0
+# 			}
+# 		} } } } 
 
-t=lm(cum_kicsidcase ~ poly(year,2, raw=TRUE) + factor(ccode)-1, data=modelData)
-modelData$cum_kicsidcase[!is.na(modelData$cum_kicsidcase)]=t$residuals
+# 		# check sig
+# 		coefs=lapply(r, function(x) FUN=coeftest(x))
+# 		while(sig==0){
 
-t=lm(cum_icsidtreaty_case ~ poly(year,2, raw=TRUE) + factor(ccode)-1, data=modelData)
-modelData$cum_icsidtreaty_case[!is.na(modelData$cum_icsidtreaty_case)]=t$residuals
+# 			if(ro!=1){
+# 					sig=sum(coefs[[ro]][paste0('poly(year, x, raw = TRUE)',1:ro),4]<0.05)/ro
+# 					} else { 
+# 						sig=sum(coefs[[ro]]['poly(year, x, raw = TRUE)',4]<0.05)/ro
+# 					}
+# 			if(sig!=1){ro=ro-1}
+# 			if(ro==0){sig=1}
+# 		}
+		
+# 		# Create det var
+# 		if(ro>0){ t=r[[ro]]$'residuals'  } else { t = varSlice[which(varSlice$ccode==ii), detVars[jj] ] }
+# 		detVar=append(detVar,t)
+# 	}
 
-t=lm(cumunsettled_icsid_treaty ~ poly(year,2, raw=TRUE) + factor(ccode)-1, data=modelData)
-modelData$cumunsettled_icsid_treaty[!is.na(modelData$cumunsettled_icsid_treaty)]=t$residuals
+# 	varSlice$detVar=detVar
+# 	detDat[[jj]]=varSlice
+# }
 
-t=lm(cumcunctadcase ~ poly(year,2, raw=TRUE) + factor(ccode)-1, data=modelData)
-modelData$cumcunctadcase[!is.na(modelData$cumcunctadcase)]=t$residuals
+# # Unpack results into original dataframe
+# names(detDat)=detVars
+# for(ii in detVars){
+# 	modelData[,ii] = detDat[[ii]][,'detVar'][match( modelData$cyear, detDat[[ii]][,'cyear']  )]
+# }
+# #######################################################################################
 
-t=lm(cum_alltreaty ~ poly(year,2, raw=TRUE) + factor(ccode)-1, data=modelData)
-modelData$cum_alltreaty[!is.na(modelData$cum_alltreaty)]=t$residuals
-#######################################################################################
+# #######################################################################################
+# # Detrend with fixed effects
+# t=lm(Investment_Profile ~ poly(year,3, raw=TRUE) + factor(ccode)-1, data=modelData)
+# modelData$Investment_Profile[!is.na(modelData$Investment_Profile)]=t$residuals
+
+# t=lm(pch_gdp ~ poly(year,3, raw=TRUE) + factor(ccode)-1, data=modelData)
+# modelData$pch_gdp[!is.na(modelData$pch_gdp)]=t$residuals
+
+# t=lm(LNpopulation ~ poly(year,2, raw=TRUE) + factor(ccode)-1, data=modelData)
+# modelData$LNpopulation[!is.na(modelData$LNpopulation)]=t$residuals
+
+# t=lm(lncinflation ~ poly(year,4, raw=TRUE) + factor(ccode)-1, data=modelData)
+# modelData$lncinflation[!is.na(modelData$lncinflation)]=t$residuals
+
+# t=lm(Internal_Conflict ~ poly(year,3, raw=TRUE) + factor(ccode)-1, data=modelData)
+# modelData$Internal_Conflict[!is.na(modelData$Internal_Conflict)]=t$residuals
+
+# t=lm(ratifiedbits ~ poly(year,3, raw=TRUE) + factor(ccode)-1, data=modelData)
+# modelData$ratifiedbits[!is.na(modelData$ratifiedbits)]=t$residuals
+
+# t=lm(kaopen ~ poly(year,2, raw=TRUE) + factor(ccode)-1, data=modelData)
+# modelData$kaopen[!is.na(modelData$kaopen)]=t$residuals
+
+# t=lm(polity ~ poly(year,3, raw=TRUE) + factor(ccode)-1, data=modelData)
+# modelData$polity[!is.na(modelData$polity)]=t$residuals
+
+# t=lm(cum_kicsidcase ~ poly(year,2, raw=TRUE) + factor(ccode)-1, data=modelData)
+# modelData$cum_kicsidcase[!is.na(modelData$cum_kicsidcase)]=t$residuals
+
+# t=lm(cum_icsidtreaty_case ~ poly(year,2, raw=TRUE) + factor(ccode)-1, data=modelData)
+# modelData$cum_icsidtreaty_case[!is.na(modelData$cum_icsidtreaty_case)]=t$residuals
+
+# t=lm(cumunsettled_icsid_treaty ~ poly(year,2, raw=TRUE) + factor(ccode)-1, data=modelData)
+# modelData$cumunsettled_icsid_treaty[!is.na(modelData$cumunsettled_icsid_treaty)]=t$residuals
+
+# t=lm(cumcunctadcase ~ poly(year,2, raw=TRUE) + factor(ccode)-1, data=modelData)
+# modelData$cumcunctadcase[!is.na(modelData$cumcunctadcase)]=t$residuals
+
+# t=lm(cum_alltreaty ~ poly(year,2, raw=TRUE) + factor(ccode)-1, data=modelData)
+# modelData$cum_alltreaty[!is.na(modelData$cum_alltreaty)]=t$residuals
+# #######################################################################################
 
 ###############################################################################
 # Model setup
@@ -110,7 +176,7 @@ modForm=lapply(ivAll, function(x)
 modelCntries=unique(modelData$ccode)
 set.seed(round(runif(1,100,10000),0))
 randSamp=data.frame(cbind(ccode=modelCntries, 
-	rand=sample(1:9,length(modelCntries),replace=T)))
+	rand=sample(1:5,length(modelCntries),replace=T)))
 modelData$rand=randSamp$rand[match(modelData$ccode,randSamp$ccode)]
 
 rands=sort(unique(na.omit(modelData[,'rand'])))
