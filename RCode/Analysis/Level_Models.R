@@ -27,72 +27,72 @@ modelData = modelData[modelData$upperincome==0,]
 modelData = modelData[modelData$year>1986,]
 #######################################################################################
 
-#######################################################################################
-# Detrend by country
-detVars=c('Investment_Profile', 'lag_pch_gdp' ,'lag_LNpopulation', 
-	'lag_lncinflation' , 'lag_Internal_Conflict', 'lag_ratifiedbits', 
-	'lag_kaopen' ,'lag_polity', 'lag_cum_kicsidcase','lag_cum_icsidtreaty_case', 
-	'lag_cumunsettled_icsid_treaty','lag_cumcunctadcase','lag_cum_alltreaty')
+# #######################################################################################
+# # Detrend by country
+# detVars=c('Investment_Profile', 'lag_pch_gdp' ,'lag_LNpopulation', 
+# 	'lag_lncinflation' , 'lag_Internal_Conflict', 'lag_ratifiedbits', 
+# 	'lag_kaopen' ,'lag_polity', 'lag_cum_kicsidcase','lag_cum_icsidtreaty_case', 
+# 	'lag_cumunsettled_icsid_treaty','lag_cumcunctadcase','lag_cum_alltreaty')
 
-detDat=list()
+# detDat=list()
 
-for(jj in 1:length(detVars)){
+# for(jj in 1:length(detVars)){
 
-	varSlice=na.omit(modelData[,c(detVars[jj], 'year', 'ccode', 'cyear')])
-	cntries=unique(varSlice$ccode)
+# 	varSlice=na.omit(modelData[,c(detVars[jj], 'year', 'ccode', 'cyear')])
+# 	cntries=unique(varSlice$ccode)
 
-	detVar=NULL
+# 	detVar=NULL
 
-	for(ii in cntries){
+# 	for(ii in cntries){
 
-		varSlice$dv=varSlice[,detVars[jj]]
-		r=lapply(1:4, function(x) FUN=
-			lm(dv ~ poly(year,x,raw=TRUE), 
-				data=varSlice[which(varSlice$ccode==ii),]) )
+# 		varSlice$dv=varSlice[,detVars[jj]]
+# 		r=lapply(1:4, function(x) FUN=
+# 			lm(dv ~ poly(year,x,raw=TRUE), 
+# 				data=varSlice[which(varSlice$ccode==ii),]) )
 
-		# remove list items that had errors
-		sig=0
-		roots=unlist(lapply(r, function(x) FUN=nrow(na.omit(coeftest(x)))-1 ))
-		if(roots[4]==4) { s=r[[4]]; ro=4
-			} else {
-				if(roots[3]==3) { s=r[[3]]; ro=3
-			} else {
-				if(roots[2]==2) {s=r[[2]]; ro=2
-			} else {
-				if(roots[1]==1) {s=r[[1]]; ro=1
-			} else {
-				if(roots[1]!=1) {sig=1; ro=0
-			}
-		} } } } 
+# 		# remove list items that had errors
+# 		sig=0
+# 		roots=unlist(lapply(r, function(x) FUN=nrow(na.omit(coeftest(x)))-1 ))
+# 		if(roots[4]==4) { s=r[[4]]; ro=4
+# 			} else {
+# 				if(roots[3]==3) { s=r[[3]]; ro=3
+# 			} else {
+# 				if(roots[2]==2) {s=r[[2]]; ro=2
+# 			} else {
+# 				if(roots[1]==1) {s=r[[1]]; ro=1
+# 			} else {
+# 				if(roots[1]!=1) {sig=1; ro=0
+# 			}
+# 		} } } } 
 
-		# check sig
-		coefs=lapply(r, function(x) FUN=coeftest(x))
-		while(sig==0){
+# 		# check sig
+# 		coefs=lapply(r, function(x) FUN=coeftest(x))
+# 		while(sig==0){
 
-			if(ro!=1){
-					sig=sum(coefs[[ro]][paste0('poly(year, x, raw = TRUE)',1:ro),4]<0.05)/ro
-					} else { 
-						sig=sum(coefs[[ro]]['poly(year, x, raw = TRUE)',4]<0.05)/ro
-					}
-			if(sig!=1){ro=ro-1}
-			if(ro==0){sig=1}
-		}
+# 			if(ro!=1){
+# 					sig=sum(coefs[[ro]][paste0('poly(year, x, raw = TRUE)',1:ro),4]<0.05)/ro
+# 					} else { 
+# 						sig=sum(coefs[[ro]]['poly(year, x, raw = TRUE)',4]<0.05)/ro
+# 					}
+# 			if(sig!=1){ro=ro-1}
+# 			if(ro==0){sig=1}
+# 		}
 		
-		# Create det var
-		if(ro>0){ t=r[[ro]]$'residuals'  } else { t = varSlice[which(varSlice$ccode==ii), detVars[jj] ] }
-		detVar=append(detVar,t)
-	}
+# 		# Create det var
+# 		if(ro>0){ t=r[[ro]]$'residuals'  } else { t = varSlice[which(varSlice$ccode==ii), detVars[jj] ] }
+# 		detVar=append(detVar,t)
+# 	}
 
-	varSlice$detVar=detVar
-	detDat[[jj]]=varSlice
-}
+# 	varSlice$detVar=detVar
+# 	detDat[[jj]]=varSlice
+# }
 
-# Unpack results into original dataframe
-names(detDat)=detVars
-for(ii in detVars){
-	modelData[,ii] = detDat[[ii]][,'detVar'][match( modelData$cyear, detDat[[ii]][,'cyear']  )]
-}
-#######################################################################################
+# # Unpack results into original dataframe
+# names(detDat)=detVars
+# for(ii in detVars){
+# 	modelData[,ii] = detDat[[ii]][,'detVar'][match( modelData$cyear, detDat[[ii]][,'cyear']  )]
+# }
+# #######################################################################################
 
 # #######################################################################################
 # # Detrend with fixed effects
@@ -209,5 +209,5 @@ modSumm=lapply(modResults, function(x) FUN=coeftest(x,
 setwd(pathResults)
 # save(modResults, modSumm, ivAll, dv, ivs, ivsName, dvName, file=fileFE)
 # save(modResults, modSumm, ivAll, dv, ivs, ivsName, dvName, file=paste0('B',fileFE))
-save(modResults, modSumm, ivAll, dv, ivs, ivsName, dvName, file=paste0('det',fileFE))
+# save(modResults, modSumm, ivAll, dv, ivs, ivsName, dvName, file=paste0('det',fileFE))
 #######################################################################################
