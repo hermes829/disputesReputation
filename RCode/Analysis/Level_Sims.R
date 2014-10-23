@@ -25,9 +25,7 @@ modelData = modelData[modelData$year>1986,]
 ##########################################################################################
 setwd(pathResults)
 load('LinvProfFE.rda'); dv='Investment Profile'; modNames=ivsName[1:5]
-# load('detLinvProfFE.rda'); dv='Investment Profile'; modNames=ivsName[1:5]
 
-# diffPlots=list()
 preds=NULL
 for(ii in 1:length(modResults)){
 

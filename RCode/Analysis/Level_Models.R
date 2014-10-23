@@ -25,7 +25,6 @@ modelData=cbind(modelData,diffData)
 
 modelData = modelData[modelData$upperincome==0,]
 modelData = modelData[modelData$year>1986,]
-# modelData = modelData[which(!modelData$cname %in% c('ARGENTINA', 'ECUADOR')),]
 #######################################################################################
 
 #######################################################################################
@@ -44,8 +43,6 @@ ivOther=c(
 	,'ratifiedbits'	
 	,'kaopen'	
 	,'polity'
-	,'arg'
-	,'ecu'
 	)
 
 # Untrans IVs
@@ -65,8 +62,6 @@ ivOtherName=c(
 	,'Ratif. BITs'	
 	,'Capital Openness'	
 	,'Polity'
-	,'arg'
-	,'ecu'
 	)
 ivsName=c(ivDispName, ivOtherName)
 

@@ -17,9 +17,6 @@ modelData$cyear=numSM(modelData$cyear)
 modelData=lagDataSM(modelData, 'cyear', 'ccode', lagVars, 1)
 colnames(modelData)[(ncol(modelData)-1):ncol(modelData)]=paste0('lag_',lagVars)
 
-ivDisp=c('cum_kicsidcase','cum_icsidtreaty_case',
-	'cumunsettled_icsid_treaty','cumcunctadcase','cum_alltreaty' )
-
 modelData = modelData[modelData$upperincome==0,]
 modelData = modelData[modelData$year>1986,]
 ###############################################################################
@@ -28,6 +25,9 @@ modelData = modelData[modelData$year>1986,]
 # Model setup
 # Set up models
 dv='Investment_Profile'; dvName='Investment Profile'
+
+ivDisp=c('cum_kicsidcase','cum_icsidtreaty_case',
+	'cumunsettled_icsid_treaty','cumcunctadcase','cum_alltreaty' )
 
 # Other covariates
 ivOther=c(
@@ -53,16 +53,6 @@ modForm=lapply(ivAll, function(x)
 
 ###############################################################################
 # Run cross val models
-
-# Cross val by cuts of inv prof var
-# avgRat=summaryBy(Investment_Profile ~ ccode, FUN=mean, na.rm=T, data=modelData)
-# # slice=na.omit(modelData[,c('ccode','year','Investment_Profile')])
-# # cyrs=numSM(paste0(unique(slice$ccode),ddply(slice, .(ccode), summarize, min(year))[,2]))
-
-# avgRat=modelData[which(modelData$cyear %in% cyrs),c('ccode','Investment_Profile')]
-# avgRat=avgRat[order(avgRat[,2]),]
-# avgRat$rand=c(1,rep(1:5,each=18))
-# modelData$rand=avgRat$rand[match(modelData$ccode,avgRat$ccode)]
 
 # Random cross val
 modelCntries=unique(modelData$ccode)
