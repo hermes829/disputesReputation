@@ -64,6 +64,8 @@ coefCross=NULL
 for(ii in 1:length(rands)){
 
 	slice=modelData[which(modelData$rand %in% rands[ii]), ]
+	print(paste0('cross ',rands[ii], ' has ', nrow(slice), ' obs from ',
+		length(unique(slice$ccode)), ' countries'))	
 
 	plmSlice=pdata.frame( slice[,c(dv, unique(unlist(ivAll)), 'ccode', 'year') ], 
 			index=c('ccode','year') )
@@ -74,11 +76,7 @@ for(ii in 1:length(rands)){
 	modSumm=lapply(modResults, function(x)
 		FUN=coeftest(x, vcov=vcovHC(x,method='arellano',cluster="group")))	
 
-	dispSumm=matrix(unlist(lapply(modSumm,function(x)FUN=numSM(x[1,]))), 
-		ncol=4, byrow=T, 
-		dimnames=list(
-			unlist(as.character(lapply(ivAll,function(x)FUN=x[1]))), 
-			c('Estimate','Std. Error','tstat','pval')) )
+	dispSumm=do.call(rbind, lapply(modSumm,function(x)FUN=x[1,,drop=FALSE]))
 	
 	coefCross=rbind(coefCross, cbind(dispSumm,cross=ii))
 }
@@ -99,8 +97,8 @@ temp = ggcoefplot(coefData=coefCross,
   facetBreaks=NULL, facetLabs=NULL
   )
 temp
-# setwd(pathPaper)
-# tikz(file='crossVal.tex',width=8,height=6,standAlone=T)
-# temp
-# dev.off()
-# ###############################################################################
+setwd(pathPaper)
+tikz(file='crossValLevel.tex',width=8,height=6,standAlone=T)
+temp
+dev.off()
+###############################################################################

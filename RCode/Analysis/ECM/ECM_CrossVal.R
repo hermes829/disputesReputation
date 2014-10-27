@@ -120,6 +120,8 @@ coefCross=NULL
 for(ii in 1:length(rands)){
 
 	slice=modelData[which(modelData$rand %in% rands[ii]), ]
+	print(paste0('cross ',rands[ii], ' has ', nrow(slice), ' obs from ',
+		length(unique(slice$ccode)), ' countries'))
 
 	modResults=lapply(modForm, function(x) FUN=panelAR(x, slice, 'ccode', 'year', 
 		autoCorr = c("psar1"), panelCorrMethod="pcse",rhotype='breg', complete.case=FALSE  ) )
@@ -143,13 +145,12 @@ temp = ggcoefplot(coefData=coefCross,
 	vars=VARS, varNames=VARSname,
   Noylabel=FALSE, coordFlip=TRUE, revVar=FALSE,
   facet=TRUE, facetColor=TRUE, colorGrey=TRUE,
-  facetName='cross', 
-  # facetDim=c(4,2),
+  facetName='cross', facetDim=c(4,2),
   facetBreaks=NULL, facetLabs=NULL
   )
 temp
-# setwd(pathPaper)
-# tikz(file='crossVal.tex',width=8,height=6,standAlone=T)
-# temp
-# dev.off()
+setwd(pathPaper)
+tikz(file='crossValECM.tex',width=8,height=6,standAlone=T)
+temp
+dev.off()
 ###############################################################################
