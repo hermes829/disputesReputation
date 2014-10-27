@@ -3,7 +3,7 @@
 ### Load setup
 source('/Users/janus829/Desktop/Research/RemmerProjects/disputesReputation/RCode/setup.R')
 
-##########################################################################################
+####################################################################
 # Load data
 # Directly loading in Karen's data
 setwd(paste(pathData, '/Components', sep=''))
@@ -20,9 +20,9 @@ colnames(modelData)[(ncol(modelData)-1):ncol(modelData)]=paste0('lag_',lagVars)
 
 modelData = modelData[modelData$upperincome==0,]
 modelData = modelData[modelData$year>1986,]
-##########################################################################################
+####################################################################
 
-##########################################################################################
+####################################################################
 setwd(pathResults)
 load('LinvProfFE.rda'); dv='Investment Profile'; modNames=ivsName[1:5]
 
@@ -36,30 +36,29 @@ for(ii in 1:length(modResults)){
   colnames(varcov)=rownames(varcov)=names(estimates)
   serrors=sqrt(diag( varcov ))
   error = sqrt(sum(x$residuals^2)/x$df.residual)
-  ##########################################################################################
+  ####################################################################
 
-  ##########################################################################################
+  ####################################################################
   varsTable=unlist(lapply(ivs, function(x) FUN=paste( c('lag_'), x, sep='' )))
   lagLabName=function(x){ paste(x, '$_{t-1}$', sep='') }
   varsTableNames=unlist( lapply(ivsName, function(x) FUN= c(lagLabName(x))) )
   varDef=cbind(varsTable, varsTableNames)
   varDef=varDef[c(ii,6:nrow(varDef)),]
-  ##########################################################################################
+  ####################################################################
 
-  #########################################################################################
+  ###################################################################
   # Distributions
   # Plotting density distributions
   vi=varDef[1,1]
   sims=10000
   simData=na.omit(modelData[,c(varDef[,1],'Investment_Profile')])
   vRange=quantile(simData[,vi],probs=seq(0,1,.01))[c('0%','99%')]
-  # print(cbind(table(simData[,vi]), round(table(simData[,vi])/sum(table(simData[,vi])),3)*100))
-  # vrange=c(0,10)
   intercept=FALSE
   specX=FALSE
   specY=TRUE
   ylabel="Inv. Profile$_{t}$"
 
+  # #########
   # # Set up disputes scenario
   # scenCol = length(vars); scenRow = length(vRange)
   # scenario = matrix(NA, nrow=scenRow, ncol=scenCol)
@@ -71,7 +70,9 @@ for(ii in 1:length(modResults)){
   # scenario[,vars[-viPos]] = matrix(rep(ovals,scenRow),nrow=scenRow,byrow=TRUE)
   # if(intercept){scenario = cbind('(Intercept)'=1, scenario)}
   # vars2 = colnames(scenario)
+  # #########  
 
+  ##########
   # Macro econ scenario
   viPos = which(vi==vars)
   qtS=function(x,p=0.9){quantile(x,probs=p)}
@@ -84,7 +85,10 @@ for(ii in 1:length(modResults)){
   scenario=cbind(vRange, scenario)
   colnames(scenario)[1]=vi
   vars2 = colnames(scenario)
+  ##########  
 
+  ##########
+  # Draw pred values from mvnorm
   draws = mvrnorm(n = sims, estimates[vars2], varcov[vars2,vars2])
   modelPreds = draws %*% t(scenario)
   modelExp = apply(modelPreds, 2, function(x) FUN=rnorm(sims, x, error))
@@ -99,30 +103,22 @@ summPreds=apply(preds, 2, function(x) FUN= rbind(mean(x), qSM(x))  )
 summPreds=data.frame(t(summPreds)); colnames(summPreds)=c('mean','lo','hi')
 summPreds$scen=rep(LETTERS[1:2],nrow(summPreds)/2)
 summPreds$disp=modNames
-summPreds = summPreds[which(!summPreds$disp %in% c('UNCTAD','ICSID-UNCTAD')),]
 
 temp=ggplot(summPreds, aes(x=factor(scen), y=mean,ymax=hi,ymin=lo,group=disp))
 temp=temp+geom_linerange() + geom_point() + facet_wrap(~ disp)
 temp=temp+ylab('Predicted Investment Profile Rating')
 temp=temp+scale_x_discrete('',labels=c(
   # 'A'='Zero Disputes', 'B'='High Disputes'))  
-  'A'='Zero Disputes \n & Weak \n Fundamentals', 'B'='High Disputes \n & Strong \n Fundamentals'))
-  # 'A'='Low', 'B'='High'))
+  'A'='Zero Disputes \n \\& Weak \n Fundamentals', 'B'='High Disputes \n \\& Strong \n Fundamentals'))
 temp=temp+scale_y_continuous(breaks=c(0,4,8,12),labels=c(0,4,8,12))
 temp = temp + theme(
-  # legend.position='none', legend.title=element_blank(),
   axis.ticks=element_blank(), panel.grid.major=element_blank(),
   panel.grid.minor=element_blank()
-  # ,panel.border = element_blank() ,axis.line = element_line(color = 'black')
   )
 temp
-
-
-#########################################################################################
-
-#########################################################################################
-# check if they exist
-scenario
-slice=unique(modelData[ which(modelData$lag_cum_alltreaty > 7), 'cname' ])
-modelData[modelData$cname=='ROMANIA', colnames(scenario)]
-#########################################################################################
+setwd(pathPaper)
+# tikz(file='simResults.tex',width=8,height=6,standAlone=T)
+tikz(file='dispVfund.tex',width=8,height=6,standAlone=T)
+temp
+dev.off()
+###################################################################

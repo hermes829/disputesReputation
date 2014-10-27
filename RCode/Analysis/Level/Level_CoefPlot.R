@@ -3,7 +3,7 @@
 ### Load setup
 source('/Users/janus829/Desktop/Research/RemmerProjects/disputesReputation/RCode/setup.R')
 
-##########################################################################################
+#############################################################
 # Directly loading in Karen's data
 setwd(paste(pathData, '/Components', sep=''))
 modelData=read.dta('Investment Profile Data.9.dta')
@@ -28,9 +28,9 @@ modelData=lagDataSM(modelData, 'cyear', 'ccode', ivDisp, 5)
 
 modelData = modelData[modelData$upperincome==0,]
 modelData = modelData[modelData$year>1986,]
-##########################################################################################
+#############################################################
 
-##########################################################################################
+#############################################################
 # Coef plot to show change over time
 
 # Set up models
@@ -99,4 +99,4 @@ setwd(pathPaper)
 tikz(file='lagEffect.tex',width=8,height=6,standAlone=T)
 temp
 dev.off()
-##########################################################################################
+#############################################################

@@ -11,7 +11,7 @@ Sys.info()["user"]=="janus829"
   pathCode="~/Desktop/Research/RemmerProjects/disputesReputation/RCode";
   pathLatex="~/Desktop/Research/RemmerProjects/disputesReputation/Latex"
   pathFunctions="~/Desktop/Prog Notes/R Functions"
-  pathPaper="~/Dropbox/Research/RemmerProjects/disputesReputation/IO"
+  pathPaper="~/Dropbox/Research/RemmerProjects/disputesReputation/IO/graphics"
 }
 
 load('~/Desktop/Research/BuildingPanelData/panel.rda')
