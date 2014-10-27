@@ -58,34 +58,34 @@ for(ii in 1:length(modResults)){
   specY=TRUE
   ylabel="Inv. Profile$_{t}$"
 
-  # #########
-  # # Set up disputes scenario
-  # scenCol = length(vars); scenRow = length(vRange)
-  # scenario = matrix(NA, nrow=scenRow, ncol=scenCol)
-  # colnames(scenario) = c(vars)
-  # scenario[,vi] = vRange
+  #########
+  # Set up disputes scenario
+  scenCol = length(vars); scenRow = length(vRange)
+  scenario = matrix(NA, nrow=scenRow, ncol=scenCol)
+  colnames(scenario) = c(vars)
+  scenario[,vi] = vRange
 
-  # viPos = which(vi==vars)
-  # ovals = apply(simData[,vars[-viPos]], 2, median)
-  # scenario[,vars[-viPos]] = matrix(rep(ovals,scenRow),nrow=scenRow,byrow=TRUE)
-  # if(intercept){scenario = cbind('(Intercept)'=1, scenario)}
-  # vars2 = colnames(scenario)
-  # #########  
-
-  ##########
-  # Macro econ scenario
   viPos = which(vi==vars)
-  qtS=function(x,p=0.9){quantile(x,probs=p)}
-  scenario=rbind(
-   apply(simData[,vars[-viPos]], 2, function(x) FUN=qtS(x,0.1)),
-   apply(simData[,vars[-viPos]], 2, function(x) FUN=qtS(x,0.9))
-    )
-  scenario[,5]=median(simData$lag_ratifiedbits)
-  scenario[,4]=rev(scenario[,4]) # inflation
-  scenario=cbind(vRange, scenario)
-  colnames(scenario)[1]=vi
+  ovals = apply(simData[,vars[-viPos]], 2, median)
+  scenario[,vars[-viPos]] = matrix(rep(ovals,scenRow),nrow=scenRow,byrow=TRUE)
+  if(intercept){scenario = cbind('(Intercept)'=1, scenario)}
   vars2 = colnames(scenario)
-  ##########  
+  #########  
+
+  # ##########
+  # # Macro econ scenario
+  # viPos = which(vi==vars)
+  # qtS=function(x,p=0.9){quantile(x,probs=p)}
+  # scenario=rbind(
+  #  apply(simData[,vars[-viPos]], 2, function(x) FUN=qtS(x,0.1)),
+  #  apply(simData[,vars[-viPos]], 2, function(x) FUN=qtS(x,0.9))
+  #   )
+  # scenario[,5]=median(simData$lag_ratifiedbits)
+  # scenario[,4]=rev(scenario[,4]) # inflation
+  # scenario=cbind(vRange, scenario)
+  # colnames(scenario)[1]=vi
+  # vars2 = colnames(scenario)
+  # ##########  
 
   ##########
   # Draw pred values from mvnorm
@@ -108,8 +108,8 @@ temp=ggplot(summPreds, aes(x=factor(scen), y=mean,ymax=hi,ymin=lo,group=disp))
 temp=temp+geom_linerange() + geom_point() + facet_wrap(~ disp)
 temp=temp+ylab('Predicted Investment Profile Rating')
 temp=temp+scale_x_discrete('',labels=c(
-  # 'A'='Zero Disputes', 'B'='High Disputes'))  
-  'A'='Zero Disputes \n \\& Weak \n Fundamentals', 'B'='High Disputes \n \\& Strong \n Fundamentals'))
+  'A'='Zero Disputes', 'B'='High Disputes'))  
+  # 'A'='Zero Disputes \n \\& Weak \n Fundamentals', 'B'='High Disputes \n \\& Strong \n Fundamentals'))
 temp=temp+scale_y_continuous(breaks=c(0,4,8,12),labels=c(0,4,8,12))
 temp = temp + theme(
   axis.ticks=element_blank(), panel.grid.major=element_blank(),
@@ -117,8 +117,8 @@ temp = temp + theme(
   )
 temp
 setwd(pathPaper)
-# tikz(file='simResults.tex',width=8,height=6,standAlone=T)
-tikz(file='dispVfund.tex',width=8,height=6,standAlone=T)
+tikz(file='simResults.tex',width=8,height=6,standAlone=F)
+# tikz(file='dispVfund.tex',width=8,height=6,standAlone=F)
 temp
 dev.off()
 ###################################################################

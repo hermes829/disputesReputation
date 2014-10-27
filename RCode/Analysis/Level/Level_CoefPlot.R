@@ -96,7 +96,7 @@ temp <- ggcoefplot(coefData=dispData,
   )
 temp
 setwd(pathPaper)
-tikz(file='lagEffect.tex',width=8,height=6,standAlone=T)
+tikz(file='lagEffect.tex',width=8,height=6,standAlone=F)
 temp
 dev.off()
 #############################################################

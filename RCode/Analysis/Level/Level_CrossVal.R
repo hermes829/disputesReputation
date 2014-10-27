@@ -98,7 +98,7 @@ temp = ggcoefplot(coefData=coefCross,
   )
 temp
 setwd(pathPaper)
-tikz(file='crossValLevel.tex',width=8,height=6,standAlone=T)
+tikz(file='crossValLevel.tex',width=8,height=6,standAlone=F)
 temp
 dev.off()
 ###############################################################################
