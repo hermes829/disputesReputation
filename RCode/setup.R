@@ -51,6 +51,11 @@ substrRight <- function(x, n){
   substr(x, nchar(x)-n+1, nchar(x))
 }
 
+pchLab=function(x){ paste('pch_',x,sep='') }
+lagLab=function(x){ paste('lag_',x,sep='') }
+pchLabName=function(x){ paste('\\%$\\Delta$ Change',x,sep=' ') }
+lagLabName=function(x){ paste(x, '$_{t-1}$', sep='') }
+
 # Log transformations for vars with negative values
 logNeg <- function(z){
 	x <- z[!is.na(z)]; y <- x

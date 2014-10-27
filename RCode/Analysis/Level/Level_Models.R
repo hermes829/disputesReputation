@@ -47,9 +47,6 @@ ivOther=c(
 
 # Untrans IVs
 ivs=c(ivDisp, ivOther)
-
-lagLab=function(x){ paste('lag_',x,sep='') }
-diffLab=function(x){ paste('diff_',x,sep='') }
 ivAll=lapply(ivDisp, function(x) FUN= c( lagLab(x), lagLab(ivOther) ) )
 
 # Setting up variables names for display

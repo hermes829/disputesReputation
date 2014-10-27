@@ -121,20 +121,12 @@ for(ii in 1:length(rands)){
 
 	slice=modelData[which(modelData$rand %in% rands[ii]), ]
 
-	plmSlice=pdata.frame( slice[,c(dv, unique(unlist(ivAll)), 'ccode', 'year') ], 
-			index=c('ccode','year') )
+	modResults=lapply(modForm, function(x) FUN=panelAR(x, slice, 'ccode', 'year', 
+		autoCorr = c("psar1"), panelCorrMethod="pcse",rhotype='breg', complete.case=FALSE  ) )
 
-	modResults=lapply(modForm, function(x)
-		FUN=plm(x, data=plmSlice, model='within') )
+	modSumm=lapply(modResults, function(x) FUN=coeftest(x) )
 
-	modSumm=lapply(modResults, function(x)
-		FUN=coeftest(x, vcov=vcovHC(x,method='arellano',cluster="group")))	
-
-	dispSumm=matrix(unlist(lapply(modSumm,function(x)FUN=numSM(x[1,]))), 
-		ncol=4, byrow=T, 
-		dimnames=list(
-			unlist(as.character(lapply(ivAll,function(x)FUN=x[1]))), 
-			c('Estimate','Std. Error','tstat','pval')) )
+	dispSumm=do.call(rbind, lapply(modSumm,function(x)FUN=x[c(2,10),]))
 	
 	coefCross=rbind(coefCross, cbind(dispSumm,cross=ii))
 }
@@ -142,20 +134,22 @@ for(ii in 1:length(rands)){
 
 ###############################################################################
 # Plotting
-VARS=unique(rownames(coefCross))
-VARSname=c('All ICSID Disputes', 'ICSID Treaty-Based',
-	'Unsettled ICSID', 'UNCTAD','ICSID-UNCTAD' )
+VARS=unique(rownames(coefCross))[seq(1,10,2)]
+ivDispName=c('All ICSID Disputes', 'ICSID Treaty-Based', 'Unsettled ICSID', 
+	'UNCTAD','ICSID-UNCTAD' )
+VARSname=lagLabName(ivDispName)
 
 temp = ggcoefplot(coefData=coefCross, 
 	vars=VARS, varNames=VARSname,
   Noylabel=FALSE, coordFlip=TRUE, revVar=FALSE,
   facet=TRUE, facetColor=TRUE, colorGrey=TRUE,
-  facetName='cross', facetDim=c(2,3),
+  facetName='cross', 
+  # facetDim=c(4,2),
   facetBreaks=NULL, facetLabs=NULL
   )
 temp
-setwd(pathPaper)
-tikz(file='crossVal.tex',width=8,height=6,standAlone=T)
-temp
-dev.off()
+# setwd(pathPaper)
+# tikz(file='crossVal.tex',width=8,height=6,standAlone=T)
+# temp
+# dev.off()
 ###############################################################################

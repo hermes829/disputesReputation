@@ -87,8 +87,9 @@ for(ii in 1:length(rands)){
 ###############################################################################
 # Plotting
 VARS=unique(rownames(coefCross))
-VARSname=c('All ICSID Disputes', 'ICSID Treaty-Based',
-	'Unsettled ICSID', 'UNCTAD','ICSID-UNCTAD' )
+ivDispName=c('All ICSID Disputes', 'ICSID Treaty-Based', 'Unsettled ICSID', 
+	'UNCTAD','ICSID-UNCTAD' )
+VARSname=lagLabName(ivDispName)
 
 temp = ggcoefplot(coefData=coefCross, 
 	vars=VARS, varNames=VARSname,
@@ -98,8 +99,8 @@ temp = ggcoefplot(coefData=coefCross,
   facetBreaks=NULL, facetLabs=NULL
   )
 temp
-setwd(pathPaper)
-tikz(file='crossVal.tex',width=8,height=6,standAlone=T)
-temp
-dev.off()
+# setwd(pathPaper)
+# tikz(file='crossVal.tex',width=8,height=6,standAlone=T)
+# temp
+# dev.off()
 # ###############################################################################

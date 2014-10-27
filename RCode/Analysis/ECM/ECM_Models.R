@@ -57,9 +57,6 @@ ivOther=c(
 
 # Untrans IVs
 ivs=c(ivDV, ivDisp, ivOther)
-
-pchLab=function(x){ paste('pch_',x,sep='') }
-lagLab=function(x){ paste('lag_',x,sep='') }
 ivAll=lapply(ivDisp, function(x) 
 	FUN= c(ivDV ,lagLab(x), lagLab(ivOther), pchLab(x), pchLab(ivOther)) )
 
@@ -76,9 +73,6 @@ ivOtherName=c(
 	,'Polity'
 	)
 ivsName=c(ivDispName, ivOtherName)
-
-pchLabName=function(x){ paste('\\%$\\Delta$ Change',x,sep=' ') }
-lagLabName=function(x){ paste(x, '$_{t-1}$', sep='') }
 ivAllNames=lapply(ivDispName, function(x) FUN= c(lagLabName(dvName) ,
 	lagLabName(x), lagLabName(ivOtherName), pchLabName(x), pchLabName(ivOtherName)) )
 ###############################################################################
