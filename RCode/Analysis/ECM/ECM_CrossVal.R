@@ -143,10 +143,10 @@ VARSname=lagLabName(ivDispName)
 
 temp = ggcoefplot(coefData=coefCross, 
 	vars=VARS, varNames=VARSname,
-  Noylabel=FALSE, coordFlip=TRUE, revVar=FALSE,
-  facet=TRUE, facetColor=TRUE, colorGrey=TRUE,
-  facetName='cross', facetDim=c(4,2),
-  facetBreaks=NULL, facetLabs=NULL
+  Noylabel=FALSE, coordFlip=FALSE, revVar=FALSE,
+  facet=TRUE, facetColor=FALSE, colorGrey=FALSE,
+  facetName='cross', facetDim=c(2,3),
+  facetBreaks=NULL, facetLabs=NULL, allBlack=TRUE
   )
 temp
 setwd(pathPaper)

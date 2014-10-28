@@ -243,7 +243,7 @@ ggcoefplot = function(coefData, vars, varNames, estimates, serrors,
 	Noylabel=FALSE, coordFlip=TRUE, 
 	specY=FALSE, ggylims=NULL, ggybreaks=NULL, revVar=TRUE,
 	facet=FALSE, facetName=NULL, facetDim=NULL, facetBreaks=NULL, facetLabs=NULL,
-	facetColor=FALSE, colorGrey=FALSE, grSTA=0.8, grEND=0.2){
+	facetColor=FALSE, colorGrey=FALSE, grSTA=0.8, grEND=0.2, allBlack=FALSE){
   
   # Calculate confidence intervals
   relevRows = which(rownames(coefData) %in% vars)
@@ -301,6 +301,7 @@ ggcoefplot = function(coefData, vars, varNames, estimates, serrors,
   if(facet){
   if(!facetColor){coefp = ggplot(ggcoefData, aes(as.factor(Facet), Mean, color = sig))}
   if(facetColor){coefp = ggplot(ggcoefData, aes(as.factor(Facet), Mean, color = as.factor(Facet)))}
+  if(allBlack){coefp = ggplot(ggcoefData, aes(as.factor(Facet), Mean),color = 'black')}  
   coefp = coefp + geom_linerange(aes(ymin=lower95, ymax=upper95), alpha = .3, size = 0.3)
   coefp = coefp + geom_linerange(aes(ymin=lower90, ymax=upper90),alpha = 1, size = 1)
   coefp = coefp + geom_hline(aes(yintercept=0), linetype=2, color = "black")
@@ -324,6 +325,7 @@ ggcoefplot = function(coefData, vars, varNames, estimates, serrors,
   coefp 
   	} else {
 	  coefp = ggplot(ggcoefData, aes(as.factor(Variable), Mean, color = sig))
+	  if(allBlack){coefp = ggplot(ggcoefData, aes(as.factor(Variable), Mean), color = 'black')}  	  
 	  coefp = coefp + geom_linerange(aes(ymin=lower95, ymax=upper95), alpha = .3, size = 0.3)
 	  coefp = coefp + geom_linerange(aes(ymin=lower90, ymax=upper90),alpha = 1, size = 1)
 	  coefp = coefp + geom_hline(aes(yintercept=0), linetype=2, color = "black")
