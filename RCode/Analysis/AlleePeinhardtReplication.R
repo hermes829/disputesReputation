@@ -57,7 +57,7 @@ for(ii in 1:length(kivs)){
     'lnpop_total', 'lngdppc', 'gdp_grow', 'offxrate_lcudif', 'kaopen',
     'Fworldfdi',
     'oecd', 'ifscode', 'country', 'year')
-  regData = na.omit(fdi[,regVars])
+  regData = na.omit(fdi[,c(regVars, 'fdi_inflows')])
   regData = regData[regData$oecd!=1,]
 
 # xtreg F.lnfdi bitcount losticsid2 cbdcrisis domestic1_8 external_conflict polity2
@@ -179,7 +179,9 @@ vars2 = colnames(scenario)
 
 draws = mvrnorm(n = sims, betas[vars2], vcov[vars2,vars2])
 modelPreds = draws %*% t(scenario)
-modelExp = apply(modelPreds, 2, function(x) FUN=rnorm(sims, x, sigma))
+# modelPreds = regModelSE[vars2,1] %*% t(scenario)
+# modelExp = apply(modelPreds, 2, function(x) FUN=rnorm(sims, x, sigma))
+modelExp = exp( 10 + modelPreds + error^2/2  )
 
 colnames(modelExp)=1:ncol(modelExp)
 modelExp2=melt(modelExp)[,-1]
@@ -194,20 +196,21 @@ ggMeans$X2 = as.factor(ggMeans$X2)
 ggDensity$X2 = as.factor(ggDensity$X2)
 
 temp = ggplot()
-temp = temp + geom_line(data=ggDensity, aes(x=x,y=y,color=X2))
-temp = temp + geom_vline(data=ggMeans,
-  aes(xintercept=sMean, color=X2),linetype='solid',size=1)
-temp = temp + geom_ribbon(data=subset(ggDensity,q95),
-  aes(x=x,ymax=y,fill=X2),ymin=0,alpha=0.5)
-temp = temp + geom_ribbon(data=subset(ggDensity,q90),
-  aes(x=x,ymax=y,fill=X2),ymin=0,alpha=0.9)
-temp = temp + xlab("Ln(Net FDI Inflows)$_{t}$") + ylab('Density')
+temp = temp + geom_line(data=ggDensity, aes(x=x,y=y, linetype=X2), color='black')
+# temp = temp + geom_vline(data=ggMeans,
+#   aes(xintercept=sMean, color=X2),linetype='solid',size=1)
+# temp = temp + geom_ribbon(data=subset(ggDensity,q95),
+#   aes(x=x,ymax=y,fill=X2),ymin=0,alpha=0.5)
+# temp = temp + geom_ribbon(data=subset(ggDensity,q90),
+#   aes(x=x,ymax=y,fill=X2),ymin=0,alpha=0.9)
+temp = temp + xlab("Net FDI Inflows -- Outflows$_{t}$") + ylab('Density')
 temp = temp + theme(legend.position='none', legend.title=element_blank(),
   axis.ticks = element_blank(), 
   panel.grid.major=element_blank(), panel.grid.minor=element_blank(), 
   axis.title.x = element_text(vjust=-0.2), 
   axis.title.y = element_text(vjust=0.2),
   panel.border = element_blank(), axis.line = element_line(color='black'))
+# temp=temp+scale_color_grey(start=0.2,end=0.8)+scale_fill_grey(start=0.2,end=0.8)
 temp
 # tikz("BITsSimMod4vAP.tex",width=5, height=3,standAlone=F)
 tikz("DisputesSimMod4vAP.tex",width=5, height=3,standAlone=F)
