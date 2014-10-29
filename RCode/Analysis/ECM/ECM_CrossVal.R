@@ -119,7 +119,7 @@ rands=sort(unique(na.omit(modelData[,'rand'])))
 coefCross=NULL
 for(ii in 1:length(rands)){
 
-	slice=modelData[which(modelData$rand %in% rands[ii]), ]
+	slice=modelData[modelData$rand == rands[ii], ]
 	print(paste0('cross ',rands[ii], ' has ', nrow(slice), ' obs from ',
 		length(unique(slice$ccode)), ' countries'))
 
