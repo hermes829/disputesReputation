@@ -45,7 +45,14 @@ fdi$Fworldfdi=fdi[,'lead1_worldfdi']
 # Checking on footnote 72
 ###
 f72=fdi[which(fdi$cname %in% c('Gambia', 'Peru')),]
-ggplot(f72, aes(x=year, y=fdi_inflows, color=cname))+geom_line()
+setwd(pathGraphics)
+pdf(file='gambiaPeruFDI.pdf', width=12, height=10)
+ggplot(f72, aes(x=year, y=fdi_inflows))+geom_line()+facet_wrap(~cname, ncol=1,scales='free_y')
+dev.off()
+
+pdf(file='gambiaPeruLnFDI.pdf', width=12, height=10)
+ggplot(f72, aes(x=year, y=lnfdi))+geom_line()+facet_wrap(~cname, ncol=1,scales='free_y')
+dev.off()
 
 ####
 # RUNNING MODELS
