@@ -12,9 +12,23 @@ Sys.info()["user"]=="janus829"
   pathLatex="~/Desktop/Research/RemmerProjects/disputesReputation/Latex"
   pathFunctions="~/Desktop/Prog Notes/R Functions"
   pathPaper="~/Dropbox/Research/RemmerProjects/disputesReputation/IO/graphics"
+  load('~/Desktop/Research/BuildingPanelData/panel.rda')
 }
 
-load('~/Desktop/Research/BuildingPanelData/panel.rda')
+if(
+Sys.info()["user"]=="s7m"
+){pathMain="~/Dropbox/Research/RemmerProjects/disputesReputation";
+  pathGraphics="~/Dropbox/Research/RemmerProjects/disputesReputation/Graphics";
+  pathData="~/Dropbox/Research/RemmerProjects/disputesReputation/Data";
+  pathResults="~/Dropbox/Research/RemmerProjects/disputesReputation/Results";
+  pathCode="~/Research/RemmerProjects/disputesReputation/RCode";
+  pathLatex="~/Research/RemmerProjects/disputesReputation/Latex"
+  pathFunctions="~/Prog Notes/R Functions"
+  pathPaper="~/Dropbox/Research/RemmerProjects/disputesReputation/IO/graphics"
+  load('~/Research/BuildingPanelData/panel.rda')
+}
+
+
 
 # Loading libraries and functions
 require(foreign)

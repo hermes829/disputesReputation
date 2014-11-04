@@ -4,7 +4,11 @@
 ###
 
 # Setting workspace
-source('/Users/janus829/Desktop/Research/RemmerProjects/disputesReputation/RCode/setup.R')
+if(Sys.info()['user']=='janus829'){
+source('/Users/janus829/Desktop/Research/RemmerProjects/disputesReputation/RCode/setup.R')}
+if(Sys.info()['user']=='s7m'){
+source('/Users/s7m/Research/RemmerProjects/disputesReputation/RCode/setup.R')}
+
 
 ####
 #Loading Allee Peinhardt Data
@@ -36,6 +40,19 @@ fdi=merge(fdi, tmp[,3:ncol(tmp)], by='cyear', all.x=TRUE)
 # fdi$DV = fdi[,'lead1_lnfdi'] # Allee and Peinhardt Approach
 fdi$DV = fdi[,'lead1_lnfdiSM'] # Corrected
 fdi$Fworldfdi=fdi[,'lead1_worldfdi']
+
+### 
+# Checking on footnote 72
+###
+f72=fdi[which(fdi$cname %in% c('Gambia', 'Peru')),]
+setwd(pathGraphics)
+pdf(file='gambiaPeruFDI.pdf', width=12, height=10)
+ggplot(f72, aes(x=year, y=fdi_inflows))+geom_line()+facet_wrap(~cname, ncol=1,scales='free_y')
+dev.off()
+
+pdf(file='gambiaPeruLnFDI.pdf', width=12, height=10)
+ggplot(f72, aes(x=year, y=lnfdi))+geom_line()+facet_wrap(~cname, ncol=1,scales='free_y')
+dev.off()
 
 ####
 # RUNNING MODELS
@@ -120,10 +137,10 @@ temp = ggcoefplot(coefData=regModelSE[1:ap_modelVars,],
   specY=TRUE, ggylims=c(-4.5,3), ggybreaks=seq(-4.5, 3, 1.5),    
   colorGrey=FALSE, grSTA=0.5, grEND=0.1)
 temp
-tikz("AlleePeinhardtModel4.tex",width=7, height=7,standAlone=F)
+# tikz("AlleePeinhardtModel4.tex",width=7, height=7,standAlone=F)
 # tikz("Correct_AlleePeinhardtModel4.tex",width=7, height=7,standAlone=F)
 temp
-dev.off()
+# dev.off()
 
 ####
 #RUNNING SIMULATIONS ON MODEL 4.2
@@ -135,9 +152,9 @@ temp = ggsimplot(sims=10000, simData=regData, vars=regVars[2:ap_modelVars],
   ylabel="Ln(Net FDI Inflows)$_{t}$", xlabel="BITs Signed$_{t-1}$",
   specX=TRUE, ggxbreaks=seq(0,105,10))
 temp
-tikz("BITsSimMod4vAP.tex",width=4, height=3,standAlone=F)
+# tikz("BITsSimMod4vAP.tex",width=4, height=3,standAlone=F)
 temp
-dev.off()
+# dev.off()
 
 temp = ggsimplot(sims=10000, simData=regData, vars=regVars[2:ap_modelVars], 
   vi='losticsid2', vRange=0:3, ostat=median,
@@ -145,9 +162,9 @@ temp = ggsimplot(sims=10000, simData=regData, vars=regVars[2:ap_modelVars],
   ylabel="Ln(Net FDI Inflows)$_{t}$", xlabel="ICSID Rulings Lost (past 2 years)",
   specX=TRUE, ggxbreaks=seq(0,3,1))
 temp
-tikz("DisputesSimMod4vAP.tex",width=4, height=3,standAlone=F)
+# tikz("DisputesSimMod4vAP.tex",width=4, height=3,standAlone=F)
 temp
-dev.off()
+# dev.off()
 
 # Plotting density distributions
 vi='losticsid2'
@@ -213,6 +230,6 @@ temp = temp + theme(legend.position='none', legend.title=element_blank(),
 # temp=temp+scale_color_grey(start=0.2,end=0.8)+scale_fill_grey(start=0.2,end=0.8)
 temp
 # tikz("BITsSimMod4vAP.tex",width=5, height=3,standAlone=F)
-tikz("DisputesSimMod4vAP.tex",width=5, height=3,standAlone=F)
+# tikz("DisputesSimMod4vAP.tex",width=5, height=3,standAlone=F)
 temp
-dev.off()
+# dev.off()
