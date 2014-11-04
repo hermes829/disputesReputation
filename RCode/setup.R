@@ -96,7 +96,7 @@ lagDataSM <- function(data, country_year, country, varsTOlag, lag)
 # Order panel dataset
 orderTS=function(x, unit, time){ x=x[order(x[,time]),]; x=x[order(x[,unit]),]; x }
 
-# calculate moving averages for panel datasets
+# calculate moving averages/sums for panel datasets
 movePanel <- function(data, ccode, time, vars, wdow, sum=FALSE){
 	data=orderTS(data, ccode, time)
 	vars2 <- paste('mva',wdow,'_',vars,sep='')

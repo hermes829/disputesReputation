@@ -5,6 +5,8 @@ source('/Users/janus829/Desktop/Research/RemmerProjects/disputesReputation/RCode
 # Directly loading in Karen's data
 setwd(paste(pathData, '/Components', sep=''))
 modelData=read.dta('Investment Profile Data.9.dta')
+
+# Use cumulative number of disputes 
 colnames(modelData)[colnames(modelData)=='lagcumcunctadcase']='lag_cumcunctadcase'
 colnames(modelData)[colnames(modelData)=='lagcum_icsidtreaty_case']='lag_cum_icsidtreaty_case'
 colnames(modelData)[colnames(modelData)=='lagcum_kicsidcase']='lag_cum_kicsidcase'
@@ -15,14 +17,21 @@ modelData$cyear=numSM(modelData$cyear)
 modelData=lagDataSM(modelData, 'cyear', 'ccode', lagVars, 1)
 colnames(modelData)[(ncol(modelData)-1):ncol(modelData)]=paste0('lag_',lagVars)
 
-# Adding yearly number of disputes
-lagVars=c('cum_kicsidcase','cum_icsidtreaty_case',
-	'cumunsettled_icsid_treaty','cumcunctadcase','cum_alltreaty')
-modelData=lagDataSM(modelData, 'cyear', 'ccode', lagVars, 2)
-diffData=modelData[,paste0('lag_',lagVars)]-modelData[,paste0('lag2_',lagVars)]
-colnames(diffData)=paste0('diff_',lagVars)
-modelData=cbind(modelData,diffData)
+# For modeling
+ivDisp=c('cum_kicsidcase','cum_icsidtreaty_case',
+	'cumunsettled_icsid_treaty','cumcunctadcase','cum_alltreaty' )
 
+# Create two year moving sum of dispute variables
+dispVars=c('kicsidcase', 'icsidtreaty_case', 
+	'unsettled_icsid_treaty', 'cunctadcase', 'alltreaty')
+modelData=movePanel(modelData, 'ccode', 'year', dispVars, 2, sum=TRUE)
+modelData=lagDataSM(modelData, 'cyear', 'ccode', paste0('mvs2_',dispVars), 1)
+colnames(modelData)[(ncol(modelData)-4):ncol(modelData)]=paste0('lag_',paste0('mvs2_',dispVars))
+
+# For modeling
+ivDisp=paste0('mvs2_',dispVars)
+
+# Narrow sample to relevant range
 modelData = modelData[modelData$upperincome==0,]
 modelData = modelData[modelData$year>1986,]
 #######################################################################################
@@ -30,9 +39,6 @@ modelData = modelData[modelData$year>1986,]
 #######################################################################################
 # Setting up models
 dv='Investment_Profile'; dvName='Investment Profile'; fileFE='LinvProfFE.rda'
-
-ivDisp=c('cum_kicsidcase','cum_icsidtreaty_case',
-	'cumunsettled_icsid_treaty','cumcunctadcase','cum_alltreaty' )
 
 # Other covariates
 ivOther=c(
@@ -86,7 +92,9 @@ modForm=lapply(ivAll, function(x)
 modResults=lapply(modForm, function(x) FUN=plm(x, data=plmData, model='within') )
 modSumm=lapply(modResults, function(x) FUN=coeftest(x, 
 	vcov=vcovHC(x,method='arellano',cluster="group")))
-modSumm
+
+# Peak at dispute var results
+lapply(modSumm, function(x) x[1,,drop=FALSE])
 
 # Saving results for further analysis
 setwd(pathResults)
