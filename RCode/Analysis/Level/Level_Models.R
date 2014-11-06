@@ -72,7 +72,7 @@ modSumm=lapply(modResults, function(x) FUN=coeftest(x,
 	vcov=vcovHC(x,method='arellano',cluster="group")))
 
 # Peak at dispute var results
-lapply(modSumm, function(x) x[1,,drop=FALSE])
+print(lapply(modSumm, function(x) x[1,,drop=FALSE]))
 
 # Saving results for further analysis
 setwd(pathResults)
