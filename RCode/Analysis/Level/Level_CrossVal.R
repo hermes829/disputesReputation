@@ -52,6 +52,18 @@ randSamp=data.frame(cbind(ccode=modelCntries,
 modelData$rand=randSamp$rand[match(modelData$ccode,randSamp$ccode)]
 
 rands=sort(unique(na.omit(modelData[,'rand'])))
+
+rands=sort(unique(modelData$year))
+modelData$rand=modelData$year
+
+# rands=1:5
+# modelData$rand=0
+# modelData$rand[modelData$year>=1987 & modelData$year<1992]=1
+# modelData$rand[modelData$year>=1992 & modelData$year<1997]=2
+# modelData$rand[modelData$year>=1997 & modelData$year<2002]=3
+# modelData$rand[modelData$year>=2002 & modelData$year<2007]=4
+# modelData$rand[modelData$year>=2007]=5
+
 coefCross=NULL
 for(ii in 1:length(rands)){
 
@@ -59,19 +71,29 @@ for(ii in 1:length(rands)){
 	print(paste0('cross ',rands[ii], ' has ', nrow(slice), ' obs from ',
 		length(unique(slice$ccode)), ' countries'))	
 
-	plmSlice=pdata.frame( slice[,c(dv, unique(unlist(ivAll)), 'ccode', 'year') ], 
-			index=c('ccode','year') )
+	# plmSlice=pdata.frame( slice[,c(dv, unique(unlist(ivAll)), 'ccode', 'year') ], 
+	# 		index=c('ccode','year') )
+
+	# modResults=lapply(modForm, function(x)
+	# 	FUN=plm(x, data=plmSlice, model='within') )
+
+	# modSumm=lapply(modResults, function(x)
+	# 	FUN=coeftest(x, vcov=vcovHC(x,method='arellano',cluster="group")))	
 
 	modResults=lapply(modForm, function(x)
-		FUN=plm(x, data=plmSlice, model='within') )
+		FUN=lm(x, data=slice) )	
 
 	modSumm=lapply(modResults, function(x)
-		FUN=coeftest(x, vcov=vcovHC(x,method='arellano',cluster="group")))	
+		FUN=coeftest(x))		
 
-	dispSumm=do.call(rbind, lapply(modSumm,function(x)FUN=x[1,,drop=FALSE]))
+	dispSumm=do.call(rbind, lapply(modSumm,function(x)FUN=x[2,,drop=FALSE]))
 	
-	coefCross=rbind(coefCross, cbind(dispSumm,cross=ii))
+	# coefCross=rbind(coefCross, cbind(dispSumm,cross=ii))
+
+	coefCross=rbind(coefCross, cbind(dispSumm,cross=rands[ii]))	
 }
+coefCross
+coefCross=coefCross[which(!rownames(coefCross) %in% 'lag_pch_gdp'),]
 ###############################################################################
 
 ###############################################################################
@@ -85,8 +107,10 @@ temp = ggcoefplot(coefData=coefCross,
 	vars=VARS, varNames=VARSname,
   Noylabel=FALSE, coordFlip=FALSE, revVar=FALSE,
   facet=TRUE, facetColor=FALSE, colorGrey=FALSE,
-  facetName='cross', facetDim=c(2,3),
-  facetBreaks=NULL, facetLabs=NULL, allBlack=TRUE
+  facetName='cross', facetDim=c(2,3), 
+  facetBreaks=seq(1987,2011,3),
+  facetLabs=seq(1987,2011,3),
+  allBlack=FALSE
   )
 temp
 setwd(pathPaper)
@@ -94,3 +118,17 @@ tikz(file='crossValLevel.tex',width=8,height=6,standAlone=F)
 temp
 dev.off()
 ###############################################################################
+
+# Number of disputes by year
+yrDisp=summaryBy(data=modelData, FUN=sum, keep.names=TRUE,
+	formula(paste0(paste(dispVars, collapse=' + '), '~ year')))
+ggDisp=melt(yrDisp, id='year')
+ggDisp$varLab=ivDispName[match(ggDisp$variable, dispVars)]
+
+tmp=ggplot(ggDisp, aes(x=year, y=value))
+tmp=tmp + geom_bar(stat='identity') + facet_wrap(~ varLab)
+tmp=tmp + xlab('') + ylab('Frequency')
+tmp=tmp + theme(legend.position='none', legend.title=element_blank(),
+	axis.ticks=element_blank(), panel.grid.major=element_blank(),
+	panel.grid.minor=element_blank())
+tmp
