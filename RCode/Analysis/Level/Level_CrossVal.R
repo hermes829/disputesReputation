@@ -92,7 +92,6 @@ for(ii in 1:length(rands)){
 
 	coefCross=rbind(coefCross, cbind(dispSumm,cross=rands[ii]))	
 }
-coefCross
 coefCross=coefCross[which(!rownames(coefCross) %in% 'lag_pch_gdp'),]
 ###############################################################################
 
