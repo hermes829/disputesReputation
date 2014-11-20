@@ -18,15 +18,48 @@ load('modelData.rda')
 icsidVars=c('kicsidcase', 'icsidtreaty_case', 'icsidmember', 
 	'cum_kicsidcase', 'cum_icsidtreaty_case')
 icsidData=modelData[,c('ccode', 'cname', 'year', icsidVars)]
+
+# Aggregate to yearly level
+aggForm=formula(paste0(paste(icsidVars, collapse=' + ' ), ' ~ year'))
+icsidYrData=summaryBy(aggForm, data=icsidData, FUN=sum, keep.names=TRUE)
+icsidYrData$year=as.character(icsidYrData$year)
 ###################################################################
 
 ###################################################################
 # Convert dates to year month format
 textData$date=as.Date(as.yearmon(textData$date))
+textData$year=format(textData$date, "%Y")
 textData=na.omit(textData)
 ###################################################################
 
 ###################################################################
+# yearly level
+
+tmp=ggplot(textData, aes(x=year)) + geom_histogram(binwidth=30)
+tmp=tmp + ylab("Frequency") + xlab("Year")
+tmp=tmp + theme(axis.text.x=element_text(angle=45, hjust=1))
+tmp=tmp + geom_line(data=icsidYrData, aes(x=year, y=kicsidcase))
+tmp
+setwd(pathGraphics)
+pdf(file='histICSID.pdf', width=12, height=8)
+tmp
+dev.off()
+###################################################################
+
+###################################################################
+# yearly level
+tmp=ggplot(textData, aes(x=date)) + geom_density()
+tmp=tmp + ylab("Frequency") + xlab("Year")
+tmp=tmp + theme(axis.text.x=element_text(angle=45, hjust=1))
+tmp
+setwd(pathGraphics)
+pdf(file='densityICSID.pdf', width=12, height=8)
+tmp
+dev.off()
+###################################################################
+
+###################################################################
+# Monthly level
 tmp=ggplot(textData, aes(x=date)) + geom_histogram(binwidth=30)
 tmp=tmp + scale_x_date(labels = date_format("%Y-%b"),
     breaks = seq(min(textData$date)-5, max(textData$date)+5, 480),
@@ -41,6 +74,7 @@ dev.off()
 ###################################################################
 
 ###################################################################
+# Monthly level
 tmp=ggplot(textData, aes(x=date)) + geom_density()
 tmp=tmp + scale_x_date(labels = date_format("%Y-%b"),
     breaks = seq(min(textData$date)-5, max(textData$date)+5, 480),
