@@ -4,7 +4,7 @@ source('/Users/janus829/Desktop/Research/RemmerProjects/disputesReputation/RCode
 #######################################################################################
 # Directly loading in Karen's data
 setwd(paste(pathData, '/Components', sep=''))
-modelData=read.dta('Investment Profile Data.9.dta')
+modelData=read.dta('Investment Profile Data.10.dta')
 
 # Use cumulative number of disputes 
 colnames(modelData)[colnames(modelData)=='lagcumcunctadcase']='lag_cumcunctadcase'
