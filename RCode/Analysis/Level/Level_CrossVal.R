@@ -1,7 +1,12 @@
 # Cross-validation
 
 ### Load setup
-source('/Users/janus829/Desktop/Research/RemmerProjects/disputesReputation/RCode/setup.R')
+if(Sys.info()['user']=='janus829'){
+	source('~/Desktop/Research/RemmerProjects/disputesReputation/RCode/setup.R') }
+
+if(Sys.info()['user']=='s7m'){
+	source('~/Research/RemmerProjects/disputesReputation/RCode/setup.R') }	
+
 setwd(pathData)
 load('modelData.rda')
 
@@ -17,7 +22,7 @@ ivDisp=c('cum_kicsidcase','cum_icsidtreaty_case',
 # Two year moving sum of disputes
 dispVars=c('kicsidcase', 'icsidtreaty_case', 
 	'unsettled_icsid_treaty', 'cunctadcase', 'alltreaty')
-ivDisp=paste0('mvs2_',dispVars)
+ivDisp=paste0('mvs5_',dispVars)
 
 # Other covariates
 ivOther=c(
