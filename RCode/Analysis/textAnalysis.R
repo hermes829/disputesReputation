@@ -11,22 +11,59 @@ if(Sys.info()['user']=='s7m'){
 # Load in Data
 setwd(pathData)
 load('textData.rda')
+load('caseTextData.rda')
+load('modelData.rda')
+
+# ICSID dispute variables
+icsidVars=c('kicsidcase', 'icsidtreaty_case', 'icsidmember', 
+	'cum_kicsidcase', 'cum_icsidtreaty_case')
+icsidData=modelData[,c('ccode', 'cname', 'year', icsidVars)]
+
+# Aggregate to yearly level
+aggForm=formula(paste0(paste(icsidVars, collapse=' + ' ), ' ~ year'))
+icsidYrData=summaryBy(aggForm, data=icsidData, FUN=sum, keep.names=TRUE)
+icsidYrData$year=as.character(icsidYrData$year)
 ###################################################################
 
 ###################################################################
-library(zoo)
-library(ggplot2)
-library(scales)
-
+# Convert dates to year month format
 textData$date=as.Date(as.yearmon(textData$date))
+textData$year=format(textData$date, "%Y")
 textData=na.omit(textData)
+###################################################################
 
 ###################################################################
+# yearly level
+
+tmp=ggplot(textData, aes(x=year)) + geom_histogram(binwidth=30)
+tmp=tmp + ylab("Frequency") + xlab("Year")
+tmp=tmp + theme(axis.text.x=element_text(angle=45, hjust=1))
+tmp=tmp + geom_line(data=icsidYrData, aes(x=year, y=kicsidcase))
+tmp
+setwd(pathGraphics)
+pdf(file='histICSID.pdf', width=12, height=8)
+tmp
+dev.off()
+###################################################################
+
+###################################################################
+# yearly level
+tmp=ggplot(textData, aes(x=date)) + geom_density()
+tmp=tmp + ylab("Frequency") + xlab("Year")
+tmp=tmp + theme(axis.text.x=element_text(angle=45, hjust=1))
+tmp
+setwd(pathGraphics)
+pdf(file='densityICSID.pdf', width=12, height=8)
+tmp
+dev.off()
+###################################################################
+
+###################################################################
+# Monthly level
 tmp=ggplot(textData, aes(x=date)) + geom_histogram(binwidth=30)
 tmp=tmp + scale_x_date(labels = date_format("%Y-%b"),
-                    breaks = seq(min(textData$date)-5, 
-                    	max(textData$date)+5, 480),
-                    limits = c(as.Date("1975-10-01"), as.Date("2014-11-01")))
+    breaks = seq(min(textData$date)-5, max(textData$date)+5, 480),
+    limits = c(as.Date("1975-10-01"), as.Date("2014-11-01")))
 tmp=tmp + ylab("Frequency") + xlab("Year and Month")
 tmp=tmp + theme(axis.text.x=element_text(angle=45, hjust=1))
 tmp
@@ -37,11 +74,11 @@ dev.off()
 ###################################################################
 
 ###################################################################
+# Monthly level
 tmp=ggplot(textData, aes(x=date)) + geom_density()
 tmp=tmp + scale_x_date(labels = date_format("%Y-%b"),
-                    breaks = seq(min(textData$date)-5, 
-                    	max(textData$date)+5, 480),
-                    limits = c(as.Date("1975-10-01"), as.Date("2014-11-01")))
+    breaks = seq(min(textData$date)-5, max(textData$date)+5, 480),
+    limits = c(as.Date("1975-10-01"), as.Date("2014-11-01")))
 tmp=tmp + ylab("Frequency") + xlab("Year and Month")
 tmp=tmp + theme(axis.text.x=element_text(angle=45, hjust=1))
 tmp
@@ -49,4 +86,9 @@ setwd(pathGraphics)
 pdf(file='densityICSID.pdf', width=12, height=8)
 tmp
 dev.off()
+###################################################################
+
+###################################################################
+# Number of media mentions for a case change by year?
+
 ###################################################################
