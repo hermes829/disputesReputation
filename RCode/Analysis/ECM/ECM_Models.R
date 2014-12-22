@@ -136,7 +136,7 @@ modResults=lapply(modForm, function(x) FUN=panelAR(x, modelData, 'ccode', 'year'
 	autoCorr = c("psar1"), panelCorrMethod="pcse",rhotype='breg', complete.case=TRUE  ) )
 modSumm=lapply(modResults, function(x) FUN=coeftest(x) )
 
-lapply(modSumm, function(x){ print(x[c(1,3,4,12,13),]) })
+lapply(modSumm, function(x){ print(x[c(1,3,4,12,13),1:3]) })
 
 # Saving results for further analysis
 setwd(pathResults)

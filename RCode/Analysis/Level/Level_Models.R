@@ -15,7 +15,7 @@ ivDisp=c('cum_kicsidcase','cum_icsidtreaty_case',
 
 # Two year moving sum of disputes
 dispVars=c('kicsidcase', 'icsidtreaty_case', 
-	'unsettled_icsid_treaty', 'cunctadcase', 'alltreaty')
+	'unsettled_icsid_treaty', 'alltreaty')
 ivDisp=paste0('mvs2_',dispVars)
 
 # Other covariates
@@ -34,7 +34,7 @@ ivs=c(ivDisp, ivOther)
 ivAll=lapply(ivDisp, function(x) FUN= c( lagLab(x), lagLab(ivOther) ) )
 
 # Setting up variables names for display
-ivDispName=c('All ICSID Disputes', 'ICSID Treaty-Based', 'Unsettled ICSID', 'UNCTAD','ICSID-UNCTAD' )
+ivDispName=c('All ICSID Disputes', 'ICSID Treaty-Based', 'Unsettled ICSID', 'ICSID-UNCTAD' )
 ivOtherName=c(
 	'\\%$\\Delta$ GDP'
 	, 'Ln(Pop.)'
@@ -44,7 +44,31 @@ ivOtherName=c(
 	,'Capital Openness'	
 	,'Polity'
 	)
-ivsName=c(ivDispName, ivOtherName)
+ivsName=lapply(ivDispName, function(x) FUN= c(lagLab(x), lagLab(ivOtherName)))
+
+# Add temporal dummy
+yrCut=2006
+modelData$time=0; modelData$time[modelData$year>yrCut]=1
+
+# Interaction lagged variables
+modelData$kicsidI = modelData$mvs2_kicsidcase*modelData$time
+modelData$icsidI = modelData$mvs2_icsidtreaty_case*modelData$time
+modelData$unsettI = modelData$mvs2_unsettled_icsid_treaty*modelData$time
+modelData$allI = modelData$mvs2_alltreaty*modelData$time
+
+# Add temporal interactions
+lagI=c('kicsidI', 'icsidI', 'unsettI', 'allI')
+for(ii in 1:4){ 
+	ivAll[[ii]] = append(ivAll[[ii]], 'time', 0)
+	ivAll[[ii]] = append(ivAll[[ii]], lagI[ii], 2)
+}
+
+tName=paste0('Post ', yrCut)
+lagI=paste(lagLabName(ivDispName), tName, sep=' x ')
+for(ii in 1:4){
+	ivsName[[ii]] = append(ivsName[[ii]], tName, 0)
+	ivsName[[ii]] = append(ivsName[[ii]], lagI[ii], 2)
+}
 #######################################################################################
 
 # #####################################################################################
