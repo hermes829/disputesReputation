@@ -22,7 +22,6 @@ icsidData=modelData[,c('ccode', 'cname', 'year', icsidVars)]
 # Aggregate to yearly level
 aggForm=formula(paste0(paste(icsidVars, collapse=' + ' ), ' ~ year'))
 icsidYrData=summaryBy(aggForm, data=icsidData, FUN=sum, keep.names=TRUE)
-icsidYrData$year=as.character(icsidYrData$year)
 ###################################################################
 
 ###################################################################
@@ -30,20 +29,26 @@ icsidYrData$year=as.character(icsidYrData$year)
 textData$date=as.Date(as.yearmon(textData$date))
 textData$year=format(textData$date, "%Y")
 textData=na.omit(textData)
+
+# data
+caseTextData$date=as.Date(as.yearmon(caseTextData$date))
+caseTextData$year=format(caseTextData$date, "%Y")
+caseTextData=na.omit(caseTextData)
+caseTextData$count=1
+cyear=summaryBy(count ~ icsid, data=caseTextData, FUN=sum)
+# merge(cyear, )
 ###################################################################
 
 ###################################################################
 # yearly level
-
+textData = textData[textData$year<=2011,]
 tmp=ggplot(textData, aes(x=year)) + geom_histogram(binwidth=30)
 tmp=tmp + ylab("Frequency") + xlab("Year")
 tmp=tmp + theme(axis.text.x=element_text(angle=45, hjust=1))
-tmp=tmp + geom_line(data=icsidYrData, aes(x=year, y=kicsidcase))
 tmp
-setwd(pathGraphics)
-pdf(file='histICSID.pdf', width=12, height=8)
-tmp
-dev.off()
+
+ggplot(icsidYrData, aes(x=year, y=cum_kicsidcase))+geom_line()
+ggplot(icsidYrData, aes(x=year, y=kicsidcase))+geom_line()
 ###################################################################
 
 ###################################################################
@@ -52,10 +57,6 @@ tmp=ggplot(textData, aes(x=date)) + geom_density()
 tmp=tmp + ylab("Frequency") + xlab("Year")
 tmp=tmp + theme(axis.text.x=element_text(angle=45, hjust=1))
 tmp
-setwd(pathGraphics)
-pdf(file='densityICSID.pdf', width=12, height=8)
-tmp
-dev.off()
 ###################################################################
 
 ###################################################################

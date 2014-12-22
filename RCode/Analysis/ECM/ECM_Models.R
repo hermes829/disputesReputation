@@ -4,7 +4,7 @@ source('/Users/janus829/Desktop/Research/RemmerProjects/disputesReputation/RCode
 ###############################################################################
 # Directly loading in Karen's data
 setwd(paste(pathData, '/Components', sep=''))
-modelData=read.dta('Investment Profile Data.9.dta')
+modelData=read.dta('Investment Profile Data.11.dta')
 colnames(modelData)[colnames(modelData)=='lagcumcunctadcase']='lag_cumcunctadcase'
 colnames(modelData)[colnames(modelData)=='lagcum_icsidtreaty_case']='lag_cum_icsidtreaty_case'
 colnames(modelData)[colnames(modelData)=='lagcum_kicsidcase']='lag_cum_kicsidcase'
@@ -42,7 +42,23 @@ ivDV=paste('lag',substr(dv, 4, nchar(dv)),sep='')
 
 # Cum. Dispute vars
 ivDisp=c('cum_kicsidcase','cum_icsidtreaty_case',
-	'cumunsettled_icsid_treaty','cumcunctadcase','cum_alltreaty' )
+	'cumunsettled_icsid_treaty','cum_alltreaty' )
+
+# Add temporal dummy
+yrCut=2008
+modelData$time=0; modelData$time[modelData$year>yrCut]=1
+
+# Interaction lagged variables
+modelData$L_kicsid_T = modelData$lag_cum_kicsidcase*modelData$time
+modelData$L_icsid_T = modelData$lag_cum_icsidtreaty_case*modelData$time
+modelData$L_unsett_T = modelData$lag_cumunsettled_icsid_treaty*modelData$time
+modelData$L_all_T = modelData$lag_cum_alltreaty*modelData$time
+
+# Interaction perc change vars
+modelData$C_kicsid_T = modelData$pch_cum_kicsidcase*modelData$time
+modelData$C_icsid_T = modelData$pch_cum_icsidtreaty_case*modelData$time
+modelData$C_unsett_T = modelData$pch_cumunsettled_icsid_treaty*modelData$time
+modelData$C_all_T = modelData$pch_cum_alltreaty*modelData$time
 
 # Other covariates
 ivOther=c(
@@ -61,8 +77,7 @@ ivAll=lapply(ivDisp, function(x)
 	FUN= c(ivDV ,lagLab(x), lagLab(ivOther), pchLab(x), pchLab(ivOther)) )
 
 # Setting up variables names for display
-ivDispName=c('All ICSID Disputes', 'ICSID Treaty-Based', 'Unsettled ICSID', 
-	'UNCTAD','ICSID-UNCTAD' )
+ivDispName=c('All ICSID Disputes', 'ICSID Treaty-Based', 'Unsettled ICSID', 'ICSID-UNCTAD' )
 ivOtherName=c(
 	'Ln(GDP)'
 	, 'Ln(Pop.)'
@@ -75,6 +90,24 @@ ivOtherName=c(
 ivsName=c(ivDispName, ivOtherName)
 ivAllNames=lapply(ivDispName, function(x) FUN= c(lagLabName(dvName) ,
 	lagLabName(x), lagLabName(ivOtherName), pchLabName(x), pchLabName(ivOtherName)) )
+
+# Add temporal interactions
+lagI=c('L_kicsid_T', 'L_icsid_T', 'L_unsett_T', 'L_all_T')
+pchI=c('C_kicsid_T', 'C_icsid_T', 'C_unsett_T', 'C_all_T')
+for(ii in 1:4){ 
+	ivAll[[ii]] = append(ivAll[[ii]], 'time', 0)
+	ivAll[[ii]] = append(ivAll[[ii]], lagI[ii], 3)
+	ivAll[[ii]] = append(ivAll[[ii]], pchI[ii], 12)
+}
+
+tName=paste0('Post ', yrCut)
+lagI=paste(lagLabName(ivDispName), tName, sep=' x ')
+pchI=paste(pchLabName(ivDispName), tName, sep=' x ')
+for(ii in 1:4){
+	ivAllNames[[ii]] = append(ivAllNames[[ii]], tName, 0)
+	ivAllNames[[ii]] = append(ivAllNames[[ii]], lagI[ii], 3)
+	ivAllNames[[ii]] = append(ivAllNames[[ii]], pchI[ii], 12)	
+}
 ###############################################################################
 
 ###############################################################################
@@ -102,6 +135,8 @@ modForm=lapply(ivAll, function(x)
 modResults=lapply(modForm, function(x) FUN=panelAR(x, modelData, 'ccode', 'year', 
 	autoCorr = c("psar1"), panelCorrMethod="pcse",rhotype='breg', complete.case=TRUE  ) )
 modSumm=lapply(modResults, function(x) FUN=coeftest(x) )
+
+lapply(modSumm, function(x){ print(x[c(1,3,4,12,13),]) })
 
 # Saving results for further analysis
 setwd(pathResults)
