@@ -8,7 +8,7 @@ if(Sys.info()['user']=='s7m'){
 #######################################################################################
 # Directly loading in Karen's data
 setwd(paste(pathData, '/Components', sep=''))
-modelData=read.dta('Investment Profile Data.11.dta')
+modelData=read.dta('Investment Profile Data.13.dta')
 
 # Use cumulative number of disputes 
 colnames(modelData)[colnames(modelData)=='lagcumcunctadcase']='lag_cumcunctadcase'
@@ -16,14 +16,14 @@ colnames(modelData)[colnames(modelData)=='lagcum_icsidtreaty_case']='lag_cum_ics
 colnames(modelData)[colnames(modelData)=='lagcum_kicsidcase']='lag_cum_kicsidcase'
 colnames(modelData)[colnames(modelData)=='lagpch_gdp']='lag_pch_gdp'
 
-lagVars=c('cumunsettled_icsid_treaty','cum_alltreaty')
+lagVars=c('cumunsettled_icsidtreaty','cum_alltreaty')
 modelData$cyear=numSM(modelData$cyear)
 modelData=lagDataSM(modelData, 'cyear', 'ccode', lagVars, 1)
 colnames(modelData)[(ncol(modelData)-1):ncol(modelData)]=paste0('lag_',lagVars)
 
 # For modeling
 ivDisp=c('cum_kicsidcase','cum_icsidtreaty_case',
-	'cumunsettled_icsid_treaty','cumcunctadcase','cum_alltreaty' )
+	'cumunsettled_icsidtreaty','cumcunctadcase','cum_alltreaty' )
 
 # Create two year moving sum of dispute variables
 dispVars=c('kicsidcase', 'icsidtreaty_case', 
@@ -59,7 +59,7 @@ modelData=lagDataSM(modelData, 'cyear', 'ccode', ivDisp, 4)
 modelData=lagDataSM(modelData, 'cyear', 'ccode', ivDisp, 5)
 
 # Narrow sample to relevant range
-modelData = modelData[modelData$upperincome==0,]
+modelData = modelData[modelData$coecd==0,]
 modelData = modelData[modelData$year>1986,]
 #######################################################################################
 

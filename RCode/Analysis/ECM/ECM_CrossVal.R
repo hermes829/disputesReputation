@@ -4,7 +4,8 @@ source('/Users/janus829/Desktop/Research/RemmerProjects/disputesReputation/RCode
 ###############################################################################
 # Directly loading in Karen's data
 setwd(paste(pathData, '/Components', sep=''))
-modelData=read.dta('Investment Profile Data.9.dta')
+modelData=read.dta('Investment Profile Data.13.dta')
+colnames(modelData)[colnames(modelData)=='cumunsettled_icsidtreaty']='cumunsettled_icsid_treaty'
 colnames(modelData)[colnames(modelData)=='lagcumcunctadcase']='lag_cumcunctadcase'
 colnames(modelData)[colnames(modelData)=='lagcum_icsidtreaty_case']='lag_cum_icsidtreaty_case'
 colnames(modelData)[colnames(modelData)=='lagcum_kicsidcase']='lag_cum_kicsidcase'
@@ -24,7 +25,7 @@ diffData=modelData[,paste0('lag_',lagVars)]-modelData[,paste0('lag2_',lagVars)]
 colnames(diffData)=paste0('diff_',lagVars)
 modelData=cbind(modelData,diffData)
 
-modelData = modelData[modelData$upperincome==0,]
+modelData = modelData[modelData$coecd==0,]
 modelData = modelData[modelData$year>1986,]
 ###############################################################################
 
@@ -42,7 +43,7 @@ ivDV=paste('lag',substr(dv, 4, nchar(dv)),sep='')
 
 # Cum. Dispute vars
 ivDisp=c('cum_kicsidcase','cum_icsidtreaty_case',
-	'cumunsettled_icsid_treaty','cumcunctadcase','cum_alltreaty' )
+	'cumunsettled_icsid_treaty','cum_alltreaty' )
 
 # Other covariates
 ivOther=c(
@@ -57,15 +58,11 @@ ivOther=c(
 
 # Untrans IVs
 ivs=c(ivDV, ivDisp, ivOther)
-
-pchLab=function(x){ paste('pch_',x,sep='') }
-lagLab=function(x){ paste('lag_',x,sep='') }
 ivAll=lapply(ivDisp, function(x) 
 	FUN= c(ivDV ,lagLab(x), lagLab(ivOther), pchLab(x), pchLab(ivOther)) )
 
 # Setting up variables names for display
-ivDispName=c('All ICSID Disputes', 'ICSID Treaty-Based', 'Unsettled ICSID', 
-	'UNCTAD','ICSID-UNCTAD' )
+ivDispName=c('All ICSID Disputes', 'ICSID Treaty-Based', 'Unsettled ICSID', 'ICSID-UNCTAD' )
 ivOtherName=c(
 	'Ln(GDP)'
 	, 'Ln(Pop.)'
@@ -76,37 +73,54 @@ ivOtherName=c(
 	,'Polity'
 	)
 ivsName=c(ivDispName, ivOtherName)
-
-pchLabName=function(x){ paste('\\%$\\Delta$ Change',x,sep=' ') }
-lagLabName=function(x){ paste(x, '$_{t-1}$', sep='') }
 ivAllNames=lapply(ivDispName, function(x) FUN= c(lagLabName(dvName) ,
 	lagLabName(x), lagLabName(ivOtherName), pchLabName(x), pchLabName(ivOtherName)) )
+
+# Create interaction terms
+modelData$L_kicsid_lac = modelData$lag_cum_kicsidcase*modelData$lac
+modelData$L_icsid_lac = modelData$lag_cum_icsidtreaty_case*modelData$lac
+modelData$L_unsett_lac = modelData$lag_cumunsettled_icsid_treaty*modelData$lac
+modelData$L_all_lac = modelData$lag_cum_alltreaty*modelData$lac
+
+# Add interactions to variable lists
+lagI=c('L_kicsid_lac', 'L_icsid_lac', 'L_unsett_lac', 'L_all_lac')
+for(ii in 1:4){ 
+	ivAll[[ii]] = append(ivAll[[ii]], 'lac', 1)
+	ivAll[[ii]] = append(ivAll[[ii]], lagI[ii], 3)
+}
+
+iName='LAC'
+lagI=paste(lagLabName(ivDispName), iName, sep=' x ')
+for(ii in 1:4){
+	ivAllNames[[ii]] = append(ivAllNames[[ii]], iName, 1)
+	ivAllNames[[ii]] = append(ivAllNames[[ii]], lagI[ii], 3)
+}
 ###############################################################################
 
-###############################################################################
-### Check balance of panel
-panelBalance(ivs=ivAll[[1]], dv=dv, group='cname', time='year', regData=modelData)
+# ###############################################################################
+# ### Check balance of panel
+# panelBalance(ivs=ivAll[[1]], dv=dv, group='cname', time='year', regData=modelData)
 
-## Create balanced panel based off
-# All vars used in model
-temp=na.omit(modelData[,c('cname','ccode','year', ivDV, ivDisp, ivOther)])
-temp2=lapply(unique(temp$cname), function(x) FUN=nrow(temp[which(temp$cname %in% x), ]) )
-names(temp2)=unique(temp$cname); temp3=unlist(temp2)
+# ## Create balanced panel based off
+# # All vars used in model
+# temp=na.omit(modelData[,c('cname','ccode','year', ivDV, ivDisp, ivOther)])
+# temp2=lapply(unique(temp$cname), function(x) FUN=nrow(temp[which(temp$cname %in% x), ]) )
+# names(temp2)=unique(temp$cname); temp3=unlist(temp2)
 
-# Cutoff for dropping
-# drop=names(temp3[temp3<max(temp3)])
-drop=names(temp3[temp3<10])
+# # Cutoff for dropping
+# # drop=names(temp3[temp3<max(temp3)])
+# drop=names(temp3[temp3<10])
 
-# New data
-modelData = modelData[which(!modelData$cname %in% drop),]
-###############################################################################
+# # New data
+# modelData = modelData[which(!modelData$cname %in% drop),]
+# ###############################################################################
 
 ###############################################################################
 # Run cross val models
 modForm=lapply(ivAll, function(x) 
 	FUN=as.formula( 
 		paste(paste(dv, 
-			paste(x, collapse=' + '), sep=' ~ '), '+ factor(ccode)-1', collapse='') ))
+			paste(x, collapse=' + '), sep=' ~ '), '+ factor(ccode) + factor(year)-1', collapse='') ))
 
 # Random cross val
 modelCntries=unique(modelData$ccode)
@@ -122,13 +136,16 @@ for(ii in 1:length(rands)){
 	slice=modelData[modelData$rand == rands[ii], ]
 	print(paste0('cross ',rands[ii], ' has ', nrow(slice), ' obs from ',
 		length(unique(slice$ccode)), ' countries'))
+	temp=unique(slice[,c('lac', 'cname')])
+	print( paste0(sum(temp[,1]), ' of those countries are LAC') )
+	print( temp[temp[,1]==1, 2] )
 
 	modResults=lapply(modForm, function(x) FUN=panelAR(x, slice, 'ccode', 'year', 
 		autoCorr = c("psar1"), panelCorrMethod="pcse",rhotype='breg', complete.case=FALSE  ) )
 
 	modSumm=lapply(modResults, function(x) FUN=coeftest(x) )
 
-	dispSumm=do.call(rbind, lapply(modSumm,function(x)FUN=x[c(2,10),]))
+	dispSumm=do.call(rbind, lapply(modSumm,function(x)FUN=x[c(3:4, 12),]))
 	
 	coefCross=rbind(coefCross, cbind(dispSumm,cross=ii))
 }
@@ -136,17 +153,17 @@ for(ii in 1:length(rands)){
 
 ###############################################################################
 # Plotting
-VARS=unique(rownames(coefCross))[seq(1,10,2)]
-ivDispName=c('All ICSID Disputes', 'ICSID Treaty-Based', 'Unsettled ICSID', 
-	'UNCTAD','ICSID-UNCTAD' )
+# VARS=unique(rownames(coefCross))[seq(1,10,2)]
+VARS=unique(rownames(coefCross))[seq(2, 11, 3)]
+ivDispName=c('All ICSID Disputes', 'ICSID Treaty-Based', 'Unsettled ICSID', 'ICSID-UNCTAD' )
 VARSname=lagLabName(ivDispName)
 
 temp = ggcoefplot(coefData=coefCross, 
 	vars=VARS, varNames=VARSname,
   Noylabel=FALSE, coordFlip=FALSE, revVar=FALSE,
   facet=TRUE, facetColor=FALSE, colorGrey=FALSE,
-  facetName='cross', facetDim=c(2,3),
-  facetBreaks=NULL, facetLabs=NULL, allBlack=TRUE
+  facetName='cross', facetDim=c(2,2),
+  facetBreaks=1:6, facetLabs=1:6, allBlack=TRUE
   )
 temp
 setwd(pathPaper)

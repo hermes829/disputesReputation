@@ -40,6 +40,15 @@ cyear=summaryBy(count ~ icsid, data=caseTextData, FUN=sum)
 ###################################################################
 
 ###################################################################
+# Country and year
+cntryYrMention=summaryBy(count ~ year + cname, data=caseTextData, FUN=sum, keep.names=TRUE)
+
+cntryYrMentionTime=cntryYrMention[which(cntryYrMention$year>=2007),]
+byCntry=summaryBy(count ~ cname, data=cntryYrMention, FUN=sum)
+byCntry[order(byCntry$count.sum, decreasing=TRUE),]
+###################################################################
+
+###################################################################
 # yearly level
 textData = textData[textData$year<=2011,]
 tmp=ggplot(textData, aes(x=year)) + geom_histogram(binwidth=30)
