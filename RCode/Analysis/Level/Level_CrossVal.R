@@ -22,7 +22,7 @@ ivDisp=c('cum_kicsidcase','cum_icsidtreaty_case',
 # Two year moving sum of disputes
 dispVars=c('kicsidcase', 'icsidtreaty_case', 
 	'unsettled_icsid_treaty', 'cunctadcase', 'alltreaty')
-ivDisp=paste0('mvs5_',dispVars)
+ivDisp=paste0('mvs2_',dispVars)
 
 # Other covariates
 ivOther=c(

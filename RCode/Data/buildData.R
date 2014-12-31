@@ -11,19 +11,20 @@ setwd(paste(pathData, '/Components', sep=''))
 modelData=read.dta('Investment Profile Data.13.dta')
 
 # Use cumulative number of disputes 
+colnames(modelData)[colnames(modelData)=='cumunsettled_icsidtreaty']='cumunsettled_icsid_treaty'
 colnames(modelData)[colnames(modelData)=='lagcumcunctadcase']='lag_cumcunctadcase'
 colnames(modelData)[colnames(modelData)=='lagcum_icsidtreaty_case']='lag_cum_icsidtreaty_case'
 colnames(modelData)[colnames(modelData)=='lagcum_kicsidcase']='lag_cum_kicsidcase'
 colnames(modelData)[colnames(modelData)=='lagpch_gdp']='lag_pch_gdp'
 
-lagVars=c('cumunsettled_icsidtreaty','cum_alltreaty')
+lagVars=c('cumunsettled_icsid_treaty','cum_alltreaty')
 modelData$cyear=numSM(modelData$cyear)
 modelData=lagDataSM(modelData, 'cyear', 'ccode', lagVars, 1)
 colnames(modelData)[(ncol(modelData)-1):ncol(modelData)]=paste0('lag_',lagVars)
 
 # For modeling
 ivDisp=c('cum_kicsidcase','cum_icsidtreaty_case',
-	'cumunsettled_icsidtreaty','cumcunctadcase','cum_alltreaty' )
+	'cumunsettled_icsid_treaty','cumcunctadcase','cum_alltreaty' )
 
 # Create two year moving sum of dispute variables
 dispVars=c('kicsidcase', 'icsidtreaty_case', 
