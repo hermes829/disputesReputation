@@ -3,20 +3,7 @@ rm(list=ls())
 
 # Setting working directory
 if(
-Sys.info()["user"]=="janus829"
-){pathMain="~/Dropbox/Research/RemmerProjects/disputesReputation";
-  pathGraphics="~/Dropbox/Research/RemmerProjects/disputesReputation/Graphics";
-  pathData="~/Dropbox/Research/RemmerProjects/disputesReputation/Data";
-  pathResults="~/Dropbox/Research/RemmerProjects/disputesReputation/Results";
-  pathCode="~/Desktop/Research/RemmerProjects/disputesReputation/RCode";
-  pathLatex="~/Desktop/Research/RemmerProjects/disputesReputation/Latex"
-  pathFunctions="~/Desktop/Prog Notes/R Functions"
-  pathPaper="~/Dropbox/Research/RemmerProjects/disputesReputation/IO/graphics"
-  load('~/Desktop/Research/BuildingPanelData/panel.rda')
-}
-
-if(
-Sys.info()["user"]=="s7m"
+Sys.info()["user"]=="janus829" | Sys.info()["user"]=="s7m"
 ){pathMain="~/Dropbox/Research/RemmerProjects/disputesReputation";
   pathGraphics="~/Dropbox/Research/RemmerProjects/disputesReputation/Graphics";
   pathData="~/Dropbox/Research/RemmerProjects/disputesReputation/Data";
