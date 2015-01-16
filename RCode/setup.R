@@ -15,8 +15,6 @@ Sys.info()["user"]=="janus829" | Sys.info()["user"]=="s7m"
   load('~/Research/BuildingPanelData/panel.rda')
 }
 
-
-
 # Loading libraries and functions
 library(foreign)
 library(countrycode)
@@ -73,4 +71,5 @@ rescale <- function(x,new_max,new_min){
  xResc }
 
 # turn variables into numeric
-numSM <- function(x){ as.numeric(as.character(x)) }
+char = function(x){ as.character(x) }
+numSM <- function(x){ as.numeric(char(x)) }

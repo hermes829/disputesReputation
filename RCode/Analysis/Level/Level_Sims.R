@@ -56,21 +56,6 @@ for(ii in 1:length(modResults)){
   #########  
 
   ##########
-  # Macro econ scenario
-  viPos = which(vi==vars)
-  qtS=function(x,p=0.9){quantile(x,probs=p)}
-  scenario=rbind(
-   apply(simData[,vars[-viPos]], 2, function(x) FUN=qtS(x,0.1)),
-   apply(simData[,vars[-viPos]], 2, function(x) FUN=qtS(x,0.9))
-    )
-  scenario[,5]=median(simData$lag_ratifiedbits)
-  scenario[,4]=rev(scenario[,4]) # inflation
-  scenario=cbind(vRange, scenario)
-  colnames(scenario)[1]=vi
-  vars2 = colnames(scenario)
-  ##########  
-
-  ##########
   # Draw pred values from mvnorm
   draws = mvrnorm(n = sims, estimates[vars2], varcov[vars2,vars2])
   modelPreds = draws %*% t(scenario)
@@ -91,8 +76,7 @@ temp=ggplot(summPreds, aes(x=factor(scen), y=mean,ymax=hi,ymin=lo,group=disp))
 temp=temp+geom_linerange() + geom_point() + facet_wrap(~ disp)
 temp=temp+ylab('Predicted Investment Profile Rating')
 temp=temp+scale_x_discrete('',labels=c(
-  # 'A'='Zero Disputes', 'B'='High Disputes'))  
-  'A'='Zero Disputes \n \\& Weak \n Fundamentals', 'B'='High Disputes \n \\& Strong \n Fundamentals'))
+  'A'='Zero Disputes', 'B'='High Disputes'))  
 temp=temp+scale_y_continuous(breaks=c(0,4,8,12),labels=c(0,4,8,12))
 temp = temp + theme(
   axis.ticks=element_blank(), panel.grid.major=element_blank(),
@@ -100,8 +84,7 @@ temp = temp + theme(
   )
 temp
 setwd(pathPaper)
-# tikz(file='simResults.tex',width=8,height=6,standAlone=F)
-tikz(file='dispVfund.tex',width=8,height=6,standAlone=F)
+tikz(file='simResults.tex',width=8,height=6,standAlone=F)
 temp
 dev.off()
 ###################################################################

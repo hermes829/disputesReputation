@@ -113,9 +113,74 @@ temp = ggcoefplot(coefData=coefCross,
   )
 temp
 setwd(pathPaper)
-tikz(file='crossValLevel.tex',width=8,height=6,standAlone=F)
-temp
-dev.off()
+# tikz(file='crossValLevel.tex',width=8,height=6,standAlone=F)
+# temp
+# dev.off()
+###############################################################################
+
+###############################################################################
+# Substantive effect
+sims=1000
+yrs=1994:2010
+modelYrPreds=NULL
+for(Year in yrs){
+	slice=modelData[which(modelData$rand %in% Year), ]
+	yrMod=lapply(modForm, function(x) lm(x, data=slice) )
+
+	# scenario
+	# Control vars same for each model
+	vars=names(coef(yrMod[[1]]))[c(-1,-2)]
+	means=apply(slice[,vars], 2, function(x) mean(x, na.rm=TRUE))
+	dispVar=lapply(yrMod, function(x) names(coef(x))[2] )
+	minMaxDisp=lapply(dispVar, function(x) quantile(slice[,x], probs=c(0,1), na.rm=TRUE) )
+	scen=lapply(minMaxDisp, function(x) rbind( c(1, x[1], means), c(1, x[2], means) ) )
+	
+	# sims
+	draws=lapply(yrMod, function(x) mvrnorm(sims, coef(x), vcov(x)) )
+	modelPreds=lapply(1:length(scen), function(x){ 
+		preds=data.frame( draws[[x]] %*% t(scen[[x]]) )
+		names(preds)=c('lodisp', 'hidisp')
+		preds$varYr=paste(dispVar[[x]], Year, sep='__')
+		preds } )
+	modelPreds=do.call('rbind', modelPreds)
+
+	# Aggregate results
+	modelYrPreds=rbind(modelYrPreds, modelPreds)
+}
+
+# Aggregate
+qSM=function(x){quantile(x, probs=c(0.025,0.975))}
+aggData=lapply(unique(modelYrPreds$varYr), function(x){ modelYrPreds[modelYrPreds$varYr==x,] })
+aggStats=do.call('rbind', lapply(aggData, function(x){
+	stats=t(apply(x[,1:2], 2, function(y){ c(mean(y), qSM(y)) }))
+	colnames(stats)=c('mu','qlo','qhi')
+	rownames(stats)=NULL
+	cbind(unique(x[,3]), c('Low', 'High'), stats) }) )
+aggStats=data.frame(aggStats); names(aggStats)[1:2]=c('varYr', 'Scenario')
+aggStats$mu=numSM(aggStats$mu); aggStats$qlo=numSM(aggStats$qlo); aggStats$qhi=numSM(aggStats$qhi)
+aggStats$dispVar=unlist(lapply(strsplit(char(aggStats$varYr), '__'), function(x) x[1]))
+aggStats$Year=unlist(lapply(strsplit(char(aggStats$varYr), '__'), function(x) x[2]))
+rm(list=c('modelYrPreds', 'aggData')) # Clean up workspace
+
+ggplot(aggStats, aes(x=Year, color=Scenario)) + geom_linerange(aes(ymax=qhi,ymin=qlo)) + geom_point(aes(y=mu)) + facet_wrap(~dispVar, scales='free') + theme(axis.text.x=element_text(angle=45,hjust=1))
+
+par(mfrow=c(2,2))
+for(yr in yrs){
+	box=modelYrPreds[which(modelYrPreds[,1]==yr),2:3]
+	
+	boxplot(box, main=yr)
+
+	# plot(density(box[,1]), col='blue', main=yr,
+	# 	xlim=c(floor(min(apply(box, 2, min))),ceiling(max(apply(box, 2, max)))))
+	# lines(density(box[,2]), col='red')	
+
+	# plot( density(box[,1]-box[,2]), main=yr )
+}
+
+summary(modelPreds)
+plot(density(modelPreds[,1]), col='blue', 
+	xlim=c(floor(min(apply(modelPreds, 2, min))),ceiling(max(apply(modelPreds, 2, max)))))
+lines(density(modelPreds[,2]), col='red')
 ###############################################################################
 
 # Number of disputes by year
