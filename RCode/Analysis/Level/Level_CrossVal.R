@@ -12,11 +12,11 @@ dv='Investment_Profile'; dvName='Investment Profile'
 
 # Cumulative disputes
 ivDisp=c('cum_kicsidcase','cum_icsidtreaty_case',
-	'cumunsettled_icsid_treaty','cumcunctadcase','cum_alltreaty' )
+	'cumunsettled_icsid_treaty','cum_alltreaty' )
 
 # Two year moving sum of disputes
 dispVars=c('kicsidcase', 'icsidtreaty_case', 
-	'unsettled_icsid_treaty', 'cunctadcase', 'alltreaty')
+	'unsettled_icsid_treaty', 'alltreaty')
 ivDisp=paste0('mvs2_',dispVars)
 
 # Other covariates
@@ -56,29 +56,12 @@ rands=sort(unique(na.omit(modelData[,'rand'])))
 rands=sort(unique(modelData$year))
 modelData$rand=modelData$year
 
-# rands=1:5
-# modelData$rand=0
-# modelData$rand[modelData$year>=1987 & modelData$year<1992]=1
-# modelData$rand[modelData$year>=1992 & modelData$year<1997]=2
-# modelData$rand[modelData$year>=1997 & modelData$year<2002]=3
-# modelData$rand[modelData$year>=2002 & modelData$year<2007]=4
-# modelData$rand[modelData$year>=2007]=5
-
 coefCross=NULL
 for(ii in 1:length(rands)){
 
 	slice=modelData[which(modelData$rand %in% rands[ii]), ]
 	print(paste0('cross ',rands[ii], ' has ', nrow(slice), ' obs from ',
 		length(unique(slice$ccode)), ' countries'))	
-
-	# plmSlice=pdata.frame( slice[,c(dv, unique(unlist(ivAll)), 'ccode', 'year') ], 
-	# 		index=c('ccode','year') )
-
-	# modResults=lapply(modForm, function(x)
-	# 	FUN=plm(x, data=plmSlice, model='within') )
-
-	# modSumm=lapply(modResults, function(x)
-	# 	FUN=coeftest(x, vcov=vcovHC(x,method='arellano',cluster="group")))	
 
 	modResults=lapply(modForm, function(x)
 		FUN=lm(x, data=slice) )	
@@ -87,8 +70,6 @@ for(ii in 1:length(rands)){
 		FUN=coeftest(x))		
 
 	dispSumm=do.call(rbind, lapply(modSumm,function(x)FUN=x[2,,drop=FALSE]))
-	
-	# coefCross=rbind(coefCross, cbind(dispSumm,cross=ii))
 
 	coefCross=rbind(coefCross, cbind(dispSumm,cross=rands[ii]))	
 }
@@ -98,15 +79,14 @@ coefCross=coefCross[which(!rownames(coefCross) %in% 'lag_pch_gdp'),]
 ###############################################################################
 # Plotting
 VARS=unique(rownames(coefCross))
-ivDispName=c('All ICSID Disputes', 'ICSID Treaty-Based', 'Unsettled ICSID', 
-	'UNCTAD','ICSID-UNCTAD' )
+ivDispName=c('All ICSID Disputes', 'ICSID Treaty-Based', 'Unsettled ICSID', 'ICSID-UNCTAD' )
 VARSname=lagLabName(ivDispName)
 
 temp = ggcoefplot(coefData=coefCross, 
 	vars=VARS, varNames=VARSname,
   Noylabel=FALSE, coordFlip=FALSE, revVar=FALSE,
   facet=TRUE, facetColor=FALSE, colorGrey=FALSE,
-  facetName='cross', facetDim=c(2,3), 
+  facetName='cross', facetDim=c(2,2), 
   facetBreaks=seq(1987,2011,3),
   facetLabs=seq(1987,2011,3),
   allBlack=FALSE
@@ -121,7 +101,7 @@ setwd(pathPaper)
 ###############################################################################
 # Substantive effect
 sims=1000
-yrs=1994:2010
+yrs=1999:2011
 modelYrPreds=NULL
 for(Year in yrs){
 	slice=modelData[which(modelData$rand %in% Year), ]
@@ -159,28 +139,22 @@ aggStats=do.call('rbind', lapply(aggData, function(x){
 aggStats=data.frame(aggStats); names(aggStats)[1:2]=c('varYr', 'Scenario')
 aggStats$mu=numSM(aggStats$mu); aggStats$qlo=numSM(aggStats$qlo); aggStats$qhi=numSM(aggStats$qhi)
 aggStats$dispVar=unlist(lapply(strsplit(char(aggStats$varYr), '__'), function(x) x[1]))
-aggStats$Year=unlist(lapply(strsplit(char(aggStats$varYr), '__'), function(x) x[2]))
-rm(list=c('modelYrPreds', 'aggData')) # Clean up workspace
+aggStats$Year=numSM(unlist(lapply(strsplit(char(aggStats$varYr), '__'), function(x) x[2])))
 
-ggplot(aggStats, aes(x=Year, color=Scenario)) + geom_linerange(aes(ymax=qhi,ymin=qlo)) + geom_point(aes(y=mu)) + facet_wrap(~dispVar, scales='free') + theme(axis.text.x=element_text(angle=45,hjust=1))
+# Plot labeling
+aggStats$Scenario=mapVar(aggStats$Scenario, c('Low','High'), paste0(c('Zero ', 'High '), 'Disputes'))
+aggStats$dispVar=mapVar(aggStats$dispVar, paste0('lag_', ivDisp), ivDispName )
+aggStats$Year[aggStats$Scenario=='Zero Disputes']=aggStats$Year[aggStats$Scenario=='Zero Disputes']-.12
 
-par(mfrow=c(2,2))
-for(yr in yrs){
-	box=modelYrPreds[which(modelYrPreds[,1]==yr),2:3]
-	
-	boxplot(box, main=yr)
-
-	# plot(density(box[,1]), col='blue', main=yr,
-	# 	xlim=c(floor(min(apply(box, 2, min))),ceiling(max(apply(box, 2, max)))))
-	# lines(density(box[,2]), col='red')	
-
-	# plot( density(box[,1]-box[,2]), main=yr )
-}
-
-summary(modelPreds)
-plot(density(modelPreds[,1]), col='blue', 
-	xlim=c(floor(min(apply(modelPreds, 2, min))),ceiling(max(apply(modelPreds, 2, max)))))
-lines(density(modelPreds[,2]), col='red')
+tmp=ggplot(aggStats, aes(x=Year, color=Scenario)) + scale_color_grey(start=.6, end=0)
+tmp=tmp + geom_linerange(aes(ymax=qhi,ymin=qlo), lwd=.75) + geom_point(aes(y=mu), cex=2.5) 
+tmp=tmp + scale_x_continuous('',breaks=seq(1999, 2011, 2)) + ylab('Predicted Investment Profile Rating')
+tmp=tmp + facet_wrap(~dispVar) 
+tmp=tmp + theme(
+	panel.grid=element_blank(),
+	axis.text.x=element_text(angle=45,hjust=1), 
+	legend.position='top', legend.title=element_blank())
+tmp
 ###############################################################################
 
 # Number of disputes by year

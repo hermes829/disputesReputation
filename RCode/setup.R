@@ -73,3 +73,8 @@ rescale <- function(x,new_max,new_min){
 # turn variables into numeric
 char = function(x){ as.character(x) }
 numSM <- function(x){ as.numeric(char(x)) }
+
+mapVar=function(var, old, new){
+  var=char(var)
+  for(ii in 1:length(old)){ var[var==old[ii]]=new[ii] }
+  return ( factor(var, levels=new) ) }
