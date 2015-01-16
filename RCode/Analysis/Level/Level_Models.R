@@ -1,7 +1,7 @@
 # Main modeling file
 
 ### Load setup
-source('/Users/janus829/Desktop/Research/RemmerProjects/disputesReputation/RCode/setup.R')
+source('~/Research/RemmerProjects/disputesReputation/RCode/setup.R')
 setwd(pathData)
 load('modelData.rda')
 
@@ -45,30 +45,6 @@ ivOtherName=c(
 	,'Polity'
 	)
 ivsName=lapply(ivDispName, function(x) FUN= c(lagLab(x), lagLab(ivOtherName)))
-
-# Add temporal dummy
-yrCut=2006
-modelData$time=0; modelData$time[modelData$year>yrCut]=1
-
-# Interaction lagged variables
-modelData$kicsidI = modelData$mvs2_kicsidcase*modelData$time
-modelData$icsidI = modelData$mvs2_icsidtreaty_case*modelData$time
-modelData$unsettI = modelData$mvs2_unsettled_icsid_treaty*modelData$time
-modelData$allI = modelData$mvs2_alltreaty*modelData$time
-
-# Add temporal interactions
-lagI=c('kicsidI', 'icsidI', 'unsettI', 'allI')
-for(ii in 1:4){ 
-	ivAll[[ii]] = append(ivAll[[ii]], 'time', 0)
-	ivAll[[ii]] = append(ivAll[[ii]], lagI[ii], 2)
-}
-
-tName=paste0('Post ', yrCut)
-lagI=paste(lagLabName(ivDispName), tName, sep=' x ')
-for(ii in 1:4){
-	ivsName[[ii]] = append(ivsName[[ii]], tName, 0)
-	ivsName[[ii]] = append(ivsName[[ii]], lagI[ii], 2)
-}
 #######################################################################################
 
 # #####################################################################################

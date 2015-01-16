@@ -2,7 +2,7 @@
 ## datasets being used in this analysis
 
 ### Load setup
-source('/Users/janus829/Desktop/Research/RemmerProjects/disputesReputation/RCode/setup.R')
+source('~/Research/RemmerProjects/disputesReputation/RCode/setup.R')
 
 ### load data
 setwd(pathData)

@@ -1,11 +1,5 @@
 ### Load setup
-if(Sys.info()['user']=='janus829'){
-	source('/Users/janus829/Desktop/Research/RemmerProjects/disputesReputation/RCode/setup.R')
-}
-
-if(Sys.info()['user']=='s7m'){
-	source('/Users/s7m/Research/RemmerProjects/disputesReputation/RCode/setup.R')
-}
+source('~/Research/RemmerProjects/disputesReputation/RCode/setup.R')
 
 ###################################################################
 # Load in Data
