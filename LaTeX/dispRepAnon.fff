@@ -1,0 +1,43 @@
+\begin{figure}[ht]
+\vspace{4cm}
+\centering
+\caption{Substantive Effect of Disputes on Investment Profile}
+\label{fig:subEffect}
+% \includegraphics[width=1\textwidth]{graphics/simResults.pdf}
+\resizebox{1\textwidth}{!}{\input{graphics/simResults}}
+\caption*{Note: Here we show a typical country's predicted rating on investment profile under a scenario where a country faces a minimum versus maximum number of disputes. Results were obtained by using simulations. Accounting for inferential uncertainty. The point estimates here represent the mean predicted ratings and the line represents the 95\% level of uncertainty associated with these estimates.}
+\end{figure}
+\efloatseparator
+ 
+\begin{figure}[ht]
+\vspace{3cm}
+\centering
+\caption{Lagged Effects of Disputes on Investment Profile}
+\label{fig:lagEffect}
+% \includegraphics[width=1\textwidth]{graphics/lagEffect.pdf}
+\resizebox{1\textwidth}{!}{\input{graphics/lagEffect}}
+\caption*{Note: Results here combine the coefficient estimates of disputes from four additional models where we lagged disputes by two, three, four, and five years instead of just one, all other covariates remained lagged at one year.}
+\end{figure}
+\efloatseparator
+ 
+\begin{figure}[ht]
+\vspace{4cm}
+\centering
+\caption{Effects of Disputes versus Fundamentals on Reputation}
+\label{fig:dispFund}
+% \includegraphics[width=1\textwidth]{graphics/dispVfund.pdf}
+\resizebox{1\textwidth}{!}{\input{graphics/dispVfund}}
+\caption*{Note: Results here show differences in predicted investment profile ratings under a scenario of zero disputes but weak country fundamentals and high disputes but strong country fundamentals. We exclude results for the ICSID-UNCTAD and UNCTAD cases because they are similar to the above.}
+\end{figure}
+\efloatseparator
+ 
+\begin{figure}[ht]
+\vspace{4cm}
+\centering
+\caption{Cross-Validation of ECM Estimates}
+\label{fig:ecmCross}
+\resizebox{1\textwidth}{!}{\input{graphics/crossValECM}}
+\caption*{Note: Each line here shows the coefficient estimate of one of the lagged dispute variables from rerunning the model on a random subsample within the dataset. All the covariates used in the initial model shown in table \ref{tab:ecm} were included as well.}
+\end{figure}
+\efloatseparator
+ 
