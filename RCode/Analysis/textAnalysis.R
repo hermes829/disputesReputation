@@ -44,10 +44,10 @@ tmp=tmp + theme(
 	axis.line = element_line(color = 'black')
 	)
 tmp
-# setwd(pathGraphics)
-# pdf(file='histICSID.pdf', width=12, height=8)
-# tmp
-# dev.off()
+setwd(pathGraphics)
+tikz(file='histICSID', width=8, height=4, standAlone=F)
+tmp
+dev.off()
 ###################################################################
 
 ###################################################################

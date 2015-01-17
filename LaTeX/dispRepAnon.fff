@@ -34,6 +34,28 @@
 \begin{figure}[ht]
 \vspace{4cm}
 \centering
+\caption{Substantive Effect of Changes in Coefficient estimates}
+\label{fig:levelCross}
+% \includegraphics[width=1\textwidth]{graphics/dispVfund.pdf}
+\resizebox{1\textwidth}{!}{\input{graphics/crossValSim}}
+\caption*{Note: Each line here in the left panel shows the coefficient estimate of running the model in a pooled fashion at yearly intervals. All the covariates used in the initial model shown in table \ref{tab:dispRepLevel} were included as well.}
+\end{figure}
+\efloatseparator
+ 
+\begin{figure}[ht]
+\vspace{4cm}
+\centering
+\caption{Media Reporting of ICSID Disputes}
+\label{fig:levelCross}
+% \includegraphics[width=1\textwidth]{graphics/dispVfund.pdf}
+\resizebox{1\textwidth}{!}{\input{graphics/histICSID}}
+\caption*{Note: Each line here in the left panel shows the coefficient estimate of running the model in a pooled fashion at yearly intervals. All the covariates used in the initial model shown in table \ref{tab:dispRepLevel} were included as well.}
+\end{figure}
+\efloatseparator
+ 
+\begin{figure}[ht]
+\vspace{4cm}
+\centering
 \caption{Cross-Validation of ECM Estimates}
 \label{fig:ecmCross}
 \resizebox{1\textwidth}{!}{\input{graphics/crossValECM}}
