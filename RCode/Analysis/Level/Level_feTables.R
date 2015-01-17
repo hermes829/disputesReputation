@@ -75,8 +75,8 @@ temp[which(is.na(temp))]=tableFinal[,'Variable'][which(is.na(temp))]
 tableFinal[,'Variable']=temp
 
 # Add & before every period
-tableFinal[,2:ncol(tableFinal)]=apply(
-	tableFinal[,2:ncol(tableFinal)], c(1,2), function(x){ 
+tableFinal[,2:ncol(tableFinal)]=apply(tableFinal[,2:ncol(tableFinal)], c(1,2), 
+	function(x){ 
 		if( grepl('\\$', x) ){ gsub('\\$*\\.', '$&$.', x)
 		} else { gsub('\\.', '&.', x) } })
 

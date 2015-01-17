@@ -23,11 +23,11 @@
 \begin{figure}[ht]
 \vspace{4cm}
 \centering
-\caption{Effects of Disputes versus Fundamentals on Reputation}
-\label{fig:dispFund}
+\caption{Change in Effect of Disputes}
+\label{fig:levelCross}
 % \includegraphics[width=1\textwidth]{graphics/dispVfund.pdf}
-\resizebox{1\textwidth}{!}{\input{graphics/dispVfund}}
-\caption*{Note: Results here show differences in predicted investment profile ratings under a scenario of zero disputes but weak country fundamentals and high disputes but strong country fundamentals. We exclude results for the ICSID-UNCTAD and UNCTAD cases because they are similar to the above.}
+\resizebox{1\textwidth}{!}{\input{graphics/crossValLevel}}
+\caption*{Note: Each line here in the left panel shows the coefficient estimate of running the model in a pooled fashion at yearly intervals. All the covariates used in the initial model shown in table \ref{tab:dispRepLevel} were included as well.}
 \end{figure}
 \efloatseparator
  

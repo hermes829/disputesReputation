@@ -42,25 +42,13 @@ modForm=lapply(ivAll, function(x)
 ###############################################################################
 
 ###############################################################################
-# Run cross val models
-
-# Random cross val
-modelCntries=unique(modelData$ccode)
-set.seed(round(runif(1,100,10000),0))
-randSamp=data.frame(cbind(ccode=modelCntries, 
-	rand=sample(1:6,length(modelCntries),replace=T)))
-modelData$rand=randSamp$rand[match(modelData$ccode,randSamp$ccode)]
-
-rands=sort(unique(na.omit(modelData[,'rand'])))
-
-rands=sort(unique(modelData$year))
-modelData$rand=modelData$year
-
+# Run yearly models
+yrs=sort(unique(modelData$year))
 coefCross=NULL
-for(ii in 1:length(rands)){
+for(ii in 1:length(yrs)){
 
-	slice=modelData[which(modelData$rand %in% rands[ii]), ]
-	print(paste0('cross ',rands[ii], ' has ', nrow(slice), ' obs from ',
+	slice=modelData[which(modelData$year %in% yrs[ii]), ]
+	print(paste0('cross ',yrs[ii], ' has ', nrow(slice), ' obs from ',
 		length(unique(slice$ccode)), ' countries'))	
 
 	modResults=lapply(modForm, function(x)
@@ -71,7 +59,7 @@ for(ii in 1:length(rands)){
 
 	dispSumm=do.call(rbind, lapply(modSumm,function(x)FUN=x[2,,drop=FALSE]))
 
-	coefCross=rbind(coefCross, cbind(dispSumm,cross=rands[ii]))	
+	coefCross=rbind(coefCross, cbind(dispSumm,cross=yrs[ii]))	
 }
 coefCross=coefCross[which(!rownames(coefCross) %in% 'lag_pch_gdp'),]
 ###############################################################################
@@ -82,7 +70,7 @@ VARS=unique(rownames(coefCross))
 ivDispName=c('All ICSID Disputes', 'ICSID Treaty-Based', 'Unsettled ICSID', 'ICSID-UNCTAD' )
 VARSname=lagLabName(ivDispName)
 
-temp = ggcoefplot(coefData=coefCross, 
+tmp = ggcoefplot(coefData=coefCross, 
 	vars=VARS, varNames=VARSname,
   Noylabel=FALSE, coordFlip=FALSE, revVar=FALSE,
   facet=TRUE, facetColor=FALSE, colorGrey=FALSE,
@@ -91,11 +79,10 @@ temp = ggcoefplot(coefData=coefCross,
   facetLabs=seq(1987,2011,3),
   allBlack=FALSE
   )
-temp
-setwd(pathPaper)
-# tikz(file='crossValLevel.tex',width=8,height=6,standAlone=F)
-# temp
-# dev.off()
+setwd(pathGraphics)
+tikz(file='crossValLevel.tex',width=8,height=6,standAlone=F)
+tmp
+dev.off()
 ###############################################################################
 
 ###############################################################################
@@ -104,7 +91,7 @@ sims=1000
 yrs=1999:2011
 modelYrPreds=NULL
 for(Year in yrs){
-	slice=modelData[which(modelData$rand %in% Year), ]
+	slice=modelData[which(modelData$year %in% Year), ]
 	yrMod=lapply(modForm, function(x) lm(x, data=slice) )
 
 	# scenario
@@ -155,6 +142,10 @@ tmp=tmp + theme(
 	axis.text.x=element_text(angle=45,hjust=1), 
 	legend.position='top', legend.title=element_blank())
 tmp
+setwd(pathGraphics)
+tikz(file='crossValSim.tex',width=8,height=6,standAlone=F)
+temp
+dev.off()
 ###############################################################################
 
 # Number of disputes by year

@@ -265,33 +265,24 @@ The clear implication is that facing disputes at the ICSID or other dispute trib
 
 % \newpage
 
-We also hypothesized that the effect of disputes relative to country fundamentals should be minimal. To test this we again set up two scenarios. For the first, we set up a scenario where a state has faced no disputes but has weak country fundamentals, meaning that it has low levels of economic dynamism, market size, macroeconomic stability, internal stability, financial openness, and political democracy. For the alternative case, we set up a scenario where a country has faced a high number of disputes but has strong country fundamentals. Since BITs are not representative of country fundamentals, we set the value of BITs in both scenarios to the median value in our sample.\footnote{In the low disputes and weak country fundamentals scenario, we set the value of disputes to zero and that of each of the country fundamental variables to their 10$^{th}$ percentile -- inflation was set to its 90$^{th}$ percentile. In the high disputes and strong country fundamentals scenario, we set the value of disputes to its 99th percentile and each of the country fundamental variables to their 90$^{th}$ percentile -- inflation was set to its 10$^{th}$ percentile. Under both scenarios the value of BITs was set to 5, its median in the sample.} To assess differences in reputation, we again employ a simulation-based approach that enables us to account for uncertainty in the regression estimates when making inferences. The results of this analysis are shown in Figure \ref{fig:dispFund}. Here we can clearly see that these two scenarios generate substantively different ratings on reputation. Even after experiencing a high level of dispute involvement, a country with strong fundamentals can still maintain its reputation whereas the opposite scenario does not hold. Compared with exposure to investor-state dispute arbitration processes, country fundamentals thus emerge as a significant determinant of reputation.
-
-% \newpage
+However, the effects of disputes in recent years has changed to matter in interesting ways. 
 
 \begin{figure}[ht]
 	\vspace{4cm}
 	\centering
-	\caption{Effects of Disputes versus Fundamentals on Reputation}
-	\label{fig:dispFund}
+	\caption{Change in Effect of Disputes}
+	\label{fig:levelCross}
 	% \includegraphics[width=1\textwidth]{graphics/dispVfund.pdf}
-	\resizebox{1\textwidth}{!}{\input{graphics/dispVfund}}	
-	\caption*{Note: Results here show differences in predicted investment profile ratings under a scenario of zero disputes but weak country fundamentals and high disputes but strong country fundamentals. We exclude results for the ICSID-UNCTAD and UNCTAD cases because they are similar to the above.}
+	\resizebox{1\textwidth}{!}{\input{graphics/crossValLevel}}
+	\caption*{Note: Each line here in the left panel shows the coefficient estimate of running the model in a pooled fashion at yearly intervals. All the covariates used in the initial model shown in table \ref{tab:dispRepLevel} were included as well.}
 \end{figure}
 
-% \newpage
 
-% To ensure that our parameter estimates are robust to changes in our sample, we run a six-fold cross-validation. This analysis helps us to understand whether some of the subsets in our dataset follow a different pattern than what is in the broader set \citep{beck2008time}. To conduct the cross-validation, we randomly split the 68 country observations in our dataset into seven approximately equal subsets. Each subset ends up containing a minimum of approximately 65 cases. We then run each model shown in table \ref{tab:dispRepLevel} seven times, where in each iteration we left out one subsample. The results of this analysis are depicted in \ref{fig:levelCross}, and we can clearly see that the parameter estimates for our two spatial proximity variables remain consistent across the exclusion of any of the folds.
-%
-% \begin{figure}[ht]
-% 	\vspace{4cm}
-% 	\centering
-% 	\caption{Cross-Validation of Level Model Estimates}
-% 	\label{fig:levelCross}
-% 	% \includegraphics[width=1\textwidth]{graphics/dispVfund.pdf}
-% 	\resizebox{1\textwidth}{!}{\input{graphics/crossValLevel}}
-% 	\caption*{Note: Each line here in the left panel shows the coefficient estimate of $Ln(Min. \; Capital \; Dist.)_{i,t-1}$ from rerunning the model on six random subsamples within the dataset. The panel on the right shows the same for $Ln(Min. \; City \; Dist.)_{i,t-1}$. All the covariates used in the initial model shown in table \ref{tab:dispRepLevel} were included as well.}
-% \end{figure}
+Further in recent years we can clearly see that these agreements are having a substantive effect on reputation.
+
+
+
+\section{Short and Long Term Effects}
 
 The main limitations of the preceding results are that they do not directly address the question of reputational change nor allow us to distinguish between the short and long-term effects of alleged treaty violations. For this reason, we probe the impact of investment disputes further below on the basis of an error correction model (ECM). Contrary, to Allee and Peinhardt, who assert ``once an investment dispute emerges, investors will rethink their assessments of political risk,'' our central theoretical expectation is that individual disputes are unlikely to have immediate or significant -- consequences for a state's reputation with investors. To the extent that disputes matter, we expect instead that reputational costs only emerge slowly with the accumulation of arbitral claims over time.\footnote{\footnote{\citet[p. 402]{allee:peinhardt:2011}}} In other words, the arguments relating state reputation to treaty compliance are arguably best understood as reflecting long-term equilibria rather than transitory or short-term effects.
 
