@@ -2,7 +2,6 @@
 rm(list=ls())
 
 # Setting working directory
-basePath='/Research/RemmerProjects/disputesReputation'
 if(
 Sys.info()["user"]=="janus829" | Sys.info()["user"]=="s7m"
 ){pathMain="~/Dropbox/Research/RemmerProjects/disputesReputation";
@@ -12,30 +11,26 @@ Sys.info()["user"]=="janus829" | Sys.info()["user"]=="s7m"
   pathCode="~/Research/RemmerProjects/disputesReputation/RCode";
   pathLatex="~/Research/RemmerProjects/disputesReputation/Latex"
   pathFunctions="~/Prog Notes/R Functions"
-  pathPaper="~/Dropbox/Research/RemmerProjects/disputesReputation/IO/graphics"
   load('~/Research/BuildingPanelData/panel.rda')
 }
 
 # Loading libraries and functions
-library(foreign)
-library(countrycode)
-library(xlsx)
-library(gdata)
-library(ggplot2)
+loadPkg=function(toLoad){
+  for(lib in toLoad){
+  if(! lib %in% installed.packages()[,1])
+    { install.packages(lib, repos='http://cran.rstudio.com/') }
+  suppressMessages( library(lib, character.only=TRUE) )
+  }
+}
+
+toLoad=c('foreign', 'countrycode', 'xlsx', 'gdata', 'ggplot2',
+  'reshape', 'scales', 'plyr', 'doBy', 'WDI', 'zoo', 'panelAR',
+  'lme4', 'plm', 'lmtest', 'xtable', 'apsrtable', 'tikzDevice', 'MASS')
+
+loadPkg(toLoad)
+
+# ggplot theme
 theme_set(theme_bw())
-library(reshape)
-library(scales)
-library(plyr)
-library(doBy)
-library(WDI)
-library(zoo)
-library(panelAR)
-library(lme4)
-library(plm)
-library(lmtest)
-library(xtable)
-library(apsrtable)
-library(tikzDevice)
 
 # sourcing helpers
 setwd(pathCode)

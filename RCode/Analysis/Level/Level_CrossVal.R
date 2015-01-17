@@ -141,10 +141,9 @@ tmp=tmp + theme(
 	panel.grid=element_blank(),
 	axis.text.x=element_text(angle=45,hjust=1), 
 	legend.position='top', legend.title=element_blank())
-tmp
 setwd(pathGraphics)
 tikz(file='crossValSim.tex',width=8,height=6,standAlone=F)
-temp
+tmp
 dev.off()
 ###############################################################################
 
