@@ -2,10 +2,11 @@
 rm(list=ls())
 
 # Setting working directory
+basePath='/Research/RemmerProjects/disputesReputation'
 if(
 Sys.info()["user"]=="janus829" | Sys.info()["user"]=="s7m"
 ){pathMain="~/Dropbox/Research/RemmerProjects/disputesReputation";
-  pathGraphics="~/Dropbox/Research/RemmerProjects/disputesReputation/Graphics";
+  pathGraphics='~/Research/RemmerProjects/disputesReputation/Latex/graphics'
   pathData="~/Dropbox/Research/RemmerProjects/disputesReputation/Data";
   pathResults="~/Dropbox/Research/RemmerProjects/disputesReputation/Results";
   pathCode="~/Research/RemmerProjects/disputesReputation/RCode";
@@ -41,6 +42,7 @@ setwd(pathCode)
 source('textFunctions.R')
 source('tscsHelpers.R')
 source('vizResults.R')
+source('clus_errors.R')
 
 # Setting seed
 set.seed(6886)
