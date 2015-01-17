@@ -13,11 +13,11 @@ dv='Investment_Profile'; dvName='Investment Profile'
 
 # Cumulative disputes
 ivDisp=c('cum_kicsidcase','cum_icsidtreaty_case',
-	'cumunsettled_icsid_treaty','cumcunctadcase','cum_alltreaty' )
+	'cumunsettled_icsid_treaty','cum_alltreaty' )
 
 # Two year moving sum of disputes
 dispVars=c('kicsidcase', 'icsidtreaty_case', 
-	'unsettled_icsid_treaty', 'cunctadcase', 'alltreaty')
+	'unsettled_icsid_treaty', 'alltreaty')
 ivDisp=paste0('mvs2_',dispVars)
 
 # Other covariates
@@ -67,20 +67,22 @@ dispData
 rownames(dispData)=substr(rownames(dispSumm),6,100)
 VARS=unique(rownames(dispData))
 VARSname=c('All ICSID Disputes', 'ICSID Treaty-Based',
-	'Unsettled ICSID', 'UNCTAD','ICSID-UNCTAD' )
+	'Unsettled ICSID', 'ICSID-UNCTAD' )
 
-temp <- ggcoefplot(coefData=dispData, 
+tmp = ggcoefplot(coefData=dispData, 
 	vars=VARS, varNames=VARSname,
   Noylabel=FALSE, coordFlip=FALSE, revVar=FALSE,
   facet=TRUE, facetName='year',
-  # , facetDim=c(3,2), 
+  , facetDim=c(2,2), 
   facetBreaks=1:5,
   facetLabs=paste0('$\\beta_{t-',1:5,'}$'),
   colorGrey=T,grSTA=0.2,grEND=0.8
   )
-temp
-setwd(pathPaper)
+tmp=tmp + ylab('$\\beta$ for Dispute Variables')
+tmp=tmp + theme(axis.title.y=element_text(vjust=1))
+tmp
+setwd(pathGraphics)
 tikz(file='lagEffect.tex',width=8,height=6,standAlone=F)
-temp
+tmp
 dev.off()
 #############################################################

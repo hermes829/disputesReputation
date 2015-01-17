@@ -79,6 +79,8 @@ tmp = ggcoefplot(coefData=coefCross,
   facetLabs=seq(1987,2011,3),
   allBlack=FALSE
   )
+tmp=tmp + ylab('$\\beta$ for Dispute Variables')
+tmp=tmp + theme(axis.title.y=element_text(vjust=1))
 setwd(pathGraphics)
 tikz(file='crossValLevel.tex',width=8,height=6,standAlone=F)
 tmp
@@ -129,18 +131,20 @@ aggStats$dispVar=unlist(lapply(strsplit(char(aggStats$varYr), '__'), function(x)
 aggStats$Year=numSM(unlist(lapply(strsplit(char(aggStats$varYr), '__'), function(x) x[2])))
 
 # Plot labeling
-aggStats$Scenario=mapVar(aggStats$Scenario, c('Low','High'), paste0(c('Zero ', 'High '), 'Disputes'))
+ aggStats$Scenario=mapVar(aggStats$Scenario, c('Low','High'), paste0(c('Zero ', 'High '), 'Disputes \\; \\;'))
 aggStats$dispVar=mapVar(aggStats$dispVar, paste0('lag_', ivDisp), ivDispName )
-aggStats$Year[aggStats$Scenario=='Zero Disputes']=aggStats$Year[aggStats$Scenario=='Zero Disputes']-.12
+# aggStats$Year[aggStats$Scenario=='Zero Disputes']=aggStats$Year[aggStats$Scenario=='Zero Disputes \;\;\;']-.12
 
 tmp=ggplot(aggStats, aes(x=Year, color=Scenario)) + scale_color_grey(start=.6, end=0)
-tmp=tmp + geom_linerange(aes(ymax=qhi,ymin=qlo), lwd=.75) + geom_point(aes(y=mu), cex=2.5) 
+tmp=tmp + geom_linerange(aes(ymax=qhi,ymin=qlo), lwd=.75) + geom_point(aes(y=mu,shape=Scenario), cex=2.5) 
 tmp=tmp + scale_x_continuous('',breaks=seq(1999, 2011, 2)) + ylab('Predicted Investment Profile Rating')
 tmp=tmp + facet_wrap(~dispVar) 
 tmp=tmp + theme(
 	panel.grid=element_blank(),
 	axis.text.x=element_text(angle=45,hjust=1), 
+	axis.title.y=element_text(vjust=1),
 	legend.position='top', legend.title=element_blank())
+tmp
 setwd(pathGraphics)
 tikz(file='crossValSim.tex',width=8,height=6,standAlone=F)
 tmp
