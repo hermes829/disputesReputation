@@ -44,7 +44,7 @@ ivOtherName=c(
 	,'Capital Openness'	
 	,'Polity'
 	)
-ivsName=lapply(ivDispName, function(x) FUN= c(lagLab(x), lagLab(ivOtherName)))
+ivsName=lapply(ivDispName, function(x) FUN= c(lagLabName(x), lagLabName(ivOtherName)))
 #######################################################################################
 
 # #####################################################################################

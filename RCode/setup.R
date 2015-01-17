@@ -42,7 +42,6 @@ setwd(pathCode)
 source('textFunctions.R')
 source('tscsHelpers.R')
 source('vizResults.R')
-source('clus_errors.R')
 
 # Setting seed
 set.seed(6886)
