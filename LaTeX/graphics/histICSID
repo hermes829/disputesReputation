@@ -1,4 +1,4 @@
-% Created by tikzDevice version 0.7.0 on 2015-01-17 16:36:34
+% Created by tikzDevice version 0.7.0 on 2015-01-17 17:51:56
 % !TEX encoding = UTF-8 Unicode
 \begin{tikzpicture}[x=1pt,y=1pt]
 \definecolor[named]{fillColor}{rgb}{1.00,1.00,1.00}
@@ -14,7 +14,7 @@
 \path[clip] ( 41.82, 45.67) rectangle (566.12,277.03);
 \definecolor[named]{fillColor}{rgb}{1.00,1.00,1.00}
 
-\path[fill=fillColor] ( 41.82, 45.67) rectangle (566.11,277.03);
+\path[fill=fillColor] ( 41.82, 45.67) rectangle (566.12,277.03);
 \definecolor[named]{drawColor}{rgb}{0.66,0.66,0.66}
 \definecolor[named]{fillColor}{rgb}{0.75,0.75,0.75}
 
@@ -156,6 +156,6 @@
 \path[clip] (  0.00,  0.00) rectangle (578.16,289.08);
 \definecolor[named]{drawColor}{rgb}{0.00,0.00,0.00}
 
-\node[text=drawColor,rotate= 90.00,anchor=base,inner sep=0pt, outer sep=0pt, scale=  1.20] at ( 17.30,161.35) {Frequency};
+\node[text=drawColor,rotate= 90.00,anchor=base,inner sep=0pt, outer sep=0pt, scale=  1.20] at ( 14.29,161.35) {Frequency};
 \end{scope}
 \end{tikzpicture}

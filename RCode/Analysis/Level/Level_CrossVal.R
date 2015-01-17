@@ -41,50 +41,50 @@ modForm=lapply(ivAll, function(x)
 	FUN=as.formula( paste(dv, paste(x, collapse=' + '), sep=' ~ ') ))
 ###############################################################################
 
-###############################################################################
-# Run yearly models
-yrs=sort(unique(modelData$year))
-coefCross=NULL
-for(ii in 1:length(yrs)){
+# ###############################################################################
+# # Run yearly models
+# yrs=sort(unique(modelData$year))
+# coefCross=NULL
+# for(ii in 1:length(yrs)){
 
-	slice=modelData[which(modelData$year %in% yrs[ii]), ]
-	print(paste0('cross ',yrs[ii], ' has ', nrow(slice), ' obs from ',
-		length(unique(slice$ccode)), ' countries'))	
+# 	slice=modelData[which(modelData$year %in% yrs[ii]), ]
+# 	print(paste0('cross ',yrs[ii], ' has ', nrow(slice), ' obs from ',
+# 		length(unique(slice$ccode)), ' countries'))	
 
-	modResults=lapply(modForm, function(x)
-		FUN=lm(x, data=slice) )	
+# 	modResults=lapply(modForm, function(x)
+# 		FUN=lm(x, data=slice) )	
 
-	modSumm=lapply(modResults, function(x)
-		FUN=coeftest(x))		
+# 	modSumm=lapply(modResults, function(x)
+# 		FUN=coeftest(x))		
 
-	dispSumm=do.call(rbind, lapply(modSumm,function(x)FUN=x[2,,drop=FALSE]))
+# 	dispSumm=do.call(rbind, lapply(modSumm,function(x)FUN=x[2,,drop=FALSE]))
 
-	coefCross=rbind(coefCross, cbind(dispSumm,cross=yrs[ii]))	
-}
-coefCross=coefCross[which(!rownames(coefCross) %in% 'lag_pch_gdp'),]
-###############################################################################
+# 	coefCross=rbind(coefCross, cbind(dispSumm,cross=yrs[ii]))	
+# }
+# coefCross=coefCross[which(!rownames(coefCross) %in% 'lag_pch_gdp'),]
+# ###############################################################################
 
-###############################################################################
-# Plotting
-VARS=unique(rownames(coefCross))
+# ###############################################################################
+# # Plotting
+# VARS=unique(rownames(coefCross))
 ivDispName=c('All ICSID Disputes', 'ICSID Treaty-Based', 'Unsettled ICSID', 'ICSID-UNCTAD' )
-VARSname=lagLabName(ivDispName)
+# VARSname=lagLabName(ivDispName)
 
-tmp = ggcoefplot(coefData=coefCross, 
-	vars=VARS, varNames=VARSname,
-  Noylabel=FALSE, coordFlip=FALSE, revVar=FALSE,
-  facet=TRUE, facetColor=FALSE, colorGrey=FALSE,
-  facetName='cross', facetDim=c(2,2), 
-  facetBreaks=seq(1987,2011,3),
-  facetLabs=seq(1987,2011,3),
-  allBlack=FALSE
-  )
-tmp=tmp + ylab('$\\beta$ for Dispute Variables')
-tmp=tmp + theme(axis.title.y=element_text(vjust=1))
-setwd(pathGraphics)
-tikz(file='crossValLevel.tex',width=8,height=6,standAlone=F)
-tmp
-dev.off()
+# tmp = ggcoefplot(coefData=coefCross, 
+# 	vars=VARS, varNames=VARSname,
+#   Noylabel=FALSE, coordFlip=FALSE, revVar=FALSE,
+#   facet=TRUE, facetColor=FALSE, colorGrey=FALSE,
+#   facetName='cross', facetDim=c(2,2), 
+#   facetBreaks=seq(1987,2011,3),
+#   facetLabs=seq(1987,2011,3),
+#   allBlack=FALSE
+#   )
+# tmp=tmp + ylab('$\\beta$ for Dispute Variables')
+# tmp=tmp + theme(axis.title.y=element_text(vjust=1))
+# setwd(pathGraphics)
+# tikz(file='crossValLevel.tex',width=8,height=6,standAlone=F)
+# tmp
+# dev.off()
 ###############################################################################
 
 ###############################################################################
@@ -131,7 +131,7 @@ aggStats$dispVar=unlist(lapply(strsplit(char(aggStats$varYr), '__'), function(x)
 aggStats$Year=numSM(unlist(lapply(strsplit(char(aggStats$varYr), '__'), function(x) x[2])))
 
 # Plot labeling
- aggStats$Scenario=mapVar(aggStats$Scenario, c('Low','High'), paste0(c('Zero ', 'High '), 'Disputes \\; \\;'))
+ aggStats$Scenario=mapVar(aggStats$Scenario, c('Low','High'), paste0(c('Zero ', 'High '), 'Disputes $\\; \\; \\;$'))
 aggStats$dispVar=mapVar(aggStats$dispVar, paste0('lag_', ivDisp), ivDispName )
 # aggStats$Year[aggStats$Scenario=='Zero Disputes']=aggStats$Year[aggStats$Scenario=='Zero Disputes \;\;\;']-.12
 
