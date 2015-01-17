@@ -17,18 +17,18 @@ fdi = read.dta("Allee and Peinhardt IO 2011 data.dta")
 ###
 fdi$lnfdiSM = log( fdi$fdi_inflows+abs(min(fdi$fdi_inflows,na.rm=T))+.0001 ) # add constant to make neg >0 and then log
 
-# Lead DV forward one year
+# Lead DV and world FDI forward one year
 fdi$cyear = numSM(paste0(fdi$ifscode, fdi$year))
 tmp=fdi[,c('ifscode', 'year','lnfdiSM', 'lnfdi', 'worldfdi')]
 names(tmp)[3:5]=paste0('lead1_', names(tmp)[3:5])
 tmp$year=tmp$year-1
 tmp$cyear = numSM(paste0(tmp$ifscode, tmp$year))
 fdi=merge(fdi, tmp[,3:ncol(tmp)], by='cyear', all.x=TRUE)
+fdi$Fworldfdi=fdi[,'lead1_worldfdi']/(10^6)
 
-# Specifying DV
-fdi$Fworldfdi=fdi[,'lead1_worldfdi']
-fdi$DV = fdi[,'lead1_lnfdi'] # Allee and Peinhardt Approach
-# fdi$DV = fdi[,'lead1_lnfdiSM'] # Corrected
+# Specifying DV, toggle commenting to get results with A & P or corrected
+# fdi$DV = fdi[,'lead1_lnfdi'] # Allee and Peinhardt Approach
+fdi$DV = fdi[,'lead1_lnfdiSM'] # Corrected
 
 # Drop pre 1983
 fdi=fdi[fdi$year>1983,]
@@ -63,4 +63,7 @@ for(ii in 1:length(kivs)){
   plmList[[ii]]=plm(plmForm, data=plmData, model='within')
 }
 
+# Get coefficient estimates
 lapply(plmList, function(x) round(coeftest(x, vcov=vcovHC(x, type='HC1')),3) )
+# Get summary stats
+lapply(plmList, summary)
