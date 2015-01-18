@@ -184,9 +184,9 @@ Our sample includes all lower and middle-income nations for which data are avail
 
 \section*{Empirical Results}
 
-We begin the analysis of the effects of dispute involvement on perceptions of investment climate by utilizing a fixed effects framework with robust standard errors similar to that utilized in our replication of Allee and Peinhardt. Following Allee and Peinhardt, we analyze the impact of disputes initiated either over the past two or five years; however, we draw on a revised theoretical model and broaden our empirical focus to include three different measures of disputes: ICSID treaty-based disputes, ICSID unsettled treaty-based disputes, and combined ICSID and UNCTAD treaty-based disputes. Table \ref{tab:dispRepLevel} displays the results of this analysis.\footnote{Table \ref{tab:dispRepLevelBal} in the \nameref{appendix} displays the results of the same analysis using a balanced panel dataset. The results were nearly identical, so we show the results using the unbalanced data here.}
+We begin the analysis of the effects of dispute involvement on perceptions of investment climate by utilizing a fixed effects framework with robust standard errors similar to that utilized in our replication of Allee and Peinhardt. Following Allee and Peinhardt, we analyze the impact of disputes initiated over the past two years;\footnote{Results using disputes over the past five years are similar.} however, we draw on a revised theoretical model and broaden our empirical focus to include three different measures of disputes: ICSID treaty-based disputes, ICSID unsettled treaty-based disputes, and combined ICSID and UNCTAD treaty-based disputes. Table \ref{tab:dispRepLevel} displays the results of this analysis.\footnote{Table \ref{tab:dispRepLevelBal} in the \nameref{appendix} displays the results of the same analysis using a balanced panel dataset. The results were nearly identical, so we show the results using the unbalanced data here.}
 
-The findings for the various control measures we include in our model align with the extant literature. The lagged number of ratified BITs has a slight impact on reputations with the marginal effect of ratifying 10 more equating to a 0.3 point change in reputation. Additionally, countries with higher levels of economic growth, greater market size, more capital account openness, more democracy, and lower levels of violence have stronger reputations. Also as expected, high rates of inflation have adverse reputational effects.
+The findings for the various control measures we include in our model align with the extant literature. The lagged number of ratified BITs has a marginal impact on reputations with the marginal effect of ratifying 10 more equating to a 0.3 point change in reputation. Additionally, countries with higher levels of economic growth, greater market size, more capital account openness, more democracy, and lower levels of violence have stronger reputations. Also as expected, high rates of inflation have adverse reputational effects.
 
 % \newpage
 
@@ -201,7 +201,7 @@ The findings for the various control measures we include in our model align with
   & \multicolumn{2}{c}{All ICSID} & \multicolumn{2}{c}{ICSID} & \multicolumn{2}{c}{Unsettled$^{a}$} & \multicolumn{2}{c}{ICSID-} \\ 
   & \multicolumn{2}{c}{Disputes} & \multicolumn{2}{c}{Treaty-Based} & \multicolumn{2}{c}{ICSID} & \multicolumn{2}{c}{UNCTAD} \\
  \hline
-Registered Disputes$_{t-1}$ & $-0$&$.152^{\ast}$ & $-0$&$.162^{\ast}$ & $-0$&$.221^{\ast}$ & $-0$&$.115^{\ast}$ \\ 
+Registered Disputes (Last two years)$_{t-1}$ & $-0$&$.152^{\ast}$ & $-0$&$.162^{\ast}$ & $-0$&$.221^{\ast}$ & $-0$&$.115^{\ast}$ \\ 
    & (0&.065) & (0&.073) & (0&.088) & (0&.056) \\ 
   \%$\Delta$ GDP$_{t-1}$ & $0$&$.713^{\ast\ast}$ & $0$&$.712^{\ast\ast}$ & $0$&$.701^{\ast\ast}$ & $0$&$.712^{\ast\ast}$ \\ 
    & (0&.227) & (0&.226) & (0&.226) & (0&.228) \\ 
@@ -233,7 +233,7 @@ Registered Disputes$_{t-1}$ & $-0$&$.152^{\ast}$ & $-0$&$.162^{\ast}$ & $-0$&$.2
 
 Moving to our dispute measures, interestingly each has a significant and negative effect on reputation. We also find that disputes registered at the ICSID have a more adverse effect on reputations than those in UNCTAD, while the unsettled ICSID cases have the greatest impact on reputation. It is unclear how much to make of the marginal differences in coefficient estimates, however, since our reputation variable ranges from 0 to 12 and the coefficient estimates only differ by fractions of a point. Furthermore, even though the dispute measures show up as significant predictors in the model, their substantive impact on reputation is clearly open to question. 
 
-To explore this issue more fully, we utilize a simulation-based approach. For each model, we set up two scenarios, one in which the disputes variable is set to zero and another where it is set to 10, which approximates the 99th percentile value for each of the dispute measures. All other covariates are set to their median value. Next, we conduct 1,000 random draws from a multivariate normal to obtain distributions for the point estimates of each of the regression coefficients. After obtaining these distributions, we calculate the predicted value of reputation on the conditions set by the two scenarios. The result of this analysis is visualized in Figure \ref{fig:subEffect}. A solid circle is used to designate the mean estimate for each scenario and the lines shows where 95 percent of the values for a given scenario falls. After accounting for the uncertainty in the regression estimates, we can see that there is little reason to conclude that any of the dispute variables account for substantive differences in reputation.
+To explore this issue more fully, we utilize a simulation-based approach. For each model, we set up two scenarios, one in which the disputes variable is set to zero and another where it is set to three, which approximates the 99th percentile value for each of the dispute measures. All other covariates are set to their median value. Next, we conduct 1,000 random draws from a multivariate normal to obtain distributions for the point estimates of each of the regression coefficients. After obtaining these distributions, we calculate the predicted value of reputation on the conditions set by the two scenarios. The result of this analysis is visualized in Figure \ref{fig:subEffect}. A solid circle is used to designate the mean estimate for each scenario and the lines shows where 95 percent of the values for a given scenario falls. After accounting for the uncertainty in the regression estimates, we can see that there is little reason to conclude that any of the dispute variables account for substantive differences in reputation.
 
 % \newpage
 
@@ -249,7 +249,7 @@ To explore this issue more fully, we utilize a simulation-based approach. For ea
 
 % \newpage
 
-The clear implication is that facing disputes at the ICSID or other dispute tribuals does not have a noticeable effect on reputation. One potential explanation is that the reputational costs of dispute involvement only emerge slowly over time with the accumulation of arbitral claims. In other words, the arguments relating state reputation to treaty compliance are arguably best understood as reflecting long-term equilibria rather than transitory or shoter-term effects.
+The clear implication is that facing disputes at the ICSID or other dispute tribuals does not have a noticeable effect on reputation. One potential explanation is that the reputational costs of dispute involvement only emerge slowly over time with the accumulation of arbitral claims. In other words, the arguments relating state reputation to treaty compliance are arguably best understood as reflecting long-term equilibria rather than transitory or shoter-term effects.  To test for this we reran the model lagging our various disputes measures by two to five years, leaving the specifications of the other covariates unchanged. The results of this analysis are presented in Figure \ref{fig:lagEffect}, which shows that the effect of disputes on reputation stays relatively consistent, indicating that there is little evidence of a lagged effect.
 
 % \newpage
 
@@ -265,7 +265,21 @@ The clear implication is that facing disputes at the ICSID or other dispute trib
 
 % \newpage
 
-However, the effects of disputes in recent years has changed to matter in interesting ways. 
+\section{Increasing Media Attention}
+
+Despite the evidence presented so far it is hard to argue against the fact that ICSID disputes have been receiving a growing amount of publicity in recent years. The increasing public attention on these agreements is a mized bag that includes quiestions about the ICSID process as well as simple reports on inappropriate actions committed by countries against companies. 
+
+\begin{figure}[ht]
+	\vspace{4cm}
+	\centering
+	\caption{Media Reporting of ICSID Disputes}
+	\label{fig:levelCross}
+	% \includegraphics[width=1\textwidth]{graphics/dispVfund.pdf}
+	\resizebox{1\textwidth}{!}{\input{graphics/histICSID}}
+	\caption*{Note: Each line here in the left panel shows the coefficient estimate of running the model in a pooled fashion at yearly intervals. All the covariates used in the initial model shown in table \ref{tab:dispRepLevel} were included as well.}
+\end{figure}
+
+Yet, in recent years there has been a clear increase in the reporting of ICSID disputes. Despite the 
 
 \begin{figure}[ht]
 	\vspace{4cm}
@@ -287,18 +301,6 @@ Further in recent years we can clearly see that these agreements are having a su
 	\label{fig:levelCross}
 	% \includegraphics[width=1\textwidth]{graphics/dispVfund.pdf}
 	\resizebox{1\textwidth}{!}{\input{graphics/crossValSim}}
-	\caption*{Note: Each line here in the left panel shows the coefficient estimate of running the model in a pooled fashion at yearly intervals. All the covariates used in the initial model shown in table \ref{tab:dispRepLevel} were included as well.}
-\end{figure}
-
-This corresponds to rise in publicity of ICSID disputes. 
-
-\begin{figure}[ht]
-	\vspace{4cm}
-	\centering
-	\caption{Media Reporting of ICSID Disputes}
-	\label{fig:levelCross}
-	% \includegraphics[width=1\textwidth]{graphics/dispVfund.pdf}
-	\resizebox{1\textwidth}{!}{\input{graphics/histICSID}}
 	\caption*{Note: Each line here in the left panel shows the coefficient estimate of running the model in a pooled fashion at yearly intervals. All the covariates used in the initial model shown in table \ref{tab:dispRepLevel} were included as well.}
 \end{figure}
 
@@ -434,7 +436,6 @@ These findings have significant implications for the broader body of literature 
 	  All ICSID Disputes & 91 & 2199 & 0.98 & 3.35 & 0.00 & 49.00 \\ 
 	  ICSID Treaty-Based & 91 & 2199 & 0.75 & 3.26 & 0.00 & 49.00 \\ 
 	  Unsettled ICSID & 91 & 2199 & 0.54 & 2.31 & 0.00 & 32.00 \\ 
-	  UNCTAD & 91 & 2199 & 0.87 & 3.54 & 0.00 & 51.00 \\ 
 	  ICSID-UNCTAD & 91 & 2199 & 0.86 & 3.69 & 0.00 & 54.00 \\ 
 	  \%$\Delta$GDP & 88 & 2056 & 0.09 & 0.17 & -0.80 & 1.43 \\ 
 	  Ln(Pop.) & 90 & 2171 & 16.46 & 1.45 & 12.87 & 21.02 \\ 
