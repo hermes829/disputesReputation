@@ -6,8 +6,8 @@ source('~/Research/RemmerProjects/disputesReputation/RCode/setup.R')
 ##########################################################################################
 # Loading model results
 setwd(pathResults)
-load('LinvProfFE.rda'); fileTable='LfeResultsInvProfile.tex'; captionTable='Fixed effects regression on investment profile with robust standard errors in parentheses. $^{**}$ and $^{*}$ indicate significance at $p< 0.05 $ and $p< 0.10 $, respectively.'
-# load('BLinvProfFE.rda'); fileTable='BLfeResultsInvProfile.tex'; captionTable='Fixed effects regression on investment profile using balanced panel with robust standard errors in parentheses. $^{**}$ and $^{*}$ indicate significance at $p< 0.05 $ and $p< 0.10 $, respectively.'
+# load('LinvProfFE.rda'); fileTable='LfeResultsInvProfile.tex'; captionTable='Fixed effects regression on investment profile with robust standard errors in parentheses. $^{**}$ and $^{*}$ indicate significance at $p< 0.05 $ and $p< 0.10 $, respectively.'
+load('BLinvProfFE.rda'); fileTable='BLfeResultsInvProfile.tex'; captionTable='Fixed effects regression on investment profile using balanced panel with robust standard errors in parentheses. $^{**}$ and $^{*}$ indicate significance at $p< 0.05 $ and $p< 0.10 $, respectively.'
 ##########################################################################################
 
 ##########################################################################################

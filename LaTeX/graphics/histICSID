@@ -1,4 +1,4 @@
-% Created by tikzDevice version 0.7.0 on 2015-01-17 17:51:56
+% Created by tikzDevice version 0.7.0 on 2015-01-19 08:59:26
 % !TEX encoding = UTF-8 Unicode
 \begin{tikzpicture}[x=1pt,y=1pt]
 \definecolor[named]{fillColor}{rgb}{1.00,1.00,1.00}
@@ -101,6 +101,33 @@
 \path[draw=drawColor,line width= 0.6pt,line join=round,fill=fillColor] (541.15, 45.67) rectangle (553.63,249.27);
 
 \path[draw=drawColor,line width= 0.6pt,line join=round,fill=fillColor] (553.63, 45.67) rectangle (566.12,263.15);
+\definecolor[named]{drawColor}{rgb}{0.00,0.00,0.00}
+
+\path[draw=drawColor,line width= 2.3pt,line join=round] (216.58, 49.14) --
+	(229.07, 45.67) --
+	(241.55, 46.83) --
+	(254.03, 45.67) --
+	(266.52, 45.67) --
+	(279.00, 47.98) --
+	(291.48, 46.83) --
+	(303.97, 49.14) --
+	(316.45, 46.83) --
+	(328.93, 49.14) --
+	(341.42, 54.93) --
+	(353.90, 56.08) --
+	(366.38, 56.08) --
+	(378.87, 57.24) --
+	(391.35, 60.71) --
+	(403.83, 65.34) --
+	(416.32, 81.53) --
+	(428.80, 74.59) --
+	(441.28, 73.43) --
+	(453.77, 66.49) --
+	(466.25, 78.06) --
+	(478.73, 66.49) --
+	(491.22, 67.65) --
+	(503.70, 67.65) --
+	(516.18, 85.00);
 \end{scope}
 \begin{scope}
 \path[clip] (  0.00,  0.00) rectangle (578.16,289.08);
@@ -134,23 +161,19 @@
 \path[clip] (  0.00,  0.00) rectangle (578.16,289.08);
 \definecolor[named]{drawColor}{rgb}{0.00,0.00,0.00}
 
-\node[text=drawColor,rotate= 45.00,anchor=base east,inner sep=0pt, outer sep=0pt, scale=  0.96] at ( 58.98, 33.88) {1974};
+\node[text=drawColor,rotate= 45.00,anchor=base east,inner sep=0pt, outer sep=0pt, scale=  0.96] at ( 96.43, 33.88) {1977};
 
-\node[text=drawColor,rotate= 45.00,anchor=base east,inner sep=0pt, outer sep=0pt, scale=  0.96] at (121.39, 33.88) {1979};
-
-\node[text=drawColor,rotate= 45.00,anchor=base east,inner sep=0pt, outer sep=0pt, scale=  0.96] at (183.81, 33.88) {1984};
+\node[text=drawColor,rotate= 45.00,anchor=base east,inner sep=0pt, outer sep=0pt, scale=  0.96] at (171.33, 33.88) {1983};
 
 \node[text=drawColor,rotate= 45.00,anchor=base east,inner sep=0pt, outer sep=0pt, scale=  0.96] at (246.23, 33.88) {1989};
 
-\node[text=drawColor,rotate= 45.00,anchor=base east,inner sep=0pt, outer sep=0pt, scale=  0.96] at (308.64, 33.88) {1994};
+\node[text=drawColor,rotate= 45.00,anchor=base east,inner sep=0pt, outer sep=0pt, scale=  0.96] at (321.13, 33.88) {1995};
 
-\node[text=drawColor,rotate= 45.00,anchor=base east,inner sep=0pt, outer sep=0pt, scale=  0.96] at (371.06, 33.88) {1999};
+\node[text=drawColor,rotate= 45.00,anchor=base east,inner sep=0pt, outer sep=0pt, scale=  0.96] at (396.03, 33.88) {2001};
 
-\node[text=drawColor,rotate= 45.00,anchor=base east,inner sep=0pt, outer sep=0pt, scale=  0.96] at (433.47, 33.88) {2004};
+\node[text=drawColor,rotate= 45.00,anchor=base east,inner sep=0pt, outer sep=0pt, scale=  0.96] at (470.92, 33.88) {2007};
 
-\node[text=drawColor,rotate= 45.00,anchor=base east,inner sep=0pt, outer sep=0pt, scale=  0.96] at (495.89, 33.88) {2009};
-
-\node[text=drawColor,rotate= 45.00,anchor=base east,inner sep=0pt, outer sep=0pt, scale=  0.96] at (558.31, 33.88) {2014};
+\node[text=drawColor,rotate= 45.00,anchor=base east,inner sep=0pt, outer sep=0pt, scale=  0.96] at (545.82, 33.88) {2013};
 \end{scope}
 \begin{scope}
 \path[clip] (  0.00,  0.00) rectangle (578.16,289.08);

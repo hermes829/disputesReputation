@@ -2373,16 +2373,6 @@
   Mendeley-tags            = {fixed effects}
 }
 
-@Article{beck2008time,
-  Title                    = {Time-series-cross-section methods},
-  Author                   = {Beck, Nathaniel},
-  Journal                  = {Oxford Handbook of Political Methodology},
-  Year                     = {2008},
-  Pages                    = {475--93},
-
-  Publisher                = {Oxford University Press New York}
-}
-
 @Unpublished{beck:2006,
   Title                    = {{Time-Series -- Cross-Section Methods}},
   Author                   = {Beck, Nathaniel},

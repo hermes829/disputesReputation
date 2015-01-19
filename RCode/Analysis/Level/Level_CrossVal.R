@@ -41,56 +41,49 @@ modForm=lapply(ivAll, function(x)
 	FUN=as.formula( paste(dv, paste(x, collapse=' + '), sep=' ~ ') ))
 ###############################################################################
 
-# ###############################################################################
-# # Run yearly models
-# yrs=sort(unique(modelData$year))
-# coefCross=NULL
-# for(ii in 1:length(yrs)){
+###############################################################################
+# Run yearly models
+yrs=1995:2011
+coefCross=NULL
+for(ii in 1:length(yrs)){
+	slice=modelData[which(modelData$year %in% yrs[ii]), ]
 
-# 	slice=modelData[which(modelData$year %in% yrs[ii]), ]
-# 	print(paste0('cross ',yrs[ii], ' has ', nrow(slice), ' obs from ',
-# 		length(unique(slice$ccode)), ' countries'))	
+	modResults=lapply(modForm, function(x) FUN=lm(x, data=slice) )	
+	modSumm=lapply(modResults, function(x) FUN=coeftest(x))		
 
-# 	modResults=lapply(modForm, function(x)
-# 		FUN=lm(x, data=slice) )	
-
-# 	modSumm=lapply(modResults, function(x)
-# 		FUN=coeftest(x))		
-
-# 	dispSumm=do.call(rbind, lapply(modSumm,function(x)FUN=x[2,,drop=FALSE]))
-
-# 	coefCross=rbind(coefCross, cbind(dispSumm,cross=yrs[ii]))	
-# }
-# coefCross=coefCross[which(!rownames(coefCross) %in% 'lag_pch_gdp'),]
-# ###############################################################################
+	dispSumm=do.call(rbind, lapply(modSumm,function(x)FUN=x[2,,drop=FALSE]))
+	coefCross=rbind(coefCross, cbind(dispSumm,cross=yrs[ii]))	
+}
+coefCross=coefCross[which(!rownames(coefCross) %in% 'lag_pch_gdp'),]
+###############################################################################
 
 # ###############################################################################
 # # Plotting
-# VARS=unique(rownames(coefCross))
+VARS=unique(rownames(coefCross))
 ivDispName=c('All ICSID Disputes', 'ICSID Treaty-Based', 'Unsettled ICSID', 'ICSID-UNCTAD' )
-# VARSname=lagLabName(ivDispName)
+VARSname=lagLabName(ivDispName)
 
-# tmp = ggcoefplot(coefData=coefCross, 
-# 	vars=VARS, varNames=VARSname,
-#   Noylabel=FALSE, coordFlip=FALSE, revVar=FALSE,
-#   facet=TRUE, facetColor=FALSE, colorGrey=FALSE,
-#   facetName='cross', facetDim=c(2,2), 
-#   facetBreaks=seq(1987,2011,3),
-#   facetLabs=seq(1987,2011,3),
-#   allBlack=FALSE
-#   )
-# tmp=tmp + ylab('$\\beta$ for Dispute Variables')
-# tmp=tmp + theme(axis.title.y=element_text(vjust=1))
-# setwd(pathGraphics)
-# tikz(file='crossValLevel.tex',width=8,height=6,standAlone=F)
-# tmp
-# dev.off()
+tmp = ggcoefplot(coefData=coefCross, 
+	vars=VARS, varNames=VARSname,
+  Noylabel=FALSE, coordFlip=FALSE, revVar=FALSE,
+  facet=TRUE, facetColor=FALSE, colorGrey=FALSE,
+  facetName='cross', facetDim=c(2,2), 
+  facetBreaks=seq(yrs[1],2011,3),
+  facetLabs=seq(yrs[1],2011,3),
+  allBlack=FALSE
+  )
+tmp=tmp + ylab('$\\beta$ for Dispute Variables')
+tmp=tmp + theme(axis.title.y=element_text(vjust=1))
+setwd(pathGraphics)
+tikz(file='crossValLevel.tex',width=8,height=6,standAlone=F)
+tmp
+dev.off()
 ###############################################################################
 
 ###############################################################################
 # Substantive effect
 sims=1000
-yrs=1999:2011
+yrs=1995:2011
 modelYrPreds=NULL
 for(Year in yrs){
 	slice=modelData[which(modelData$year %in% Year), ]
@@ -101,7 +94,7 @@ for(Year in yrs){
 	vars=names(coef(yrMod[[1]]))[c(-1,-2)]
 	means=apply(slice[,vars], 2, function(x) mean(x, na.rm=TRUE))
 	dispVar=lapply(yrMod, function(x) names(coef(x))[2] )
-	minMaxDisp=lapply(dispVar, function(x) quantile(slice[,x], probs=c(0,1), na.rm=TRUE) )
+	minMaxDisp=lapply(dispVar, function(x) quantile(slice[,x], probs=c(0,.99), na.rm=TRUE) )
 	scen=lapply(minMaxDisp, function(x) rbind( c(1, x[1], means), c(1, x[2], means) ) )
 	
 	# sims
@@ -137,12 +130,13 @@ aggStats$dispVar=mapVar(aggStats$dispVar, paste0('lag_', ivDisp), ivDispName )
 
 tmp=ggplot(aggStats, aes(x=Year, color=Scenario)) + scale_color_grey(start=.6, end=0)
 tmp=tmp + geom_linerange(aes(ymax=qhi,ymin=qlo), lwd=.75) + geom_point(aes(y=mu,shape=Scenario), cex=2.5) 
-tmp=tmp + scale_x_continuous('',breaks=seq(1999, 2011, 2)) + ylab('Predicted Investment Profile Rating')
+tmp=tmp + scale_x_continuous('',breaks=seq(yrs[1], 2011, 3)) + ylab('Predicted Investment Profile Rating')
 tmp=tmp + facet_wrap(~dispVar) 
 tmp=tmp + theme(
 	panel.grid=element_blank(),
 	axis.text.x=element_text(angle=45,hjust=1), 
 	axis.title.y=element_text(vjust=1),
+	axis.ticks=element_blank(),
 	legend.position='top', legend.title=element_blank())
 tmp
 setwd(pathGraphics)

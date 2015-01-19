@@ -5,7 +5,7 @@
 \label{fig:subEffect}
 % \includegraphics[width=1\textwidth]{graphics/simResults.pdf}
 \resizebox{1\textwidth}{!}{\input{graphics/simResults}}
-\caption*{Note: Here we show a typical country's predicted rating on investment profile under a scenario where a country faces a minimum versus maximum number of disputes. Results were obtained by using simulations. Accounting for inferential uncertainty. The point estimates here represent the mean predicted ratings and the line represents the 95\% level of uncertainty associated with these estimates.}
+\caption*{Note: Here we show a typical country's predicted rating on investment profile under a scenario where a country faces a minimum versus maximum number of disputes. Results were obtained by using simulations that accounted for inferential uncertainty. The point estimates here represent the mean predicted ratings and the line represents the 95\% level of uncertainty associated with these estimates.}
 \end{figure}
 \efloatseparator
  
@@ -23,33 +23,30 @@
 \begin{figure}[ht]
 \vspace{4cm}
 \centering
-\caption{Change in Effect of Disputes}
-\label{fig:levelCross}
-% \includegraphics[width=1\textwidth]{graphics/dispVfund.pdf}
-\resizebox{1\textwidth}{!}{\input{graphics/crossValLevel}}
-\caption*{Note: Each line here in the left panel shows the coefficient estimate of running the model in a pooled fashion at yearly intervals. All the covariates used in the initial model shown in table \ref{tab:dispRepLevel} were included as well.}
-\end{figure}
-\efloatseparator
- 
-\begin{figure}[ht]
-\vspace{4cm}
-\centering
-\caption{Substantive Effect of Changes in Coefficient estimates}
-\label{fig:levelCross}
-% \includegraphics[width=1\textwidth]{graphics/dispVfund.pdf}
-\resizebox{1\textwidth}{!}{\input{graphics/crossValSim}}
-\caption*{Note: Each line here in the left panel shows the coefficient estimate of running the model in a pooled fashion at yearly intervals. All the covariates used in the initial model shown in table \ref{tab:dispRepLevel} were included as well.}
-\end{figure}
-\efloatseparator
- 
-\begin{figure}[ht]
-\vspace{4cm}
-\centering
-\caption{Media Reporting of ICSID Disputes}
-\label{fig:levelCross}
-% \includegraphics[width=1\textwidth]{graphics/dispVfund.pdf}
+\caption{Newspaper Mentions of ICSID}
+\label{fig:icsidMedia}
 \resizebox{1\textwidth}{!}{\input{graphics/histICSID}}
-\caption*{Note: Each line here in the left panel shows the coefficient estimate of running the model in a pooled fashion at yearly intervals. All the covariates used in the initial model shown in table \ref{tab:dispRepLevel} were included as well.}
+\caption*{Note: The height of the grey bars denotes the number of times ICSID was mentioned in a newspaper source in that year from 1974 to 2011. The dark line represents a count of the number of ICSID disputes brought in that year, we only have collected data on the number of ICSID disputes between 1987 and 2011.}
+\end{figure}
+\efloatseparator
+ 
+\begin{figure}[ht]
+\vspace{4cm}
+\centering
+\caption{Change in Effect of Disputes Over Time}
+\label{fig:dispEffectYear}
+\resizebox{1\textwidth}{!}{\input{graphics/crossValLevel}}
+\caption*{Note: Each point here designates the coefficient estimate for a disputes variable in that year and the thick line represents the 90\% confidence interval around that point estimate, while the longer, thin line represents the 95\% confidence interval. Dark red lines and points designate coefficient estimate significant at a 95\% confidence interval and lighter red at a 90\% confidence interval. All the covariates used in the initial model shown in table \ref{tab:dispRepLevel} were included in these pooled models as controls as well.}
+\end{figure}
+\efloatseparator
+ 
+\begin{figure}[ht]
+\vspace{4cm}
+\centering
+\caption{Substantive Effect of Changes in Disputes}
+\label{fig:dispEffectYearSim}
+\resizebox{1\textwidth}{!}{\input{graphics/crossValSim}}
+\caption*{Note: Each line here shows the mean prediction and 95\% interval around a given scenario using the pooled yearly level regression results. The grey line and circle denote the scenario in which all control variables are set to their median and disputes is set to zero. The black line and triangle denote teh scenario in which all control variables are set to their median and the disputes variable is set to its 99th percentile. Results were obtained by using simulations that accounted for inferential uncertainty. }
 \end{figure}
 \efloatseparator
  

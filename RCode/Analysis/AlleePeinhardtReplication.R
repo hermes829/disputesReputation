@@ -27,8 +27,8 @@ fdi=merge(fdi, tmp[,3:ncol(tmp)], by='cyear', all.x=TRUE)
 fdi$Fworldfdi=fdi[,'lead1_worldfdi']/(10^6)
 
 # Specifying DV, toggle commenting to get results with A & P or corrected
-# fdi$DV = fdi[,'lead1_lnfdi'] # Allee and Peinhardt Approach
-fdi$DV = fdi[,'lead1_lnfdiSM'] # Corrected
+fdi$DV = fdi[,'lead1_lnfdi'] # Allee and Peinhardt Approach
+# fdi$DV = fdi[,'lead1_lnfdiSM'] # Corrected
 
 # Drop pre 1983
 fdi=fdi[fdi$year>1983,]

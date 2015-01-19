@@ -66,7 +66,7 @@ qSM=function(x){cbind(quantile(x, probs=c(0.25,0.75)))}
 summPreds=apply(preds, 2, function(x) FUN= rbind(mean(x), qSM(x))  )
 summPreds=data.frame(t(summPreds)); colnames(summPreds)=c('mean','lo','hi')
 summPreds$scen=rep(LETTERS[1:2],nrow(summPreds)/2)
-summPreds$disp=rep(unlist(lapply(modNames, function(x) x[1])), each=2)
+n$disp=rep(unlist(lapply(modNames, function(x) x[1])), each=2)
 
 tmp=ggplot(summPreds, aes(x=factor(scen), y=mean,ymax=hi,ymin=lo,group=disp))
 tmp=tmp+geom_linerange() + geom_point() + facet_wrap(~ disp)

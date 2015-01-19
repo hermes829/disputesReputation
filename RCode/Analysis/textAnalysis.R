@@ -34,8 +34,8 @@ cbind(table(textData$year))
 tmp=ggplot(textData, aes(x=year))
 tmp=tmp + geom_histogram(stat='bin', binwidth=1, fill='grey', color='darkgrey')
 tmp=tmp + scale_y_continuous('Frequency', breaks=seq(0, 200, 50), limits=c(0,200), expand=c(0,0))
-tmp=tmp + scale_x_continuous('', breaks=seq(1974, 2014, 5), expand=c(0,0))
-# tmp=tmp + geom_line(data=icsidYrData, aes(x=year, y=kicsidcase), lwd=1)
+tmp=tmp + scale_x_continuous('', breaks=seq(1977, 2014, 6), expand=c(0,0))
+tmp=tmp + geom_line(data=icsidYrData, aes(x=year, y=kicsidcase), lwd=2)
 tmp=tmp + theme(
 	axis.text.x=element_text(angle=45, hjust=1),
 	axis.title.y=element_text(vjust=1),
@@ -50,6 +50,11 @@ tikz(file='histICSID', width=8, height=4, standAlone=F)
 tmp
 dev.off()
 ###################################################################
+
+# Histogram of ICSID stuff
+tmp=ggplot(icsidYrData, aes(x=year, y=kicsidcase))
+tmp=tmp + geom_line()
+tmp
 
 ###################################################################
 # Case level data
