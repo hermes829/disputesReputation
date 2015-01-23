@@ -8,8 +8,10 @@ load('modelData.rda')
 # Subsetting to vars of interest
 dv='Investment_Profile'
 
-ivDisp=c('cum_kicsidcase','cum_icsidtreaty_case',
-	'cumunsettled_icsid_treaty','cumcunctadcase','cum_alltreaty' )
+# Two year moving sum of disputes
+ivDisp=c('kicsidcase', 'icsidtreaty_case', 
+	'unsettled_icsid_treaty', 'alltreaty')
+ivDisp=paste0('mvs2_',ivDisp)
 
 # Other covariates
 ivOther=c(
@@ -26,7 +28,7 @@ vars=c(dv, ivDisp, ivOther)
 
 # Setting up variables names for display
 dvName='Investment Profile'
-ivDispName=c('All ICSID Disputes', 'ICSID Treaty-Based', 'Unsettled ICSID', 'UNCTAD','ICSID-UNCTAD' )
+ivDispName=c('All ICSID Disputes', 'ICSID Treaty-Based', 'Unsettled ICSID','ICSID-UNCTAD' )
 ivOtherName=c(
 	'\\%$\\Delta$ GDP'
 	, 'Ln(Pop.)'
@@ -58,18 +60,18 @@ results=matrix(unlist(lapply(vars, function(x) FUN=summSM(x, 'ccode', modelData)
 	)
 round(results,2)
 
-setwd(pathPaper)
-# print.xtable(xtable(round(results,2), align='llccccc', 
-# 	digits=c(0,0,0,2,2,2,2),
-# 	# caption=captionTable
-# 	), include.rownames=TRUE,
-# 	# sanitize.text.function = function(x) x,
-# 	# sanitize.text.function=function(str)gsub("_","\\_",str,fixed=TRUE),
-# 	sanitize.text.function = identity,		
-# 	hline.after=c(0,0,nrow(results),nrow(results)), 	
-# 	size="footnotesize",	
-# 	file='descTable.tex'
-# 	)
+setwd(pathGraphics)
+print.xtable(xtable(round(results,2), align='llccccc', 
+	digits=c(0,0,0,2,2,2,2),
+	# caption=captionTable
+	), include.rownames=TRUE,
+	# sanitize.text.function = function(x) x,
+	# sanitize.text.function=function(str)gsub("_","\\_",str,fixed=TRUE),
+	sanitize.text.function = identity,		
+	hline.after=c(0,0,nrow(results),nrow(results)), 	
+	size="footnotesize",	
+	file='descTable.tex'
+	)
 #############################################################################
 
 #############################################################################

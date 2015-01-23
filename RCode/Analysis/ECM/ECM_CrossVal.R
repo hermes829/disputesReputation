@@ -165,8 +165,8 @@ temp = ggcoefplot(coefData=coefCross,
   facetName='cross', facetDim=c(2,2),
   facetBreaks=1:6, facetLabs=1:6, allBlack=TRUE
   )
-temp
-setwd(pathPaper)
+temp=temp + theme(axis.text.x=element_text(angle=0))
+setwd(pathGraphics)
 tikz(file='crossValECM.tex',width=8,height=6,standAlone=F)
 temp
 dev.off()

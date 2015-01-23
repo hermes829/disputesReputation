@@ -25,7 +25,8 @@ loadPkg=function(toLoad){
 
 toLoad=c('foreign', 'countrycode', 'xlsx', 'gdata', 'ggplot2',
   'reshape', 'scales', 'plyr', 'doBy', 'WDI', 'zoo', 'panelAR',
-  'lme4', 'plm', 'lmtest', 'xtable', 'apsrtable', 'tikzDevice', 'MASS')
+  'lme4', 'plm', 'lmtest', 'xtable', 'apsrtable', 'tikzDevice', 'MASS',
+  'RColorBrewer')
 
 loadPkg(toLoad)
 
@@ -52,7 +53,10 @@ substrRight <- function(x, n){
 pchLab=function(x){ paste('pch_',x,sep='') }
 lagLab=function(x){ paste('lag_',x,sep='') }
 pchLabName=function(x){ paste('\\%$\\Delta$ Change',x,sep=' ') }
-lagLabName=function(x){ paste(x, '$_{t-1}$', sep='') }
+lagLabName=function(x,mvs2=FALSE){ 
+  if(!mvs2){ return(paste(x, '$_{t-1}$', sep='')) }
+  if(mvs2){ return(paste(x, '$_{(t-1) + (t-2)}$', sep='')) }
+}
 
 # Log transformations for vars with negative values
 logNeg <- function(z){

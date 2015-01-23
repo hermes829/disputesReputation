@@ -61,12 +61,12 @@ coefCross=coefCross[which(!rownames(coefCross) %in% 'lag_pch_gdp'),]
 # # Plotting
 VARS=unique(rownames(coefCross))
 ivDispName=c('All ICSID Disputes', 'ICSID Treaty-Based', 'Unsettled ICSID', 'ICSID-UNCTAD' )
-VARSname=lagLabName(ivDispName)
+VARSname=lagLabName(ivDispName,TRUE)
 
 tmp = ggcoefplot(coefData=coefCross, 
 	vars=VARS, varNames=VARSname,
   Noylabel=FALSE, coordFlip=FALSE, revVar=FALSE,
-  facet=TRUE, facetColor=FALSE, colorGrey=FALSE,
+  facet=TRUE, facetColor=FALSE, colorGrey=TRUE,
   facetName='cross', facetDim=c(2,2), 
   facetBreaks=seq(yrs[1],2011,3),
   facetLabs=seq(yrs[1],2011,3),
@@ -74,6 +74,7 @@ tmp = ggcoefplot(coefData=coefCross,
   )
 tmp=tmp + ylab('$\\beta$ for Dispute Variables')
 tmp=tmp + theme(axis.title.y=element_text(vjust=1))
+tmp=tmp+scale_color_manual(values=brewer.pal(9,'Greys')[c(5,9,7)])
 setwd(pathGraphics)
 tikz(file='crossValLevel.tex',width=8,height=6,standAlone=F)
 tmp
@@ -124,8 +125,8 @@ aggStats$dispVar=unlist(lapply(strsplit(char(aggStats$varYr), '__'), function(x)
 aggStats$Year=numSM(unlist(lapply(strsplit(char(aggStats$varYr), '__'), function(x) x[2])))
 
 # Plot labeling
- aggStats$Scenario=mapVar(aggStats$Scenario, c('Low','High'), paste0(c('Zero ', 'High '), 'Disputes $\\; \\; \\;$'))
-aggStats$dispVar=mapVar(aggStats$dispVar, paste0('lag_', ivDisp), ivDispName )
+aggStats$Scenario=mapVar(aggStats$Scenario, c('Low','High'), paste0(c('Zero ', 'High '), 'Disputes $\\; \\; \\;$'))
+aggStats$dispVar=mapVar(aggStats$dispVar, paste0('lag_', ivDisp), lagLabName(ivDispName,TRUE) )
 # aggStats$Year[aggStats$Scenario=='Zero Disputes']=aggStats$Year[aggStats$Scenario=='Zero Disputes \;\;\;']-.12
 
 tmp=ggplot(aggStats, aes(x=Year, color=Scenario)) + scale_color_grey(start=.6, end=0)
@@ -138,23 +139,8 @@ tmp=tmp + theme(
 	axis.title.y=element_text(vjust=1),
 	axis.ticks=element_blank(),
 	legend.position='top', legend.title=element_blank())
-tmp
 setwd(pathGraphics)
 tikz(file='crossValSim.tex',width=8,height=6,standAlone=F)
 tmp
 dev.off()
 ###############################################################################
-
-# Number of disputes by year
-yrDisp=summaryBy(data=modelData, FUN=sum, keep.names=TRUE,
-	formula(paste0(paste(dispVars, collapse=' + '), '~ year')))
-ggDisp=melt(yrDisp, id='year')
-ggDisp$varLab=ivDispName[match(ggDisp$variable, dispVars)]
-
-tmp=ggplot(ggDisp, aes(x=year, y=value))
-tmp=tmp + geom_bar(stat='identity') + facet_wrap(~ varLab)
-tmp=tmp + xlab('') + ylab('Frequency')
-tmp=tmp + theme(legend.position='none', legend.title=element_blank(),
-	axis.ticks=element_blank(), panel.grid.major=element_blank(),
-	panel.grid.minor=element_blank())
-tmp
