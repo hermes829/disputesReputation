@@ -26,7 +26,7 @@ loadPkg=function(toLoad){
 toLoad=c('foreign', 'countrycode', 'xlsx', 'gdata', 'ggplot2',
   'reshape', 'scales', 'plyr', 'doBy', 'WDI', 'zoo', 'panelAR',
   'lme4', 'plm', 'lmtest', 'xtable', 'apsrtable', 'tikzDevice', 'MASS',
-  'RColorBrewer')
+  'RColorBrewer\')
 
 loadPkg(toLoad)
 
