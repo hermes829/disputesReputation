@@ -106,7 +106,7 @@ We begin our analysis of the consequences of alleged investment treaty violation
 
 For their dependent variable, Allee and Peinhardt use net FDI inflows less FDI outflows. They correctly highlight the importance of choosing this dependent variable as it best enables them to test how their reputational argument should apply to both current and potential investors. Specifically, they note that, ``firms who currently have investment in a country are likely to reconsider the investment climate in the host country \ldots on an ongoing basis'' and ``potential new investors are likely to reconsider whether a potential host country \ldots has been a defendant in ICSID disputes.''\footnote{\citet[p. 419--420]{allee:peinhardt:2011}} Thus for observations that have higher outflows than inflows their net FDI variable would be negative. Accounting for both positive and negative values introduces important variation, which their theoretical framework would argue can be explained by countries facing a higher number of ICSID disputes. 
 
-The problem arises in their attempt to address the skewness of the net FDI variable through taking the log. In doing so, Allee and Peinhardt disregard the fact that logarithms of zero and negative numbers are not defined and therefore registered as missing in most statistical programs. They make no attempt to address this problem and, as a result, mistakenly exclude 1,618 country-year observations with negative or zero flows. Considering that the net FDI variable only has 7,155 cases to begin with, this means they inadvertently dispense with almost a quarter of their dataset. Given their argument about the adverse reputational ramifications of ICSID disputes involvement on FDI flows, one could argue that this is the most relevant quarter of their dataset. In our replication of their analysis, we correct for this error by following the simple procedure suggested by \citeauthor{li:2009}, which calls for adding a constant so that each value is greater than zero before logging.\footnote{\citet{li:2009}} 
+The problem arises in their attempt to address the skewness of the net FDI variable through taking the log. In doing so, Allee and Peinhardt disregard the fact that logarithms of zero and negative numbers are not defined and therefore registered as missing in most statistical programs. They make no attempt to address this problem and, as a result, mistakenly exclude a notable number of country-year observations with negative or zero flows. Given their argument about the adverse reputational ramifications of ICSID disputes involvement on FDI flows, one could argue that the observations with negative flows are the most relevant portion of their dataset. In our replication of their analysis, we correct for this error by following the simple procedure suggested by \citeauthor{li:2009}, which calls for adding a constant so that each value is greater than zero before logging.\footnote{\citet{li:2009}} 
 
 The impact of Allee and Peinhardt's error is readily apparent in Table \ref{tab:allee}. In the first column of the table, we exactly replicate their results for their base model that assesses the impact of pending ICSID disputes over the 1984-2007 period. In column two, we follow the exact same procedure except we log FDI flows in the correct way. Comparing the results of columns 1 and 2, it becomes evident that after including zero and negative FDI observations, ICSID dispute involvement does not significantly affect FDI flows. The results presented in other columns of the table are consistent with this finding. Column three shows the results from Allee and Peinhardt's model on the effect of disputes filed in the past two years, and column five uses disputes filed in the past five years. Columns four and six again show the results after correctly logging FDI flows, an in each case we see that Allee and Peinhardt's original findings do not hold. For reasons of space, we do not report our findings with respect to other sets of Allee and Peinhardt's results, which address the impact of ICSID disputes lost or settled over the past two and five years as as well as the impact of disputes lost over the past two years controlling for pending disputes. The results for these additional estimations, however, follow the same pattern as those reported in Table \ref{tab:allee}. We simply find no evidence that foreign investment flows are responsive to ICSID activity.\footnote{Estimations utilizing unlogged FDI are very similar.} Given the nature of these findings, we turn to a more direct test of the proposition that becoming a respondent in an ICSID dispute carries significant reputational costs.
 
@@ -153,7 +153,7 @@ The impact of Allee and Peinhardt's error is readily apparent in Table \ref{tab:
 	& (0&.000) & (0&.000) & (0&.000) & (0&.000) & (0&.000) &(0&.000) \\	
 	\multirow{2}{*}{World FDI} & $0$&$.438^{\ast\ast}$ & $0$&$.000^{\ast\ast}$ & $0$&$.430^{\ast\ast}$ & $0$&$.000^{\ast\ast}$ & $0$&$.438^{\ast\ast}$ & $0$&$.000^{\ast\ast}$ \\
 	& (0&.072) & (0&.000) & (0&.073) & (0&.000) & (0&.073) &(0&.000) \\ \hline
-	$n$ & 1,&796 & 1,&956 & 1,&956 & 1,&956 & 1,&956 & 1,&956 \\
+	$n$ & 1,&796 & 1,&956 & 1,&796 & 1,&956 & 1,&796 & 1,&956 \\
 	$N$ & 1&02 & 1&02 & 1&02 & 1&02 & 1&02 & 1&02 \\
 	$R^{2}$ & 0&.52 & 0&.24 & 0&.52 & 0&.24 & 0&.52 & 0&.24 \\
 	\hline\hline
@@ -178,7 +178,7 @@ The key independent variable in the analysis is the formal initiation of investo
 
 The control variables utilized in the analysis include the cumulative number of BITs ratified by a country, which we derive from the UNCTAD database.\footnote{\citet{unctad:2013c}} In accordance with our first hypothesis, we expect the number of ratified BITs to be positively related to reputation. Since the goal of the analysis is to estimate the impact of investor-state dispute involvement vis-\`{a}-vis other variables that we expect to affect a state's reputation with the international investment community, we also include economic dynamism, market size, macroeconomic stability, internal conflict, financial openness, and political democracy. We operationalize these variables, respectively, on the basis of GDP growth,\footnote{\citet{worldbank:2013}} population,\footnote{Ibid} the rate of inflation,\footnote{Ibid} internal stability,\footnote{\citet{prs:2013}} financial openness (from \citeauthor{chinn:ito:2008}),\footnote{\citet{chinn:ito:2008}} and polity ratings\footnote{Specifically, we use the Polity 2 score from the Polity IV project developed by \citet{marshall2013polity}.} -- all of which with the exception of inflation we expect to exercise a positive influence on international reputation.\footnote{While there other variables that might be considered theoretically relevant to the study of investment reputation, we have opted for those utilized in prior IPE research with broad country coverage and limited overlap with other variables. Excluded under the latter criterion are other reputational measures, such as the rule of law and property rights protection, as well as the external conflict measure utilized by Allee and Peinhardt, which includes external pressures, such as diplomatic pressures, trade restrictions, and sanctions, resulting from investor-state disputes. Including such variables in the analysis would create problems of endogeneity as well as a bias towards underestimating the impact of disputes on reputation.}
 
-Our sample includes all lower and middle-income nations for which data are available. Following Allee and Peinhardt, we exclude upper income nations from the analysis because their role in the international investment regime differs significantly from that of lower and middle-income nations.\footnote{\citet{allee:peinhardt:2011}: 420} The time period covered by the statistical analysis ranges from 1987, when the first treaty-based dispute was brought to international arbitration, to 2011, yielding an unbalanced time-series panel of 2,199 observations covering 91 countries.\footnote{Table \ref{tab:descStats} in the \nameref{appendix} includes descriptive statistics for each of these variables.} 
+Our sample includes all lower and middle-income nations for which data are available. Following Allee and Peinhardt, we exclude upper income nations from the analysis because their role in the international investment regime differs significantly from that of lower and middle-income nations.\footnote{\citet{allee:peinhardt:2011}: 420. Specifically, we follow their case selection rule of excluding those countries that are members of the OECD at the beginning of the time period of their analysis, 1984. Applying different case selection rules such as excluding countries as they enter the OECD or removing upper income countries as defined by the World Bank generate similar results.} The time period covered by the statistical analysis ranges from 1987, when the first treaty-based dispute was brought to international arbitration, to 2011, yielding an unbalanced time-series panel of 2,129 observations covering 103 countries.\footnote{Table \ref{tab:descStats} in the \nameref{appendix} includes descriptive statistics for each of these variables.} 
 
 \section*{Empirical Results}
 
@@ -247,37 +247,6 @@ To explore this issue more fully, we utilize a simulation-based approach. For ea
 
 % \newpage
 
-One potential explanation for the null finding with regards to the simulation is that the effect of a dispute impacting reputation may be slow to emerge. More specifically, that it may take more than a year for investors to change their perceptions of a country taken before the ICSID. To test for this we reran the model lagging our various disputes measures by two to five years, leaving the specifications of the other covariates unchanged. The results of this analysis are presented in Figure \ref{fig:lagEffect}, which shows that the effect of disputes on reputation stays relatively consistent, indicating that there is little evidence of a lagged effect.
-
-% \newpage
-
-\begin{figure}[ht]
-	\vspace{3cm}
-	\centering
-	\caption{Lagged Effects of Disputes on Investment Profile}
-	\label{fig:lagEffect}
-	% \includegraphics[width=1\textwidth]{graphics/lagEffect.pdf}
-	\resizebox{1\textwidth}{!}{\input{graphics/lagEffect}}	
-	\caption*{Note: Results here combine the coefficient estimates of disputes from four additional models where we lagged disputes by two, three, four, and five years instead of just one, all other covariates remained lagged at one year.}
-\end{figure}
-
-% \newpage
-
-\section*{Increasing Media Attention}
-
-The evidence presented thus far has shown that there is strong reason to doubt claims in the extant literature that facing disputes in an ICSID tribunal inevitably leads to the damaging of a country's reputation with respect to the protection of foreign investment. However, though our analyses have shown that these agreements do not inevitably alter reputational perceptions, there has been a growing amount of publicity in recent years about ICSID cases and the arbitration tribunal as a whole. Figure \ref{fig:icsidMedia} shows the results of a LexisNexis search on mentions of ICSID disputes in major newspaper sources from 1974 to 2011. The lack of media mentions between 1974 and 1990 may simply result from a lack of online media sources, however, that same argument cannot be used to explain the paucity of mentions since the 1990s. Further even after the number of disputes brought before ICSID dramatically increased in the early 2000s, mentions of ICSID in the media did not meaningfully pick up until 2007. 
-
-\begin{figure}[ht]
-	\vspace{4cm}
-	\centering
-	\caption{Newspaper Mentions of ICSID}
-	\label{fig:icsidMedia}
-	\resizebox{1\textwidth}{!}{\input{graphics/histICSID}}
-	\caption*{Note: The height of the grey bars denotes the number of times ICSID was mentioned in a newspaper source in that year from 1974 to 2011. The dark line represents a count of the number of ICSID disputes brought in that year, we only have collected data on the number of ICSID disputes between 1987 and 2011.}
-\end{figure}
-
-Since 2007, however, the number of ICSID related articles in newspapers is dramatically increasing, with almost 200 stories filed in 2014. The growing publicity surrounding ICSID is not necessarily a validation of the tribunal's role in protecting foreign investment. As we noted earlier, many questions are being raised about the need for reforms in the ISDS regime by not only countries such as South Africa and Australia but also organizations like UNCTAD. Nonetheless, changes in the visibility of ICSID has led to an increased recognition of the cases brought in front of the arbitration tribunal and the countries that are frequent offenders. This should manifest itself in a change in how strongly disputes affect a country's reputation in recent years versus previous years.
-
 To show this we rerun the analysis shown in table \ref{tab:dispRepLevel} on a series of yearly level pooled models between 1995 to 2011.\footnote{We begin our period for analysis here at 1995 because the infrequency of disputes before that date leads to cases in which no country had a dispute within the last two years.} All the control variables that we used in table \ref{tab:dispRepLevel} are used here as well, however, since our substantive interest is in how the effect of disputes has changed over time, we only show the coefficient results for our dispute measures. Figure \ref{fig:dispEffectYear} shows the results of this analysis, the dot in each line represents the coefficient estimate for a disputes variable in that year and the line represents the 95\% confidence interval around that point estimate. From this analysis we can clearly see that, in general, the effect of having a dispute within the last two years, across the variety of dispute variables that we test, is very imprecisely measured until 2007. After 2007, however, across each version of our dispute variable, we find that having a dispute within the past two years significantly alters perceptions about a country's reputation with regards to the protection of investment.
 
 \begin{figure}[ht]
@@ -299,6 +268,23 @@ We next examine whether disputes are now having a substantive effect in a countr
 	\resizebox{1\textwidth}{!}{\input{graphics/crossValSim}}
 	\caption*{Note: Each line here shows the mean prediction and 95\% interval around a given scenario using the pooled yearly level regression results. The grey line and circle denote the scenario in which all control variables are set to their median and disputes is set to zero. The black line and triangle denote teh scenario in which all control variables are set to their median and the disputes variable is set to its 99th percentile. Results were obtained by using simulations that accounted for inferential uncertainty. }
 \end{figure}
+
+% \newpage
+
+\section*{Increasing Media Attention}
+
+The evidence presented thus far has shown that there is strong reason to doubt claims in the extant literature that facing disputes in an ICSID tribunal inevitably leads to the damaging of a country's reputation with respect to the protection of foreign investment. However, though our analyses have shown that these agreements do not inevitably alter reputational perceptions, there has been a growing amount of publicity in recent years about ICSID cases and the arbitration tribunal as a whole. Figure \ref{fig:icsidMedia} shows the results of a LexisNexis search on mentions of ICSID disputes in major newspaper sources from 1974 to 2011. The lack of media mentions between 1974 and 1990 may simply result from a lack of online media sources, however, that same argument cannot be used to explain the paucity of mentions since the 1990s. Further even after the number of disputes brought before ICSID dramatically increased in the early 2000s, mentions of ICSID in the media did not meaningfully pick up until 2007. 
+
+\begin{figure}[ht]
+	\vspace{4cm}
+	\centering
+	\caption{Newspaper Mentions of ICSID}
+	\label{fig:icsidMedia}
+	\resizebox{1\textwidth}{!}{\input{graphics/histICSID}}
+	\caption*{Note: The height of the grey bars denotes the number of times ICSID was mentioned in a newspaper source in that year from 1974 to 2011. The dark line represents a count of the number of ICSID disputes brought in that year, we only have collected data on the number of ICSID disputes between 1987 and 2011.}
+\end{figure}
+
+Since 2007, however, the number of ICSID related articles in newspapers is dramatically increasing, with almost 200 stories filed in 2014. The growing publicity surrounding ICSID is not necessarily a validation of the tribunal's role in protecting foreign investment. As we noted earlier, many questions are being raised about the need for reforms in the ISDS regime by not only countries such as South Africa and Australia but also organizations like UNCTAD. Nonetheless, changes in the visibility of ICSID has led to an increased recognition of the cases brought in front of the arbitration tribunal and the countries that are frequent offenders. This should manifest itself in a change in how strongly disputes affect a country's reputation in recent years versus previous years.
 
 \section*{Short and Long Term Effects}
 
@@ -428,18 +414,19 @@ These findings have significant implications for the broader body of literature 
 	  \hline\hline
 	  & N & n & Mean & Std. Dev. & Min & Max \\ 
 	  \hline
-	Investment Profile & 91 & 2199 & 6.48 & 2.21 & 0.00 & 12.00 \\ 
-	  All ICSID Disputes & 91 & 2199 & 0.98 & 3.35 & 0.00 & 49.00 \\ 
-	  ICSID Treaty-Based & 91 & 2199 & 0.75 & 3.26 & 0.00 & 49.00 \\ 
-	  Unsettled ICSID & 91 & 2199 & 0.54 & 2.31 & 0.00 & 32.00 \\ 
-	  ICSID-UNCTAD & 91 & 2199 & 0.86 & 3.69 & 0.00 & 54.00 \\ 
-	  \%$\Delta$GDP & 88 & 2056 & 0.09 & 0.17 & -0.80 & 1.43 \\ 
-	  Ln(Pop.) & 90 & 2171 & 16.46 & 1.45 & 12.87 & 21.02 \\ 
-	  Ln(Inflation) & 87 & 1939 & 3.38 & 0.76 & -4.61 & 10.10 \\ 
-	  Internal Stability & 91 & 2199 & 8.18 & 2.45 & 0.00 & 12.00 \\ 
-	  Ratif. BITs & 91 & 2199 & 11.71 & 15.57 & 0.00 & 101.00 \\ 
-	  Capital Openness & 87 & 2047 & -0.30 & 1.39 & -1.86 & 2.44 \\ 
-	  Polity & 91 & 2199 & 10.99 & 6.78 & 0.00 & 20.00 \\ 
+Investment Profile & 112.00 & 2658.00 & 6.94 & 2.42 & 0.00 & 12.00 \\ 
+  All ICSID Disputes & 112.00 & 2658.00 & 0.85 & 3.06 & 0.00 & 49.00 \\ 
+  ICSID Treaty-Based & 112.00 & 2658.00 & 0.66 & 2.97 & 0.00 & 49.00 \\ 
+  Unsettled ICSID & 112.00 & 2658.00 & 0.47 & 2.11 & 0.00 & 32.00 \\ 
+  UNCTAD & 112.00 & 2658.00 & 0.81 & 3.26 & 0.00 & 51.00 \\ 
+  ICSID-UNCTAD & 112.00 & 2658.00 & 0.86 & 3.42 & 0.00 & 54.00 \\ 
+  $\backslash$\%\$$\backslash$Delta\$ GDP & 109.00 & 2511.00 & 0.09 & 0.17 & -0.80 & 1.43 \\ 
+  Ln(Pop.) & 111.00 & 2627.00 & 16.12 & 1.60 & 12.35 & 21.02 \\ 
+  Ln(Inflation) & 108.00 & 2355.00 & 3.31 & 0.71 & -4.61 & 10.10 \\ 
+  Internal Stability & 112.00 & 2658.00 & 8.48 & 2.46 & 0.00 & 12.00 \\ 
+  Ratif. BITs & 111.00 & 2633.00 & 12.20 & 15.14 & 0.00 & 101.00 \\ 
+  Capital Openness & 107.00 & 2469.00 & -0.02 & 1.53 & -1.86 & 2.44 \\ 
+  Polity & 109.00 & 2583.00 & 11.01 & 7.09 & 0.00 & 20.00 \\ 
 	   \hline\hline
 \end{tabular}
 \end{table}

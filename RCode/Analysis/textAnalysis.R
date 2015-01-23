@@ -17,6 +17,10 @@ icsidData=modelData[,c('ccode', 'cname', 'year', icsidVars)]
 # Aggregate to yearly level
 aggForm=formula(paste0(paste(icsidVars, collapse=' + ' ), ' ~ year'))
 icsidYrData=summaryBy(aggForm, data=icsidData, FUN=sum, keep.names=TRUE)
+# Add in values to icsidYrData for 2012:2014
+add=matrix(c(2012:2014,c(50,40,38),rep(NA, (ncol(icsidYrData)-2)*3)),
+	byrow=FALSE,nrow=3, dimnames=list(NULL, names(icsidYrData)))
+icsidYrData=rbind(icsidYrData, add)
 ###################################################################
 
 ###################################################################
@@ -34,8 +38,8 @@ cbind(table(textData$year))
 tmp=ggplot(textData, aes(x=year))
 tmp=tmp + geom_histogram(stat='bin', binwidth=1, fill='grey', color='darkgrey')
 tmp=tmp + scale_y_continuous('Frequency', breaks=seq(0, 200, 50), limits=c(0,200), expand=c(0,0))
-tmp=tmp + scale_x_continuous('', breaks=seq(1977, 2014, 6), expand=c(0,0))
-tmp=tmp + geom_line(data=icsidYrData, aes(x=year, y=kicsidcase), lwd=2)
+tmp=tmp + scale_x_continuous('', breaks=seq(1987, 2014, 3), expand=c(0,0), limits=c(1987,2014))
+tmp=tmp + geom_line(data=icsidYrData, aes(x=year+.5, y=kicsidcase), lwd=2)
 tmp=tmp + theme(
 	axis.text.x=element_text(angle=45, hjust=1),
 	axis.title.y=element_text(vjust=1),

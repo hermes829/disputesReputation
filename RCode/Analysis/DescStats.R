@@ -1,21 +1,7 @@
 ### Load setup
 source('~/Research/RemmerProjects/disputesReputation/RCode/setup.R')
-
-# Directly loading in Karen's data
-setwd(paste(pathData, '/Components', sep=''))
-modelData=read.dta('Investment Profile Data.7.dta')
-colnames(modelData)[colnames(modelData)=='lagcumcunctadcase']='lag_cumcunctadcase'
-colnames(modelData)[colnames(modelData)=='lagcum_icsidtreaty_case']='lag_cum_icsidtreaty_case'
-colnames(modelData)[colnames(modelData)=='lagcum_kicsidcase']='lag_cum_kicsidcase'
-colnames(modelData)[colnames(modelData)=='lagpch_gdp']='lag_pch_gdp'
-
-lagVars=c('cumunsettled_icsid_treaty','cum_alltreaty')
-modelData$cyear=numSM(modelData$cyear)
-modelData=lagDataSM(modelData, 'cyear', 'ccode', lagVars, 1)
-colnames(modelData)[(ncol(modelData)-1):ncol(modelData)]=paste0('lag_',lagVars)
-
-anData = modelData[modelData$upperincome==0,]
-anData = anData[anData$year>1986,]
+setwd(pathData)
+load('modelData.rda')
 #############################################################################
 
 #############################################################################
@@ -53,7 +39,7 @@ ivOtherName=c(
 varNames=c(dvName, ivDispName, ivOtherName)
 
 # Subsetting dataset
-anData=anData[,c(vars,'year','ccode')]
+modelData=modelData[,c(vars,'year','ccode')]
 #############################################################################
 
 #############################################################################
@@ -66,7 +52,7 @@ summSM=function(var,group,data){
 	c(N, n, avg, std, lo, hi)
 }
 
-results=matrix(unlist(lapply(vars, function(x) FUN=summSM(x, 'ccode', anData))),
+results=matrix(unlist(lapply(vars, function(x) FUN=summSM(x, 'ccode', modelData))),
 	ncol=6,byrow=TRUE,
 	dimnames=c(list(varNames, c('N','n','Mean','Std. Dev.', 'Min','Max')))
 	)
