@@ -38,8 +38,12 @@ for(ii in 2:ncol(tableResults)){
 	tvals = round(as.numeric(as.character(tvals)),digs)
 	estims = ifelse(tvals>=qt(0.975,n) & !is.na(tvals) & tvals<qt(0.995,n), 
 		paste('$', estims,'^{\\ast}$',sep=''), estims)
-	estims = ifelse(tvals>=qt(0.995,n) & !is.na(tvals) & tvals<qt(0.9995,n), 
-		paste('$', estims,'^{\\ast\\ast}$',sep=''), estims)
+	estims = ifelse(tvals>=qt(0.995,n) & !is.na(tvals), 
+		paste('$', estims,'^{\\ast\\ast}$',sep=''), estims)	
+	# estims = ifelse(tvals>=qt(0.975,n) & !is.na(tvals) & tvals<qt(0.995,n), 
+	# 	paste('$', estims,'^{\\ast}$',sep=''), estims)
+	# estims = ifelse(tvals>=qt(0.995,n) & !is.na(tvals) & tvals<qt(0.9995,n), 
+	# 	paste('$', estims,'^{\\ast\\ast}$',sep=''), estims)
 	# estims = ifelse(tvals>=qt(0.9995,n) & !is.na(tvals), 
 	# 	paste('$', estims,'^{\\ast\\ast\\ast}$',sep=''), estims)			
 	estims = ifelse(is.na(estims),'',estims)
