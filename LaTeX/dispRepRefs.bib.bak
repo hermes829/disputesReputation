@@ -15659,7 +15659,7 @@
   title = {Reputation and International Law},
   journal = {UC Berkeley Public Law Research Paper No. 1112064},
   year = {2008},
-  url = {http://papers.ssrn.com/sol3/papers.cfm?abstract_id=1112064}
+  url = {\url{http://papers.ssrn.com/sol3/papers.cfm?abstract_id=1112064}}
 }
 
 @BOOK{gwartney:lawson:2004,
@@ -26210,16 +26210,6 @@
   publisher = {Cambridge University Press},
   year = {1990},
   author = {North, Douglass C.}
-}
-
-@BOOK{north:1990,
-  title = {Institutions, Institutional Change and Economic Performance},
-  publisher = {Cambridge University Press},
-  year = {1990},
-  author = {Douglass C. North},
-  address = {Cambridge, UK},
-  date-added = {2008-10-08 14:06:05 -0700},
-  date-modified = {2013-05-24 15:41:20 -0500}
 }
 
 @ARTICLE{north:1967,
