@@ -79,3 +79,50 @@ setwd(pathResults)
 save(modResults, modSumm, ivAll, dv, ivs, ivsName, dvName, file=fileFE)
 # save(modResults, modSumm, ivAll, dv, ivs, ivsName, dvName, file=paste0('B',fileFE))
 #######################################################################################
+
+# Aside with interaction of year and dispute
+plmData$yr07=ifelse(numSM(plmData$year)>=2007,1,0)
+plmData$dispYr07=plmData$lag_mvs2_kicsidcase*plmData$yr07
+
+form=formula(paste0('Investment_Profile ~ lag_mvs2_kicsidcase + yr07 + dispYr07 + lag_pch_gdp + lag_LNpopulation + 
+    lag_lncinflation + lag_Internal_Conflict + lag_ratifiedbits + 
+    lag_kaopen + lag_polity'))
+
+modRes=plm(form, data=plmData, model='within')
+coeftest(modRes, vcov=vcovHC(modRes,method='arellano',cluster="group"))
+
+
+
+plmData$yr07=ifelse(numSM(plmData$year)>=2007,1,0)
+plmData$dispYr07=plmData$lag_mvs2_icsidtreaty_case*plmData$yr07
+
+form=formula(paste0('Investment_Profile ~ lag_mvs2_icsidtreaty_case + yr07 + dispYr07 + lag_pch_gdp + lag_LNpopulation + 
+    lag_lncinflation + lag_Internal_Conflict + lag_ratifiedbits + 
+    lag_kaopen + lag_polity'))
+
+modRes=plm(form, data=plmData, model='within')
+coeftest(modRes, vcov=vcovHC(modRes,method='arellano',cluster="group"))
+
+
+
+plmData$yr07=ifelse(numSM(plmData$year)>=2007,1,0)
+plmData$dispYr07=plmData$lag_mvs2_unsettled_icsid_treaty*plmData$yr07
+
+form=formula(paste0('Investment_Profile ~ lag_mvs2_unsettled_icsid_treaty + yr07 + dispYr07 + lag_pch_gdp + lag_LNpopulation + 
+    lag_lncinflation + lag_Internal_Conflict + lag_ratifiedbits + 
+    lag_kaopen + lag_polity'))
+
+modRes=plm(form, data=plmData, model='within')
+coeftest(modRes, vcov=vcovHC(modRes,method='arellano',cluster="group"))
+
+
+
+plmData$yr07=ifelse(numSM(plmData$year)>=2007,1,0)
+plmData$dispYr07=plmData$lag_mvs2_alltreaty*plmData$yr07
+
+form=formula(paste0('Investment_Profile ~ lag_mvs2_alltreaty + yr07 + dispYr07 + lag_pch_gdp + lag_LNpopulation + 
+    lag_lncinflation + lag_Internal_Conflict + lag_ratifiedbits + 
+    lag_kaopen + lag_polity'))
+
+modRes=plm(form, data=plmData, model='within')
+coeftest(modRes, vcov=vcovHC(modRes,method='arellano',cluster="group"))
