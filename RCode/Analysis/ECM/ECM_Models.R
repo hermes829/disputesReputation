@@ -26,7 +26,7 @@ colnames(diffData)=paste0('diff_',lagVars)
 modelData=cbind(modelData,diffData)
 
 modelData = modelData[modelData$coecd==0,]
-modelData = modelData[modelData$year>1986,]
+modelData = modelData[modelData$year>2006,]
 ###############################################################################
 
 ###############################################################################
@@ -122,10 +122,11 @@ modForm=lapply(ivAll, function(x)
 		paste(paste(dv, paste(x, collapse=' + '), sep=' ~ '), 
 			'+ factor(ccode) + factor(year) -1', collapse='') ))
 modResults=lapply(modForm, function(x) FUN=panelAR(x, modelData, 'ccode', 'year', 
-	autoCorr = c("psar1"), panelCorrMethod="pcse",rhotype='breg', complete.case=FALSE  ) )
-# modResults=lapply(modForm, function(x) FUN=lm(x, data=modelData))
-modSumm=lapply(modResults, function(x) FUN=coeftest(x) )
-
+	autoCorr = c("none"), panelCorrMethod="none",rhotype='breg', complete.case=FALSE ) )
+modResults=lapply(modForm, function(x) FUN=lm(x, data=modelData))
+# modSumm=lapply(modResults, function(x) FUN=coeftest(x) )
+summary(modResults[[1]])
+summary(modResults[[2]])
 lapply(modSumm, function(x){ print(x[c(1:4,12),1:3]) })
 
 # Saving results for further analysis
