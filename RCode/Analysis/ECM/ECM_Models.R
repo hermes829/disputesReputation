@@ -26,7 +26,7 @@ colnames(diffData)=paste0('diff_',lagVars)
 modelData=cbind(modelData,diffData)
 
 modelData = modelData[modelData$coecd==0,]
-modelData = modelData[modelData$year>2006,]
+modelData = modelData[modelData$year<2007,]
 ###############################################################################
 
 ###############################################################################
@@ -75,45 +75,25 @@ ivOtherName=c(
 ivsName=c(ivDispName, ivOtherName)
 ivAllNames=lapply(ivDispName, function(x) FUN= c(lagLabName(dvName) ,
 	lagLabName(x), lagLabName(ivOtherName), pchLabName(x), pchLabName(ivOtherName)) )
-
-# Create interaction terms
-modelData$L_kicsid_lac = modelData$lag_cum_kicsidcase*modelData$lac
-modelData$L_icsid_lac = modelData$lag_cum_icsidtreaty_case*modelData$lac
-modelData$L_unsett_lac = modelData$lag_cumunsettled_icsid_treaty*modelData$lac
-modelData$L_all_lac = modelData$lag_cum_alltreaty*modelData$lac
-
-# Add interactions to variable lists
-lagI=c('L_kicsid_lac', 'L_icsid_lac', 'L_unsett_lac', 'L_all_lac')
-for(ii in 1:4){ 
-	ivAll[[ii]] = append(ivAll[[ii]], 'lac', 1)
-	ivAll[[ii]] = append(ivAll[[ii]], lagI[ii], 3)
-}
-
-iName='LAC'
-lagI=paste(lagLabName(ivDispName), iName, sep=' x ')
-for(ii in 1:4){
-	ivAllNames[[ii]] = append(ivAllNames[[ii]], iName, 1)
-	ivAllNames[[ii]] = append(ivAllNames[[ii]], lagI[ii], 3)
-}
 ###############################################################################
 
-# ###############################################################################
-# ### Check balance of panel
-# panelBalance(ivs=ivAll[[1]], dv=dv, group='cname', time='year', regData=modelData)
+###############################################################################
+### Check balance of panel
+panelBalance(ivs=ivAll[[1]], dv=dv, group='cname', time='year', regData=modelData)
 
-# ## Create balanced panel based off
-# # All vars used in model
-# temp=na.omit(modelData[,c('cname','ccode','year', ivDV, ivDisp, ivOther)])
-# temp2=lapply(unique(temp$cname), function(x) FUN=nrow(temp[which(temp$cname %in% x), ]) )
-# names(temp2)=unique(temp$cname); temp3=unlist(temp2)
+## Create balanced panel based off
+# All vars used in model
+temp=na.omit(modelData[,c('cname','ccode','year', ivDV, ivDisp, ivOther)])
+temp2=lapply(unique(temp$cname), function(x) FUN=nrow(temp[which(temp$cname %in% x), ]) )
+names(temp2)=unique(temp$cname); temp3=unlist(temp2)
 
-# # Cutoff for dropping
-# # drop=names(temp3[temp3<max(temp3)])
-# drop=names(temp3[temp3<10])
+# Cutoff for dropping
+# drop=names(temp3[temp3<max(temp3)])
+drop=names(temp3[temp3<10])
 
-# # New data
-# modelData = modelData[which(!modelData$cname %in% drop),]
-# ###############################################################################
+# New data
+modelData = modelData[which(!modelData$cname %in% drop),]
+###############################################################################
 
 ###############################################################################
 # Running PCSE models with p-specific AR1 autocorr structure
@@ -122,7 +102,7 @@ modForm=lapply(ivAll, function(x)
 		paste(paste(dv, paste(x, collapse=' + '), sep=' ~ '), 
 			'+ factor(ccode) + factor(year) -1', collapse='') ))
 modResults=lapply(modForm, function(x) FUN=panelAR(x, modelData, 'ccode', 'year', 
-	autoCorr = c("none"), panelCorrMethod="none",rhotype='breg', complete.case=FALSE ) )
+	autoCorr = c("psar1"), panelCorrMethod="none",rhotype='breg', complete.case=FALSE ) )
 modResults=lapply(modForm, function(x) FUN=lm(x, data=modelData))
 # modSumm=lapply(modResults, function(x) FUN=coeftest(x) )
 summary(modResults[[1]])
