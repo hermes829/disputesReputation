@@ -6,18 +6,35 @@ source('~/Research/RemmerProjects/disputesReputation/RCode/setup.R')
 ##########################################################################################
 # Loading model results
 setwd(pathResults)
-load('LinvProfFE.rda'); fileTable='LfeResultsInvProfile.tex'; captionTable='Fixed effects regression on investment profile with robust standard errors in parentheses. $^{**}$ and $^{*}$ indicate significance at $p< 0.05 $ and $p< 0.10 $, respectively.'
+load('invProfAR1_All.rda'); allYrSumm=modSumm; allYrResults=modResults
+load('invProfAR1_pre07.rda'); pre07Summ=modSumm; pre07Results=modResults
+
+# Keep first two dispute measures
+modSumm = list( allYrSumm[[1]], allYrSumm[[2]], pre07Summ[[1]], pre07Summ[[2]])
+modResults = list( allYrResults[[1]], allYrResults[[2]], pre07Results[[1]], pre07Results[[2]])
+
+fileTable='ecmResultsInvProfile.tex'; captionTable='ECM regression on investment profile with robust standard errors in parentheses. $^{**}$ and $^{*}$ indicate significance at $p< 0.05 $ and $p< 0.10 $, respectively.'
 ##########################################################################################
 
 ##########################################################################################
 # Mods to match table to Karen's style
-modNames=unlist(lapply(ivsName, function(x) x[1]))
+modNames = apply(expand.grid(ivsName[1:2], c('(All Years)', '(Pre-2007)')), 1, 
+	function(x){ paste(x[1], x[2]) } )
+
 varDef=rbind(
+	cbind('pch_disputes', pchLabName('Registered Disputes')),
 	cbind('lag_disputes', lagLabName('Registered Disputes')),
-	cbind(ivAll[[1]][2:8], ivsName[[1]][2:8] ) )
+	cbind(ivAll[[1]][c(11,3,12,4,13,5,14,6,15,7,16,8,17,8)], 
+		ivAllNames[[1]][c(11,3,12,4,13,5,14,6,15,7,16,8,17,8)]),
+	cbind(ivAll[[1]][1], ivAllNames[[1]][1])
+	)
 
 # Changing name of each dispute measure in results to disputes
-modSumm=lapply(modSumm, function(x) FUN={rownames(x)[1]='lag_disputes'; x})
+modSumm=lapply(modSumm, function(x){
+	rownames(x)[2]='lag_disputes'
+	rownames(x)[10]='pch_disputes'
+	x
+	})
 ##########################################################################################
 
 ##########################################################################################
@@ -64,15 +81,13 @@ for(ii in 1:nrow(varDef)){
 sSize = cbind('n', t(as.vector(mapply(x=modResults, 
 	function(x) FUN=length(x$residuals)))))
 gSize = cbind('N', t(as.vector(mapply(x=modResults, 
-	function(x) FUN=length(x$residuals)-x$df.residual-length(x$coefficient)))))
+	function(x) FUN=sum(grepl('ccode', names(x$coefficients)))))))
 rSQ = cbind('$R^{2}$', t(as.vector(mapply(x=modResults,
-		function(x) FUN=round(summary(x)$r.squared[1],2) ))))
-arSQ = cbind('Adj. $R^{2}$', t(as.vector(mapply(x=modResults,
-		function(x) FUN=round(summary(x)$r.squared[2],2) ))))
+		function(x) FUN=round(x$r2,2) ))))
 rmse = round(mapply(x=modResults, function(x) FUN=sqrt(mean(x$residuals^2))),2)
 fRmse = cbind('RMSE', t(rmse))
-tableFinal = rbind(tableFinal, sSize, gSize, rSQ, arSQ, fRmse)
-nStats=5
+tableFinal = rbind(tableFinal, sSize, gSize, rSQ, fRmse)
+nStats=4
 temp=varDef[match(tableFinal[,'Variable'], varDef[,1]),2]
 temp[which(is.na(temp))]=tableFinal[,'Variable'][which(is.na(temp))]
 tableFinal[,'Variable']=temp

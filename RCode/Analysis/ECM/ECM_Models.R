@@ -27,7 +27,8 @@ modelData=cbind(modelData,diffData)
 
 modelData = modelData[modelData$coecd==0,]
 modelData = modelData[modelData$year>1986,]
-modelData = modelData[modelData$year<2007,]
+# fileAR1='invProfAR1_All.rda'
+modelData = modelData[modelData$year<2007,]; fileAR1='invProfAR1_pre07.rda'
 ###############################################################################
 
 ###############################################################################
@@ -40,7 +41,7 @@ modelData = modelData[modelData$year<2007,]
 # i.ccode i.year if coecd ~=1 & year>1986, pairwise corr(psar1) 
 
 # Choosing DV
-dv='pch_Investment_Profile'; dvName='Investment Profile'; fileAR1='invProfAR1.rda'
+dv='pch_Investment_Profile'; dvName='Investment Profile'
 ivDV=paste('lag',substr(dv, 4, nchar(dv)),sep='')
 
 # Cum. Dispute vars
@@ -110,7 +111,7 @@ modResults=lapply(modForm, function(x) FUN=panelAR(
 modSumm=lapply(modResults, function(x) FUN=coeftest( x ) )
 lapply(modSumm, function(x){ x[c(2,10),1:3] })
 
-# # Saving results for further analysis
-# setwd(pathResults)
-# save(modResults, modSumm, ivAll, dv, ivs, ivsName, dvName, file=fileAR1)
+# Saving results for further analysis
+setwd(pathResults)
+save(modResults, modSumm, ivAll, dv, ivs, ivsName, dvName, ivAllNames, file=fileAR1)
 ###############################################################################
