@@ -17,7 +17,7 @@ ivDisp=c('cum_kicsidcase','cum_icsidtreaty_case',
 # Two year moving sum of disputes
 dispVars=c('kicsidcase', 'icsidtreaty_case', 
 	'unsettled_icsid_treaty', 'alltreaty')
-ivDisp=paste0('mvs2_',dispVars)
+# ivDisp=paste0('mvs2_',dispVars)
 
 # Other covariates
 ivOther=c(
@@ -75,10 +75,10 @@ tmp = ggcoefplot(coefData=coefCross,
 tmp=tmp + ylab('$\\beta$ for Dispute Variables')
 tmp=tmp + theme(axis.title.y=element_text(vjust=1))
 tmp=tmp+scale_color_manual(values=brewer.pal(9,'Greys')[c(5,9,7)])
-setwd(pathGraphics)
-tikz(file='crossValLevel.tex',width=8,height=6,standAlone=F)
+# setwd(pathGraphics)
+# tikz(file='crossValLevel.tex',width=8,height=6,standAlone=F)
 tmp
-dev.off()
+# dev.off()
 ###############################################################################
 
 ###############################################################################
