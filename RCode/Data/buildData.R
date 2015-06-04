@@ -55,6 +55,8 @@ modelData=lagDataSM(modelData, 'cyear', 'ccode', ivDisp, 3)
 modelData=lagDataSM(modelData, 'cyear', 'ccode', ivDisp, 4)
 modelData=lagDataSM(modelData, 'cyear', 'ccode', ivDisp, 5)
 
+usa = modelData[which(modelData$cname %in% "UNITED STATES"),]
+
 # Narrow sample to relevant range
 modelData = modelData[modelData$coecd==0,]
 modelData = modelData[modelData$year>1986,]
