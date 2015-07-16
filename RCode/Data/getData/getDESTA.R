@@ -1,12 +1,12 @@
 ####
 if(Sys.info()["user"]=="janus829" | Sys.info()["user"]=="s7m"){
-	source('~/Research/Ruthenium/R/setup.R') }
+	source('~/Research/RemmerProjects/disputesReputation/RCode/setup.R') }
 ####
 
 ####
 # Download file from ICOW site
 destaURL = 'http://www.designoftradeagreements.org/wp-content/uploads/DESTA_dyadic27March15.xlsx'
-destaName = paste0(pathDataRaw, 'desta.xlsx')
+destaName = paste0(pathRaw, 'desta.xlsx')
 if(!file.exists(destaName)) { download.file(destaURL, destaName) }
 desta = read.xlsx(destaName, sheet=1)	
 ####
@@ -31,7 +31,7 @@ desta = na.omit(desta) # removes countries not in panel
 ####
 # Create frame to merge desta with 
 # First create the standard frame
-frame = expand.grid(ccode_1=cntry$ccode, ccode_2=cntry$ccode, year=1960:2014)
+frame = expand.grid(ccode_1=cntry$ccode, ccode_2=cntry$ccode, year=1984:2014)
 frame = frame[frame$ccode_1 != frame$ccode_2, ]
 
 # Remove countries that pop up before actual existence according to panel
@@ -62,15 +62,7 @@ frame$pta = ifelse(frame$ptaCnt>=1, 1, 0)
 ####
 
 ####
-# Create adjacency matrices
-ptaCntMats <- DyadBuild(variable='ptaCnt', dyadData=frame, 
-	time=1960:2013, panel=panel, directed=FALSE)
-ptaMats <- DyadBuild(variable='pta', dyadData=frame, 
-	time=1960:2013, panel=panel, directed=FALSE)
-####
-
-####
 # Save
-destaFrame = frame
-save(destaFrame, ptaCntMats, ptaMats, file=paste0(pathDataBin, 'desta.rda'))
+desta = frame
+save(desta, file=paste0(pathBin, 'desta.rda'))
 ####

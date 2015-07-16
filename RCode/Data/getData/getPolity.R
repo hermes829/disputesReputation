@@ -1,10 +1,12 @@
+####
 if(Sys.info()["user"]=="janus829" | Sys.info()["user"]=="s7m"){
-	source('~/Research/Ruthenium/R/setup.R') }
+	source('~/Research/RemmerProjects/disputesReputation/RCode/setup.R') }
+####
 
 ############################
 # Download file from INSCR site
 polURL = 'http://www.systemicpeace.org/inscr/p4v2014.sav'
-polName = paste0(pathDataRaw, 'polity14.sav')
+polName = paste0(pathRaw, 'polity14.sav')
 if(!file.exists(polName)) { download.file(polURL, polName) }
 
 polData = read.spss(polName, to.data.frame=TRUE)
@@ -14,7 +16,7 @@ polData = read.spss(polName, to.data.frame=TRUE)
 # Process polity data
 
 # Remove pre 1960 observations
-polData = polData[polData$year >= 1960, ]
+polData = polData[polData$year >= 1984, ]
 
 # Match country names with panel dataset
 polData$country = char(polData$country) %>% trim()
@@ -64,5 +66,5 @@ polData$polity2 = polData$polity2 + 11
 ############################
 # Save cleaned polity data
 polity=polData
-save(polity, file=paste0(pathDataBin, 'polity.rda'))
+save(polity, file=paste0(pathBin, 'polity.rda'))
 ############################

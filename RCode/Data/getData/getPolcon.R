@@ -1,10 +1,12 @@
+####
 if(Sys.info()["user"]=="janus829" | Sys.info()["user"]=="s7m"){
-	source('~/Research/Ruthenium/R/setup.R') }
+	source('~/Research/RemmerProjects/disputesReputation/RCode/setup.R') }
+####
 
 ############################
 # Download file from POLCON site
 conURL = 'http://mgmt5.wharton.upenn.edu/henisz/POLCON/polcon2012.zip'
-conName = paste0(pathDataRaw, 'con.zip')
+conName = paste0(pathRaw, 'con.zip')
 if(!file.exists(conName)) { download.file(conURL, conName) }
 
 constraints = unzip(conName, 'polcon2012.dta') %>% read.dta()
@@ -12,7 +14,7 @@ constraints = unzip(conName, 'polcon2012.dta') %>% read.dta()
 
 ############################
 # Clean constraints data
-constraints <- constraints[constraints$year>=1960,1:10]
+constraints <- constraints[constraints$year>=1984,1:10]
 constraints <- constraints[!is.na(constraints$ccode),]
 
 constraints$cnts_country <- as.character(constraints$cnts_country)
@@ -42,5 +44,5 @@ table(constraints$cyear)[table(constraints$cyear)>1] # Dupe check
 
 ############################
 # Save
-save(constraints, file=paste0(pathDataBin, 'constraints.rda'))
+save(constraints, file=paste0(pathBin, 'constraints.rda'))
 ############################

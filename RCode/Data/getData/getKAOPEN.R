@@ -1,10 +1,12 @@
+####
 if(Sys.info()["user"]=="janus829" | Sys.info()["user"]=="s7m"){
-	source('~/Research/Ruthenium/R/setup.R') }
+	source('~/Research/RemmerProjects/disputesReputation/RCode/setup.R') }
+####
 
 ############################
 # Download file from Chinn-Ito website
 kaoURL = 'http://web.pdx.edu/~ito/kaopen_2013.dta'
-kaoName = paste0(pathDataRaw, 'kaopen_2013.dta')
+kaoName = paste0(pathRaw, 'kaopen_2013.dta')
 if(!file.exists(kaoName)) { download.file(kaoURL, kaoName) }
 
 kaopen = read.dta(kaoName)
@@ -39,5 +41,6 @@ kaopen$ka_openWrld = with( data=kaopen, ave( ka_open, year, FUN=meanNA ) )
 ############################
 # Save kaopen data
 kaopen=kaopen[,c('country_name','cname','ccode','year','cyear','kaopen','ka_open','kaopenWrld','ka_openWrld')]
-save(kaopen, file=paste0(pathDataBin, 'kaopen.rda'))
+kaopen = kaopen[kaopen$year>=1984,]
+save(kaopen, file=paste0(pathBin, 'kaopen.rda'))
 ############################

@@ -22,7 +22,7 @@ wbVars = c(
 # Call WDI website
 wbData = WDI(country='all', 
 	indicator=wbVars, 
-	start=1960, end=2014, extra=TRUE )
+	start=1984, end=2014, extra=TRUE )
 write.csv(wbData, file=fName)
 
 # Change names

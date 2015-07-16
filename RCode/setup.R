@@ -7,6 +7,8 @@ Sys.info()["user"]=="janus829" | Sys.info()["user"]=="s7m"
 ){pathMain="~/Dropbox/Research/RemmerProjects/disputesReputation";
   pathGraphics='~/Research/RemmerProjects/disputesReputation/Latex/graphics'
   pathData="~/Dropbox/Research/RemmerProjects/disputesReputation/Data";
+  pathRaw="~/Dropbox/Research/RemmerProjects/disputesReputation/Data/components/";
+  pathBin="~/Dropbox/Research/RemmerProjects/disputesReputation/Data/binaries/";
   pathResults="~/Dropbox/Research/RemmerProjects/disputesReputation/Results";
   pathCode="~/Research/RemmerProjects/disputesReputation/RCode";
   pathLatex="~/Research/RemmerProjects/disputesReputation/Latex"
@@ -23,8 +25,8 @@ loadPkg=function(toLoad){
   }
 }
 
-toLoad=c('foreign', 'countrycode', 'xlsx', 'gdata', 'ggplot2',
-  'reshape', 'scales', 'plyr', 'doBy', 'WDI', 'zoo', 'panelAR',
+toLoad=c('foreign', 'countrycode', 'openxlsx', 'gdata', 'ggplot2',
+  'reshape', 'scales', 'plyr', 'doBy', 'WDI', 'zoo', 'panelAR', 'magrittr',
   'lme4', 'plm', 'lmtest', 'xtable', 'apsrtable', 'tikzDevice', 'MASS',
   'RColorBrewer')
 
@@ -44,6 +46,8 @@ set.seed(6886)
 setwd(pathMain)
 
 # minor Helper functions
+cname = function(x){ countrycode(x, 'country.name', 'country.name') }
+
 trim <- function (x) gsub("^\\s+|\\s+$", "", x)
 
 substrRight <- function(x, n){
@@ -72,7 +76,7 @@ rescale <- function(x,new_max,new_min){
 
 # turn variables into numeric
 char = function(x){ as.character(x) }
-numSM <- function(x){ as.numeric(char(x)) }
+num <- function(x){ as.numeric(char(x)) }
 
 mapVar=function(var, old, new){
   var=char(var)

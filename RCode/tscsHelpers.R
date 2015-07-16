@@ -39,7 +39,7 @@ movePanel <- function(data, ccode, time, vars, wdow, sum=FALSE){
 # Calculate cumulative sum of var
 cumulTS=function(data, ccode, time, vars){
 	data=orderTS(data, ccode, time)	
-	vars2=paste('C',vars,sep='')
+	vars2=paste0(vars,'C')
 	cumsumSM=function(x){x[is.na(x)]=0; cumsum(x)}
 	temp=ddply(data[,c(ccode,vars)], .(ccode), cumsumSM)
 	temp=temp[,vars]; colnames(temp)=vars2
