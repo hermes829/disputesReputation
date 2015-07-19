@@ -1,43 +1,81 @@
+####
 if(Sys.info()["user"]=="janus829" | Sys.info()["user"]=="s7m"){
-	source('~/Research/Ruthenium/R/setup.R') }
+	source('~/Research/RemmerProjects/disputesReputation/RCode/setup.R') }
+####
+
+###############################################################
+# Function to clean data data
+icrgCleaner = function(data,sheetNum){
+	# Match to country names in panel
+	data$Country=char(data$Country)
+	data$Country[data$Country=='Congo-Brazzaville']='Congo, Republic of'
+	data$Country[data$Country=='Congo']='Congo, Republic of'
+	data$Country[data$Country=='Congo-Kinshasa']='Congo, Democratic Republic of'
+	data$Country[data$Country=='Congo, DR']='Congo, Democratic Republic of'
+	data$Country[data$Country=='UAE'] = 'United Arab Emirates'
+
+	# Drop small countries
+	drop=c("Hong Kong", "New Caledonia")
+	data=data[which(!data$Country %in% drop),]
+	data$cname=cname(data$Country)
+
+	# Corrections
+	data$cname[data$Country=='East Germany'] = 'German Democratic Republic'
+
+	# Drop repeat country observations
+	data$drop=0
+	data[data$Country=='Russia' & data$year<1992,'drop'] = 1
+	data[data$Country=='USSR' & data$year>=1992,'drop'] = 1
+	data[data$Country=='Germany' & data$year<1990,'drop'] = 1
+	data[data$Country=='West Germany' & data$year>=1990,'drop'] = 1
+	data[data$Country=='East Germany' & data$year>=1990,'drop'] = 1
+	data[data$Country=='Serbia and Montenegro' & data$year>=2006, 'drop']=1
+	data[data$Country=='Serbia' & data$year<2006, 'drop']=1
+	data[data$Country=='Serbia & Montenegro *' & data$year>=2006, 'drop']=1
+	data[data$Country=='Serbia *' & data$year<2006, 'drop']=1	
+	data[data$Country=='Czechoslovakia' & data$year>=1993, 'drop']=1
+	data[data$Country=='Czech Republic' & data$year<1993, 'drop']=1
+	data=data[data$drop==0,]; data=data[,1:(ncol(data)-1)]
+	data[data$Country=='Czechoslovakia', 'cname']='CZECH REPUBLIC'
+
+	# Create country + year id
+	data$cnameYear=paste(data$cname, data$year, sep='')
+	 
+	# Check for duplicates
+	cat(paste0('cyearDupe ',sheetNum, ': ')); cat( table(data$cnameYear)[table(data$cnameYear)>1] ) ; cat('\n')
+
+	# Adding in codes from panel
+	data$ccode=panel$ccode[match(data$cname,panel$cname)]
+	data$cyear=paste(data$ccode, data$year, sep='')
+	cat(paste0('cyearDupe ',sheetNum, ': ')); cat( table(data$cyear)[table(data$cyear)>1] ) ; cat('\n')
+
+	# return cleaned data
+	if(sheetNum<3){ return(data) } else { return(data[,c(3,7)]) }
+}
+###############################################################
 
 ###############################################################
 # ICRG data from PRS group
 # Manually downloaded through Duke website
-icrg=read.csv(paste0(pathDataRaw, 'PRS_Melted_Format.csv'))
+icrgName = paste0(pathRaw, "3BResearchersDataset2015.xlsx")
+icrgL = lapply(2:13, function(ii){
+	var = read.xlsx(icrgName, sheet=ii)[3,1]
+	dat = read.xlsx(icrgName, sheet=ii, startRow=8)
+	mdat = melt(dat, id='Country')
+	for(v in c('variable','value')){ mdat[,v] = num(mdat[,v]) }
+	names(mdat)[2:3] = c('year', var)
+	mdat = icrgCleaner(data=mdat, sheetNum=ii)
+	return(mdat)
+})
 
-# Match to country names in panel
-icrg$Country=char(icrg$Country)
-icrg$Country[icrg$Country=='Congo-Brazzaville']='Congo, Republic of'
-icrg$Country[icrg$Country=='Congo-Kinshasa']='Congo, Democratic Republic of'
-
-# Drop small countries
-drop=c("Hong Kong", "New Caledonia")
-icrg=icrg[which(!icrg$Country %in% drop),]
-icrg$cname=cname(icrg$Country)
-
-# Drop repeat country observations
-icrg$drop=0
-icrg[icrg$Country=='Serbia and Montenegro' & icrg$Year>=2006, 'drop']=1
-icrg[icrg$Country=='Serbia' & icrg$Year<2006, 'drop']=1
-icrg[icrg$Country=='Czechoslovakia' & icrg$Year>=1993, 'drop']=1
-icrg[icrg$Country=='Czech Republic' & icrg$Year<1993, 'drop']=1
-icrg=icrg[icrg$drop==0,]; icrg=icrg[,1:(ncol(icrg)-1)]
-icrg[icrg$Country=='Czechoslovakia', 'cname']='CZECH REPUBLIC'
-
-# Create country + year id
-icrg$cnameYear=paste(icrg$cname, icrg$Year, sep='')
- 
-# Check for duplicates
-table(icrg$cnameYear)[table(icrg$cnameYear)>1]
-
-# Adding in codes from panel
-icrg$ccode=panel$ccode[match(icrg$cname,panel$cname)]
-icrg$cyear=paste(icrg$ccode, icrg$Year, sep='')
-table(icrg$cyear)[table(icrg$cyear)>1] # Dupe check
+# Reduce to dataframe
+icrg = icrgL[[1]]
+for(ii in icrgL[2:length(icrgL)]){
+	icrg$tmp = ii[,1][match(icrg$cyear, ii[,2])]
+	names(icrg)[ncol(icrg)] = names(ii)[1] }
 ###############################################################
 
 ###############################################################
 # Save
-save(icrg, file=paste0(pathDataBin, 'icrg.rda'))
+save(icrg, file=paste0(pathBin, 'icrg.rda'))
 ###############################################################

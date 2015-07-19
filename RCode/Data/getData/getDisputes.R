@@ -76,6 +76,10 @@ dispF[is.na(dispF)] = 0
 ###############################################################
 # Create cumulative variables
 dispF = cumulTS(dispF, 'ccode', 'year', dispVars)
+# Create two year moving sum
+dispF = movePanel(dispF, 'ccode', 'year', dispVars, 2, sum=TRUE)
+# # Create five year moving sum
+dispF = movePanel(dispF, 'ccode', 'year', dispVars, 5, sum=TRUE)
 ###############################################################
 
 ###############################################################

@@ -4,8 +4,7 @@ source('~/Research/RemmerProjects/disputesReputation/RCode/setup.R')
 ###################################################################
 # Load in Data
 setwd(pathData)
-# load('textData.rda')
-load('textDatav2.rda')
+load('textData.rda')
 load('caseTextData.rda')
 load('modelData.rda')
 

@@ -1,11 +1,14 @@
+####
 if(Sys.info()["user"]=="janus829" | Sys.info()["user"]=="s7m"){
-	source('~/Research/Ruthenium/R/setup.R') }
+	source('~/Research/RemmerProjects/disputesReputation/RCode/setup.R') }
+####
 
 ############################
 # Download WB data using WDI package
 
 # File name to store data
-fName = paste0(pathDataRaw, 'worldBankVars.csv')
+fName = paste0(pathRaw, 'worldBankVars.csv')
+if(!file.exists(fName)){
 wbVars = c(
 	'NY.GDP.MKTP.KD', # GDP, constant 05 US
 	'NY.GDP.PCAP.KD', # GDP per capita, constant 05 US
@@ -16,18 +19,24 @@ wbVars = c(
 	'NE.IMP.GNFS.ZS', # Imports of goods and services (% of GDP)
 	'BX.KLT.DINV.WD.GD.ZS', # Foreign direct investment, net inflows (% of GDP)
 	'NE.EXP.GNFS.ZS', # Exports of goods and services (% of GDP)
-	'DT.ODA.ODAT.GN.ZS' # Net ODA received (% of GNI)
+	'DT.ODA.ODAT.GN.ZS', # Net ODA received (% of GNI)
+	'PA.NUS.FCRF', # xrate
+	'NY.GDP.DEFL.ZS' # gdp deflator
 	)
 
 # Call WDI website
 wbData = WDI(country='all', 
 	indicator=wbVars, 
 	start=1984, end=2014, extra=TRUE )
-write.csv(wbData, file=fName)
 
 # Change names
-wbVarsClean = c('gdp', 'gdpCap', 'gdpGr', 'pop', 'fdi', 'tradeGDP', 'impGDP', 'fdiGDP', 'expGDP', 'aidGNI')
+wbVarsClean = c('gdp', 'gdpCap', 'gdpGr', 'pop', 'fdi', 'tradeGDP', 'impGDP', 'fdiGDP', 'expGDP', 'aidGNI', 'xrate', 'gdpDefl')
 names(wbData)[4:(length(wbVars)+3)] = wbVarsClean
+write.csv(wbData, file=fName)
+} else {
+wbData=read.csv(fName)[,-1]
+wbVarsClean = names(wbData)[4:(ncol(wbData)-7)]
+}
 ############################
 
 ############################
@@ -59,15 +68,26 @@ table(wbData$cyear)[table(wbData$cyear)>1]
 ############################
 
 ############################
+# 2005 us defl data
+usDefl = wbData[wbData$ccode==2,c('ccode','year','cyear','gdpDefl')]
+usDefl$toReal = (usDefl$gdpDefl[usDefl$year==2005])/usDefl$gdpDefl
+# Add to main dataset
+wbData$toReal = usDefl$toReal[match(wbData$year, usDefl$year)]
+# Create real version of fdi flows
+wbData$rfdi = wbData$fdi * wbData$toReal
+############################
+
+############################
 # Create logged version of vars
 wbData$gdpLog = log(wbData$gdp)
 wbData$gdpCapLog = log(wbData$gdpCap)
 wbData$popLog = log(wbData$pop)
 wbData$fdiLog = log( wbData$fdi + abs(min(wbData$fdi, na.rm=TRUE)) + 1 )
+wbData$rfdiLog = log( wbData$rfdi + abs(min(wbData$rfdi, na.rm=TRUE)) + 1 )
 ############################
 
 ############################
 # Save
-worldBank = wbData[,c('cyear', wbVarsClean, 'gdpLog', 'gdpCapLog', 'popLog', 'fdiLog')]
-save(worldBank, file=paste0(pathDataBin, 'worldBank.rda'))
+worldBank = wbData[,c('cyear', wbVarsClean, 'rfdi', 'gdpLog', 'gdpCapLog', 'popLog', 'fdiLog', 'rfdiLog')]
+save(worldBank, file=paste0(pathBin, 'worldBank.rda'))
 ############################

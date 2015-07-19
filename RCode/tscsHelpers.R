@@ -28,12 +28,31 @@ movePanel <- function(data, ccode, time, vars, wdow, sum=FALSE){
 	data=orderTS(data, ccode, time)
 	vars2 <- paste('mva',wdow,'_',vars,sep='')
 	vars3 <- paste('mvs',wdow,'_',vars,sep='')
+
+	# Countries with fewer observed periods than wdow
+	toDrop = table(data$ccode) %>% cbind() %>% data.frame() %>% cbind(rownames(.), .) %>% .[order(.[,2]),] %>% .[.[,2]<wdow,] %>% .[,1] %>% num()	
+	d2 = data[which(!data$ccode %in% toDrop),]
+
+	# Create moving sums
 	rollmeanSM <- function(x){ as.vector(filter(x, rep(1/wdow, wdow), sides=1)) }
-	temp <- ddply(data[,c(ccode, vars)], .(ccode), numcolwise(rollmeanSM))
+	temp <- ddply(d2[,c(ccode, vars)], .(ccode), numcolwise(rollmeanSM))
+
+	# Cleanup 
 	if(sum==FALSE){
 		temp <- temp[,vars]; colnames(temp) <- vars2 }else{
 		temp <- temp[,vars]*wdow; colnames(temp) <- vars3 }
-	cbind(data, temp)
+	
+	# Return if no data to be added back in
+	if(length(toDrop)==0){ return( cbind(d2, temp) ) }
+
+	# Add back in dropped data and return result
+	if(length(toDrop)!=0){
+		d2 = cbind(d2, temp)
+		dAdd = data[which(data$ccode %in% toDrop),]
+		missVals = matrix(NA, nrow=nrow(dAdd), ncol=ncol(temp), dimnames=list(NULL, colnames(temp)))
+		dAdd = cbind(dAdd, missVals)
+		return(rbind(d2, dAdd))
+	}
 }
 
 # Calculate cumulative sum of var
