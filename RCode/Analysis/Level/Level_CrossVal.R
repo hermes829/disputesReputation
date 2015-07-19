@@ -1,41 +1,39 @@
+####
+if(Sys.info()["user"]=="janus829" | Sys.info()["user"]=="s7m"){
+	source('~/Research/RemmerProjects/disputesReputation/RCode/setup.R') }
+####
+
 # Cross-validation
 
-### Load setup
-source('~/Research/RemmerProjects/disputesReputation/RCode/setup.R')
-setwd(pathData)
-load('modelData.rda')
+### Load data
+load(paste0(pathBin, 'analysisData.rda'))
 
 ###############################################################################
 # Model setup
 # Set up models
-dv='Investment_Profile'; dvName='Investment Profile'
+dv='invProf'; dvName='Investment Profile'; fileFE='LinvProfFE.rda'
 
 # Cumulative disputes
-ivDisp=c('cum_kicsidcase','cum_icsidtreaty_case',
-	'cumunsettled_icsid_treaty','cum_alltreaty' )
+ivDisp=c( 'iDispC','iDispBC', 'iuDispC' )
 
 # Two year moving sum of disputes
-dispVars=c('kicsidcase', 'icsidtreaty_case', 
-	'unsettled_icsid_treaty', 'alltreaty')
-# ivDisp=paste0('mvs2_',dispVars)
+dispVars=c('iDisp', 'iDispB', 'iuDisp')
+ivDisp=paste0('mvs2_',dispVars)
 
 # Other covariates
 ivOther=c(
-	'pch_gdp'
-	,'LNpopulation'
-	,'lncinflation'
-	, 'Internal_Conflict'	
-	,'ratifiedbits'	
+	'gdpGr'
+	,'popLog'
+	,'inflLog'
+	, 'intConf'	
+	,'rbitNoDuplC'	
 	,'kaopen'	
 	,'polity'
 	)
 
 # Untrans IVs
 ivs=c(ivDisp, ivOther)
-
-# Setting up diff models
-lagLab=function(x,y=NULL){ paste('lag',y,'_',x,sep='') }
-ivAll=lapply(ivDisp, function(x) FUN= c( lagLab(x), lagLab(ivOther) ) )
+ivAll=lapply(ivDisp, function(x) FUN= c( lagLab(x,1), lagLab(ivOther,1) ) )
 
 modForm=lapply(ivAll, function(x) 
 	FUN=as.formula( paste(dv, paste(x, collapse=' + '), sep=' ~ ') ))
@@ -43,10 +41,10 @@ modForm=lapply(ivAll, function(x)
 
 ###############################################################################
 # Run yearly models
-yrs=1995:2011
+yrs=1995:2014
 coefCross=NULL
 for(ii in 1:length(yrs)){
-	slice=modelData[which(modelData$year %in% yrs[ii]), ]
+	slice=aData[which(aData$year %in% yrs[ii]), ]
 
 	modResults=lapply(modForm, function(x) FUN=lm(x, data=slice) )	
 	modSumm=lapply(modResults, function(x) FUN=coeftest(x))		
@@ -60,7 +58,7 @@ coefCross=coefCross[which(!rownames(coefCross) %in% 'lag_pch_gdp'),]
 # ###############################################################################
 # # Plotting
 VARS=unique(rownames(coefCross))
-ivDispName=c('All ICSID Disputes', 'ICSID Treaty-Based', 'Unsettled ICSID', 'ICSID-UNCTAD' )
+ivDispName=c('All ICSID Disputes', 'ICSID Treaty-Based', 'ICSID-UNCTAD' )
 VARSname=lagLabName(ivDispName,TRUE)
 
 tmp = ggcoefplot(coefData=coefCross, 
@@ -68,8 +66,8 @@ tmp = ggcoefplot(coefData=coefCross,
   Noylabel=FALSE, coordFlip=FALSE, revVar=FALSE,
   facet=TRUE, facetColor=FALSE, colorGrey=TRUE,
   facetName='cross', facetDim=c(2,2), 
-  facetBreaks=seq(yrs[1],2011,3),
-  facetLabs=seq(yrs[1],2011,3),
+  facetBreaks=seq(yrs[1],2014,3),
+  facetLabs=seq(yrs[1],2014,3),
   allBlack=FALSE
   )
 tmp=tmp + ylab('$\\beta$ for Dispute Variables')
@@ -84,10 +82,10 @@ tmp
 ###############################################################################
 # Substantive effect
 sims=1000
-yrs=1995:2011
+yrs=1995:2014
 modelYrPreds=NULL
 for(Year in yrs){
-	slice=modelData[which(modelData$year %in% Year), ]
+	slice=aData[which(aData$year %in% Year), ]
 	yrMod=lapply(modForm, function(x) lm(x, data=slice) )
 
 	# scenario
@@ -120,9 +118,9 @@ aggStats=do.call('rbind', lapply(aggData, function(x){
 	rownames(stats)=NULL
 	cbind(unique(x[,3]), c('Low', 'High'), stats) }) )
 aggStats=data.frame(aggStats); names(aggStats)[1:2]=c('varYr', 'Scenario')
-aggStats$mu=numSM(aggStats$mu); aggStats$qlo=numSM(aggStats$qlo); aggStats$qhi=numSM(aggStats$qhi)
+aggStats$mu=num(aggStats$mu); aggStats$qlo=num(aggStats$qlo); aggStats$qhi=num(aggStats$qhi)
 aggStats$dispVar=unlist(lapply(strsplit(char(aggStats$varYr), '__'), function(x) x[1]))
-aggStats$Year=numSM(unlist(lapply(strsplit(char(aggStats$varYr), '__'), function(x) x[2])))
+aggStats$Year=num(unlist(lapply(strsplit(char(aggStats$varYr), '__'), function(x) x[2])))
 
 # Plot labeling
 aggStats$Scenario=mapVar(aggStats$Scenario, c('Low','High'), paste0(c('Zero ', 'High '), 'Disputes $\\; \\; \\;$'))

@@ -1,20 +1,22 @@
+####
+if(Sys.info()["user"]=="janus829" | Sys.info()["user"]=="s7m"){
+	source('~/Research/RemmerProjects/disputesReputation/RCode/setup.R') }
+####
+
 # Main modeling file
 
-### Load setup
-source('~/Research/RemmerProjects/disputesReputation/RCode/setup.R')
-setwd(pathBin)
-load('analysisData.rda')
+### Load data
+load(paste0(pathBin, 'analysisData.rda'))
 
 #######################################################################################
 # Setting up models
 dv='invProf'; dvName='Investment Profile'; fileFE='LinvProfFE.rda'
 
 # Cumulative disputes
-ivDisp=c('cum_kicsidcase','cum_icsidtreaty_case',
-	'cumunsettled_icsid_treaty','cumcunctadcase','cum_alltreaty' )
+ivDisp=c( 'iDispC','iDispBC', 'iuDispC' )
 
 # Two year moving sum of disputes
-dispVars=c('iDisp', 'iDispB', 'disp')
+dispVars=c('iDisp', 'iDispB', 'iuDisp')
 ivDisp=paste0('mvs2_',dispVars)
 
 # Other covariates

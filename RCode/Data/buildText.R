@@ -19,6 +19,5 @@ textData=convertDate(textData)
 
 ###################################################################
 # Save for analysis
-setwd(pathData)
-save(textData, file='textData.rda')
+save(textData, file=paste0(pathBin, 'textData.rda'))
 ###################################################################
