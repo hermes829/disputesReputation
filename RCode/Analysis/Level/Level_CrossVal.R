@@ -8,6 +8,12 @@ if(Sys.info()["user"]=="janus829" | Sys.info()["user"]=="s7m"){
 ### Load data
 load(paste0(pathBin, 'analysisData.rda'))
 
+# Bring in upperincome data
+load(paste0(pathData,'/Old/modelData.rda'))
+ui = modelData[,c('cname', 'upperincome', 'oecd')] %>% unique()
+toDrop = setdiff(aData$cname, modelData$cname)
+aData = aData[which(!aData$cname %in% toDrop),]
+
 ###############################################################################
 # Model setup
 # Set up models
