@@ -4,6 +4,16 @@ if(Sys.info()["user"]=="janus829" | Sys.info()["user"]=="s7m"){
 ####
 
 ###############################################################
+# Add 2013 and 2014 to panel (assumes '13-14 cntries = '12 cntries)
+p13 = panel[panel$year==2012,]; p13$year = 2013
+p13$ccodeYear = paste0(p13$ccode, p13$year); p13$cnameYear = paste0(p13$cname, p13$year)
+panel = rbind(panel, p13); rm(list='p13')
+p14 = panel[panel$year==2012,]; p14$year = 2014
+p14$ccodeYear = paste0(p14$ccode, p14$year); p14$cnameYear = paste0(p14$cname, p14$year)
+panel = rbind(panel, p14); rm(list='p14')
+###############################################################
+
+###############################################################
 # Function to clean data data
 icrgCleaner = function(data,sheetNum){
 	# Match to country names in panel
@@ -49,6 +59,9 @@ icrgCleaner = function(data,sheetNum){
 	data$cyear=paste(data$ccode, data$year, sep='')
 	cat(paste0('cyearDupe ',sheetNum, ': ')); cat( table(data$cyear)[table(data$cyear)>1] ) ; cat('\n')
 
+	# Only include cyears already existing in panel, this deals with issue of ICRG repeating comm countries pre-indep from Soviet Union
+	data = data[which(data$cyear %in% panel$ccodeYear),]
+
 	# return cleaned data
 	if(sheetNum<3){ return(data) } else { return(data[,c(3,7)]) }
 }
@@ -73,6 +86,18 @@ icrg = icrgL[[1]]
 for(ii in icrgL[2:length(icrgL)]){
 	icrg$tmp = ii[,1][match(icrg$cyear, ii[,2])]
 	names(icrg)[ncol(icrg)] = names(ii)[1] }
+###############################################################
+
+###############################################################
+# Relabel variables
+shortNames = c(
+	'govtStab', 'socEconCon', 'invProf', 'intConf', 
+	'extConf', 'corr', 'milPol', 'relPol', 'lawOrd', 
+	'ethTens', 'demAcct', 'burQual')
+# check to make sure everything matches
+cbind(names(icrg)[c(3,8:ncol(icrg))], shortNames)
+# Replace
+names(icrg)[c(3,8:ncol(icrg))] = shortNames
 ###############################################################
 
 ###############################################################

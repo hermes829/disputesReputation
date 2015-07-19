@@ -5,7 +5,6 @@ source('~/Research/RemmerProjects/disputesReputation/RCode/setup.R')
 # Load in Data
 setwd(pathData)
 load('textData.rda')
-load('caseTextData.rda')
 load('modelData.rda')
 
 # ICSID dispute variables
@@ -58,19 +57,3 @@ dev.off()
 tmp=ggplot(icsidYrData, aes(x=year, y=kicsidcase))
 tmp=tmp + geom_line()
 tmp
-
-###################################################################
-# Case level data
-caseTextData$date=as.Date(as.yearmon(caseTextData$date))
-caseTextData$year=numSM(format(caseTextData$date, "%Y"))
-caseTextData=na.omit(caseTextData)
-caseTextData$count=1
-cyear=summaryBy(count ~ icsid, data=caseTextData, FUN=sum)
-
-# Country and year
-cntryYrMention=summaryBy(count ~ year + cname, data=caseTextData, FUN=sum, keep.names=TRUE)
-
-cntryYrMentionTime=cntryYrMention[which(cntryYrMention$year>=2007),]
-byCntry=summaryBy(count ~ cname, data=cntryYrMention, FUN=sum)
-# byCntry[order(byCntry$count.sum, decreasing=TRUE),]
-###################################################################

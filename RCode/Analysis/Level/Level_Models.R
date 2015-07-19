@@ -2,36 +2,35 @@
 
 ### Load setup
 source('~/Research/RemmerProjects/disputesReputation/RCode/setup.R')
-setwd(pathData)
-load('modelData.rda')
+setwd(pathBin)
+load('analysisData.rda')
 
 #######################################################################################
 # Setting up models
-dv='Investment_Profile'; dvName='Investment Profile'; fileFE='LinvProfFE.rda'
+dv='invProf'; dvName='Investment Profile'; fileFE='LinvProfFE.rda'
 
 # Cumulative disputes
 ivDisp=c('cum_kicsidcase','cum_icsidtreaty_case',
 	'cumunsettled_icsid_treaty','cumcunctadcase','cum_alltreaty' )
 
 # Two year moving sum of disputes
-dispVars=c('kicsidcase', 'icsidtreaty_case', 
-	'unsettled_icsid_treaty', 'alltreaty')
+dispVars=c('iDisp', 'iDispB', 'disp')
 ivDisp=paste0('mvs2_',dispVars)
 
 # Other covariates
 ivOther=c(
-	'pch_gdp'
-	,'LNpopulation'
-	,'lncinflation'
-	, 'Internal_Conflict'	
-	,'ratifiedbits'	
+	'gdpGr'
+	,'popLog'
+	,'inflLog'
+	, 'intConf'	
+	,'rbitNoDuplC'	
 	,'kaopen'	
 	,'polity'
 	)
 
 # Untrans IVs
 ivs=c(ivDisp, ivOther)
-ivAll=lapply(ivDisp, function(x) FUN= c( lagLab(x), lagLab(ivOther) ) )
+ivAll=lapply(ivDisp, function(x) FUN= c( lagLab(x,1), lagLab(ivOther,1) ) )
 
 # Setting up variables names for display
 ivDispName=c('All ICSID Disputes', 'ICSID Treaty-Based', 'Unsettled ICSID', 'ICSID-UNCTAD' )
@@ -50,18 +49,18 @@ ivsName=lapply(ivDispName, function(x) FUN= c(lagLabName(x,TRUE), lagLabName(ivO
 # #####################################################################################
 # ### Create semi-balanced panel based off
 # # All vars used in model
-# temp=na.omit(modelData[,c('cname','ccode','year', ivDisp, ivOther)])
+# temp=na.omit(aData[,c('cname','ccode','year', ivDisp, ivOther)])
 # # Just ICRG
-# # temp=na.omit(modelData[,c('cname','ccode','year', 'Investment.Profile')])
+# # temp=na.omit(aData[,c('cname','ccode','year', 'Investment.Profile')])
 # temp2=lapply(unique(temp$cname), function(x) FUN=nrow(temp[which(temp$cname %in% x), ]) )
 # names(temp2)=unique(temp$cname); temp3=unlist(temp2)
 # drop=names(temp3[temp3<quantile(temp3,probs=.25)])
-# modelData = modelData[which(!modelData$cname %in% drop),]
+# aData = aData[which(!aData$cname %in% drop),]
 # #####################################################################################
 
 #######################################################################################
 # Running fixed effect models with plm
-plmData=pdata.frame( modelData[,c(dv, unique(unlist(ivAll)), 'ccode', 'year') ], 
+plmData=pdata.frame( aData[,c(dv, unique(unlist(ivAll)), 'ccode', 'year') ], 
 			index=c('ccode','year') )
 
 modForm=lapply(ivAll, function(x) 

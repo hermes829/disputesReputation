@@ -25,6 +25,10 @@ orderTS=function(x, unit, time){ x=x[order(x[,time]),]; x=x[order(x[,unit]),]; x
 
 # calculate moving averages/sums for panel datasets
 movePanel <- function(data, ccode, time, vars, wdow, sum=FALSE){
+	# Dependencies
+	library(magrittr)
+	library(plyr)
+
 	data=orderTS(data, ccode, time)
 	vars2 <- paste('mva',wdow,'_',vars,sep='')
 	vars3 <- paste('mvs',wdow,'_',vars,sep='')

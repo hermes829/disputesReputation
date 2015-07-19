@@ -39,6 +39,7 @@ theme_set(theme_bw())
 setwd(pathCode)
 source('textFunctions.R')
 source('tscsHelpers.R')
+source('relDataHelpers.R')
 source('vizResults.R')
 
 # Setting seed
@@ -54,8 +55,8 @@ substrRight <- function(x, n){
   substr(x, nchar(x)-n+1, nchar(x))
 }
 
-pchLab=function(x){ paste('pch_',x,sep='') }
-lagLab=function(x){ paste('lag_',x,sep='') }
+pchLab=function(x,n){ paste('pch',n,'_',x,sep='') }
+lagLab=function(x,n){ paste('lag',n,'_',x,sep='') }
 pchLabName=function(x){ paste('\\%$\\Delta$ Change',x,sep=' ') }
 lagLabName=function(x,mvs2=FALSE){ 
   if(!mvs2){ return(paste(x, '$_{t-1}$', sep='')) }

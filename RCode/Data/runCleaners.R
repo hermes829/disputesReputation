@@ -1,10 +1,13 @@
+####
 if(Sys.info()["user"]=="janus829" | Sys.info()["user"]=="s7m"){
-	source('~/Research/Ruthenium/R/setup.R') }
+	source('~/Research/RemmerProjects/disputesReputation/RCode/setup.R') }
+####
 
 # Get list of cleaning scripts
-files = list.files( paste0(gpth, 'R/Data/getCleanData/') ) # get cleaning files
-files = files[substrRight(files, 2) == '.R'] # only R files
-cleanSripts = paste0( paste0(gpth, 'R/Data/getCleanData/'), files )
+cleanSripts = paste0(pathCode, '/Data/getData/') %>% list.files(.) %>% .[substrRight(.,2)=='.R'] %>% paste0(paste0(pathCode, '/Data/getData/'), .)
+
+# Except for getdistmat, because getdistmat is parallelized itself
+cleanSripts = cleanSripts[!grepl('getDistMat.R',cleanSripts)]
 
 # Parameters for parallelization
 cl = makeCluster(8)

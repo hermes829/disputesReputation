@@ -58,7 +58,7 @@ dispCnt$cyear = paste0(dispCnt$ccode, dispCnt$startyear)
 dispCnt = dispCnt[dispCnt$startyear<=2014,]
 
 # Merge with full coutnry year panel
-panel = panel[panel$year>=1984,]
+panel = panel[panel$year>=1970,] # use 1970 for now so moving sums dont create NAs
 # Relabel one variable in panel
 names(panel)[7] = 'cyear'
 # Add 2013 and 2014 to panel (assumes '13-14 cntries = '12 cntries)
@@ -78,12 +78,15 @@ dispF[is.na(dispF)] = 0
 dispF = cumulTS(dispF, 'ccode', 'year', dispVars)
 # Create two year moving sum
 dispF = movePanel(dispF, 'ccode', 'year', dispVars, 2, sum=TRUE)
-# # Create five year moving sum
+# Create five year moving sum
 dispF = movePanel(dispF, 'ccode', 'year', dispVars, 5, sum=TRUE)
+
+# Subset to 1984 and beyond
+dispF = dispF[dispF$year>=1984,]
 ###############################################################
 
 ###############################################################
 # Save
-disp = dispF
-save(disp, file=paste0(pathBin, 'disputes.rda'))
+disputes = dispF
+save(disputes, file=paste0(pathBin, 'disputes.rda'))
 ###############################################################
