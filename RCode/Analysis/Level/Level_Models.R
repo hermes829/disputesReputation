@@ -8,6 +8,17 @@ if(Sys.info()["user"]=="janus829" | Sys.info()["user"]=="s7m"){
 ### Load data
 load(paste0(pathBin, 'analysisData.rda'))
 
+# Bring in upperincome data
+load(paste0(pathData,'/Old/modelData.rda'))
+ui = modelData[,c('cname', 'upperincome', 'oecd', 'lacus')] %>% unique()
+toDrop = setdiff(aData$cname, modelData$cname)
+aData = aData[which(!aData$cname %in% toDrop),]
+
+# Subset to post 1987
+aData = aData[aData$year>=1987,]
+# aData = aData[aData$year>=1987 & aData$year<2007,]
+# aData = aData[aData$year>=2007,]
+# aData = aData[aData$year>=2007 & aData$year<2012,]
 #######################################################################################
 # Setting up models
 dv='invProf'; dvName='Investment Profile'; fileFE='LinvProfFE.rda'
@@ -76,54 +87,34 @@ modSumm=lapply(modResults, function(x) FUN=coeftest(x,
 print(lapply(modSumm, function(x) x[1,,drop=FALSE]))
 
 # Saving results for further analysis
-setwd(pathResults)
-save(modResults, modSumm, ivAll, dv, ivs, ivsName, dvName, file=fileFE)
+# setwd(pathResults)
+# save(modResults, modSumm, ivAll, dv, ivs, ivsName, dvName, file=fileFE)
 # save(modResults, modSumm, ivAll, dv, ivs, ivsName, dvName, file=paste0('B',fileFE))
 #######################################################################################
 
 # Aside with interaction of year and dispute
-plmData$yr07=ifelse(numSM(plmData$year)>=2007,1,0)
-plmData$dispYr07=plmData$lag_mvs2_kicsidcase*plmData$yr07
-
-form=formula(paste0('Investment_Profile ~ lag_mvs2_kicsidcase + yr07 + dispYr07 + lag_pch_gdp + lag_LNpopulation + 
-    lag_lncinflation + lag_Internal_Conflict + lag_ratifiedbits + 
-    lag_kaopen + lag_polity'))
-
+plmData$yr07=ifelse(num(plmData$year)>=2007,1,0)
+plmData$dispYr07=plmData$lag1_mvs2_iDisp*plmData$yr07
+form=formula(paste0('invProf ~ lag1_mvs2_iDisp + yr07 + dispYr07 + lag1_gdpGr + lag1_popLog + 
+    lag1_inflLog + lag1_intConf + lag1_rbitNoDuplC + 
+    lag1_kaopen + lag1_polity'))
 modRes=plm(form, data=plmData, model='within')
 coeftest(modRes, vcov=vcovHC(modRes,method='arellano',cluster="group"))
 
 
-
-plmData$yr07=ifelse(numSM(plmData$year)>=2007,1,0)
-plmData$dispYr07=plmData$lag_mvs2_icsidtreaty_case*plmData$yr07
-
-form=formula(paste0('Investment_Profile ~ lag_mvs2_icsidtreaty_case + yr07 + dispYr07 + lag_pch_gdp + lag_LNpopulation + 
-    lag_lncinflation + lag_Internal_Conflict + lag_ratifiedbits + 
-    lag_kaopen + lag_polity'))
-
+plmData$yr07=ifelse(num(plmData$year)>=2007,1,0)
+plmData$dispYr07=plmData$lag1_mvs2_iDispB*plmData$yr07
+form=formula(paste0('invProf ~ lag1_mvs2_iDispB + yr07 + dispYr07 + lag1_gdpGr + lag1_popLog + 
+    lag1_inflLog + lag1_intConf + lag1_rbitNoDuplC + 
+    lag1_kaopen + lag_polity'))
 modRes=plm(form, data=plmData, model='within')
 coeftest(modRes, vcov=vcovHC(modRes,method='arellano',cluster="group"))
 
 
-
-plmData$yr07=ifelse(numSM(plmData$year)>=2007,1,0)
-plmData$dispYr07=plmData$lag_mvs2_unsettled_icsid_treaty*plmData$yr07
-
-form=formula(paste0('Investment_Profile ~ lag_mvs2_unsettled_icsid_treaty + yr07 + dispYr07 + lag_pch_gdp + lag_LNpopulation + 
-    lag_lncinflation + lag_Internal_Conflict + lag_ratifiedbits + 
-    lag_kaopen + lag_polity'))
-
-modRes=plm(form, data=plmData, model='within')
-coeftest(modRes, vcov=vcovHC(modRes,method='arellano',cluster="group"))
-
-
-
-plmData$yr07=ifelse(numSM(plmData$year)>=2007,1,0)
-plmData$dispYr07=plmData$lag_mvs2_alltreaty*plmData$yr07
-
-form=formula(paste0('Investment_Profile ~ lag_mvs2_alltreaty + yr07 + dispYr07 + lag_pch_gdp + lag_LNpopulation + 
-    lag_lncinflation + lag_Internal_Conflict + lag_ratifiedbits + 
-    lag_kaopen + lag_polity'))
-
+plmData$yr07=ifelse(num(plmData$year)>=2007,1,0)
+plmData$dispYr07=plmData$lag1_mvs2_iuDisp*plmData$yr07
+form=formula(paste0('invProf ~ lag1_mvs2_iuDisp + yr07 + dispYr07 + lag1_gdpGr + lag1_popLog + 
+    lag1_inflLog + lag1_intConf + lag1_rbitNoDuplC + 
+    lag1_kaopen + lag_polity'))
 modRes=plm(form, data=plmData, model='within')
 coeftest(modRes, vcov=vcovHC(modRes,method='arellano',cluster="group"))

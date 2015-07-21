@@ -14,6 +14,9 @@ ui = modelData[,c('cname', 'upperincome', 'oecd')] %>% unique()
 toDrop = setdiff(aData$cname, modelData$cname)
 aData = aData[which(!aData$cname %in% toDrop),]
 
+# Subset to post 1987
+aData = aData[aData$year>=1987,]
+
 ###############################################################################
 # Model setup
 # Set up models
@@ -48,13 +51,30 @@ modForm=lapply(ivAll, function(x)
 ###############################################################################
 # Run yearly models
 yrs=1995:2014
+
+# Add yearly breaks
+# aData$yrBrk = cut(aData$year, 7)
+# yrs = unique(aData$yrBrk)
+
 coefCross=NULL
 for(ii in 1:length(yrs)){
+
+	# By year
 	slice=aData[which(aData$year %in% yrs[ii]), ]
-
 	modResults=lapply(modForm, function(x) FUN=lm(x, data=slice) )	
-	modSumm=lapply(modResults, function(x) FUN=coeftest(x))		
+	modSumm=lapply(modResults, function(x) FUN=coeftest(x))			
+	
+	# # By buckets of years
+	# slice=aData[which(aData$yrBrk %in% yrs[ii]), ]
+	# plmData=pdata.frame( slice[,c(dv, unique(unlist(ivAll)), 'ccode', 'year') ], 
+	# 			index=c('ccode','year') )
+	# modForm=lapply(ivAll, function(x) 
+	# 	FUN=as.formula( paste(dv, paste(x, collapse=' + '), sep=' ~ ') ))
+	# modResults=lapply(modForm, function(x) FUN=plm(x, data=plmData, model='within') )
+	# modSumm=lapply(modResults, function(x) FUN=coeftest(x, 
+	# 	vcov=vcovHC(x,method='arellano',cluster="group")))
 
+	# Combining results
 	dispSumm=do.call(rbind, lapply(modSumm,function(x)FUN=x[2,,drop=FALSE]))
 	coefCross=rbind(coefCross, cbind(dispSumm,cross=yrs[ii]))	
 }
@@ -72,13 +92,15 @@ tmp = ggcoefplot(coefData=coefCross,
   Noylabel=FALSE, coordFlip=FALSE, revVar=FALSE,
   facet=TRUE, facetColor=FALSE, colorGrey=TRUE,
   facetName='cross', facetDim=c(2,2), 
-  facetBreaks=seq(yrs[1],2014,3),
-  facetLabs=seq(yrs[1],2014,3),
+  # facetBreaks=seq(yrs[1],2014,3),
+  # facetLabs=seq(yrs[1],2014,3),
+  facetBreaks=yrs,
+  facetLabs=yrs,  
   allBlack=FALSE
   )
 tmp=tmp + ylab('$\\beta$ for Dispute Variables')
 tmp=tmp + theme(axis.title.y=element_text(vjust=1))
-tmp=tmp+scale_color_manual(values=brewer.pal(9,'Greys')[c(5,9,7)])
+# tmp=tmp+scale_color_manual(values=brewer.pal(9,'Greys')[c(5,9,7)])
 # setwd(pathGraphics)
 # tikz(file='crossValLevel.tex',width=8,height=6,standAlone=F)
 tmp
