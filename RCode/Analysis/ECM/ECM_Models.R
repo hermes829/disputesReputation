@@ -1,36 +1,10 @@
-### Load setup
-source('~/Research/RemmerProjects/disputesReputation/RCode/setup.R')
+####
+if(Sys.info()["user"]=="janus829" | Sys.info()["user"]=="s7m"){
+	source('~/Research/RemmerProjects/disputesReputation/RCode/setup.R') }
+####
 
-###############################################################################
-# Directly loading in Karen's data
-setwd(paste(pathData, '/Components', sep=''))
-modelData=read.dta('Investment Profile Data.13.dta')
-colnames(modelData)[colnames(modelData)=='cumunsettled_icsidtreaty']='cumunsettled_icsid_treaty'
-colnames(modelData)[colnames(modelData)=='lagcumcunctadcase']='lag_cumcunctadcase'
-colnames(modelData)[colnames(modelData)=='lagcum_icsidtreaty_case']='lag_cum_icsidtreaty_case'
-colnames(modelData)[colnames(modelData)=='lagcum_kicsidcase']='lag_cum_kicsidcase'
-colnames(modelData)[colnames(modelData)=='lagpch_gdp']='lag_pch_gdp'
-colnames(modelData)[colnames(modelData)=='pch_cumunsettled_icsidtreaty']='pch_cumunsettled_icsid_treaty'
-
-lagVars=c('cumunsettled_icsid_treaty','cum_alltreaty')
-modelData$cyear=numSM(modelData$cyear)
-modelData=lagDataSM(modelData, 'cyear', 'ccode', lagVars, 1)
-colnames(modelData)[(ncol(modelData)-1):ncol(modelData)]=paste0('lag_',lagVars)
-
-# Adding yearly number of disputes
-lagVars=c('cum_kicsidcase','cum_icsidtreaty_case',
-	'cumunsettled_icsid_treaty','cumcunctadcase','cum_alltreaty')
-modelData=lagDataSM(modelData, 'cyear', 'ccode', lagVars, 2)
-diffData=modelData[,paste0('lag_',lagVars)]-modelData[,paste0('lag2_',lagVars)]
-colnames(diffData)=paste0('diff_',lagVars)
-modelData=cbind(modelData,diffData)
-
-modelData = modelData[modelData$coecd==0,]
-modelData = modelData[modelData$year>1986,]
-# fileAR1='invProfAR1_All.rda'
-modelData = modelData[modelData$year<2007,]; fileAR1='invProfAR1_pre07.rda'
-###############################################################################
-
+### Load data
+load(paste0(pathBin, 'analysisData.rda'))
 ###############################################################################
 # Setting up models
 ## Stata code
@@ -41,20 +15,19 @@ modelData = modelData[modelData$year<2007,]; fileAR1='invProfAR1_pre07.rda'
 # i.ccode i.year if coecd ~=1 & year>1986, pairwise corr(psar1) 
 
 # Choosing DV
-dv='pch_Investment_Profile'; dvName='Investment Profile'
-ivDV=paste('lag',substr(dv, 4, nchar(dv)),sep='')
+dv='diff_invProf'; dvName='Investment Profile'
+ivDV=paste('lag1',substr(dv, 5, nchar(dv)),sep='')
 
 # Cum. Dispute vars
-ivDisp=c('cum_kicsidcase','cum_icsidtreaty_case',
-	'cumunsettled_icsid_treaty','cum_alltreaty' )
+ivDisp=c( 'iDispC','iDispBC', 'iuDispC' )
 
 # Other covariates
 ivOther=c(
-	'LNgdp'
-	,'LNpopulation'
-	,'lncinflation'
-	, 'Internal_Conflict'	
-	,'ratifiedbits'	
+	'gdpLog'
+	,'popLog'
+	,'inflLog'
+	, 'intConf'	
+	,'rbitNoDuplC'	
 	,'kaopen'	
 	,'polity'
 	)
@@ -62,10 +35,10 @@ ivOther=c(
 # Untrans IVs
 ivs=c(ivDV, ivDisp, ivOther)
 ivAll=lapply(ivDisp, function(x) 
-	FUN= c(ivDV ,lagLab(x), lagLab(ivOther), pchLab(x), pchLab(ivOther)) )
+	FUN= c(ivDV ,lagLab(x,1), lagLab(ivOther,1), chLab(x=x), chLab(x=ivOther)) )
 
 # Setting up variables names for display
-ivDispName=c('All ICSID Disputes', 'ICSID Treaty-Based', 'Unsettled ICSID', 'ICSID-UNCTAD' )
+ivDispName=c('All ICSID Disputes', 'ICSID Treaty-Based', 'ICSID-UNCTAD' )
 ivOtherName=c(
 	'Ln(GDP)'
 	, 'Ln(Pop.)'
@@ -77,41 +50,54 @@ ivOtherName=c(
 	)
 ivsName=c(ivDispName, ivOtherName)
 ivAllNames=lapply(ivDispName, function(x) FUN= c(lagLabName(dvName) ,
-	lagLabName(x), lagLabName(ivOtherName), pchLabName(x), pchLabName(ivOtherName)) )
+	lagLabName(x), lagLabName(ivOtherName), chLabName(x), chLabName(ivOtherName)) )
+
+# Add 20097 interaction terms
+aData$yr07 = ( aData$year >= 2007 ) + 0
+aData$lagLongInt = aData$lag1_iuDispC * aData$yr07
+aData$lagShortInt = aData$diff_iuDispC * aData$yr07
+
+ivAll[[3]] = c(ivAll[[3]], 'yr07', 'lagLongInt', 'lagShortInt')
+
+# Check to make sur everything exists in datafmrae
+ivAll %>% unlist() %>% unique() %>% setdiff(., names(aData)) %>% length %>% print()
 ###############################################################################
 
-# ###############################################################################
-# ### Check balance of panel
-# panelBalance(ivs=ivAll[[1]], dv=dv, group='cname', time='year', regData=modelData)
+###############################################################################
+### Check balance of panel
+panelBalance(ivs=ivAll[[1]], dv=dv, group='cname', time='year', regData=aData)
 
-# ## Create balanced panel based off
-# # All vars used in model
-# temp=na.omit(modelData[,c('cname','ccode','year', ivDV, ivDisp, ivOther)])
-# temp2=lapply(unique(temp$cname), function(x) FUN=nrow(temp[which(temp$cname %in% x), ]) )
-# names(temp2)=unique(temp$cname); temp3=unlist(temp2)
+## Create balanced panel based off
+# All vars used in model
+temp=na.omit(aData[,c('cname','ccode','year', ivDV, ivDisp, ivOther)])
+temp2=lapply(unique(temp$cname), function(x) FUN=nrow(temp[which(temp$cname %in% x), ]) )
+names(temp2)=unique(temp$cname); temp3=unlist(temp2)
 
 # Cutoff for dropping
-# drop=names(temp3[temp3<max(temp3)])
-# drop=names(temp3[temp3<10])
+drop=names(temp3[temp3<10])
 
 # New data
-# modelData = modelData[which(!modelData$cname %in% drop),]
-# ###############################################################################
+aData = aData[which(!aData$cname %in% drop),]
+###############################################################################
 
 ###############################################################################
 # Running PCSE models with p-specific AR1 autocorr structure
 modForm=lapply(ivAll, function(x) 
 	FUN=as.formula( 
 		paste(paste(dv, paste(x, collapse=' + '), sep=' ~ '), 
-			'+ factor(ccode) + factor(year) -1', collapse='') ))
+			'+ factor(ccode) + factor(year) - 1', collapse='') ))
+			# '+ factor(ccode) - 1', collapse='') ))
+
 modResults=lapply(modForm, function(x) FUN=panelAR(
-	x, modelData, 'ccode', 'year', 
+	x, aData, 'ccode', 'year', 
 	autoCorr = c("psar1"), panelCorrMethod="pcse",rhotype='breg', 
 	complete.case=FALSE, rho.na.rm=TRUE ) )
 modSumm=lapply(modResults, function(x) FUN=coeftest( x ) )
-lapply(modSumm, function(x){ x[c(2,10),1:3] })
+# lapply(modSumm, function(x){ x[c(2,10),1:3] })
+
+modSumm[[3]]
 
 # Saving results for further analysis
-setwd(pathResults)
-save(modResults, modSumm, ivAll, dv, ivs, ivsName, dvName, ivAllNames, file=fileAR1)
-###############################################################################
+# setwd(pathResults)
+# save(modResults, modSumm, ivAll, dv, ivs, ivsName, dvName, ivAllNames, file=fileAR1)
+# ###############################################################################

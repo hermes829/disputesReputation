@@ -100,9 +100,36 @@ sum(apply(aData[,toLag],2,class)=='numeric')/length(toLag)
 
 # Lag selected variables 1 year
 aData = lagDataSM(aData, 'cyear', 'ccode', toLag, lag=1)
+aData = lagDataSM(aData, 'cyear', 'ccode', toLag, lag=2)
+
+# Calculate difference variables
+toLag
+for(var in toLag){
+	# Calculate difference from prev year
+	aData$tmp = aData[,var] - aData[,paste0('lag1_', var)]
+	names(aData)[ncol(aData)] = paste0('diff_', var)		
+	# Calculate lagged difference
+	aData$tmp = aData[,paste0('lag1_', var)] - aData[,paste0('lag2_', var)]
+	names(aData)[ncol(aData)] = paste0('lag1_diff_', var)
+}
+
+# Drop 2 lag diff vars
+aData = aData[,-which( names(aData) %in% paste0('lag2_', toLag) )]
+###############################################################
+
+###############################################################
+# Bring in upperincome data
+load(paste0(pathData,'/Old/modelData.rda'))
+ui = modelData[,c('cname', 'upperincome', 'oecd', 'lacus')] %>% unique()
+toDrop = setdiff(aData$cname, modelData$cname)
+aData = aData[which(!aData$cname %in% toDrop),]
+
+# Subset to post 1987
+aData = aData[aData$year>=1987,]
 ###############################################################
 
 ###############################################################
 # Save
 save(aData, file=paste0(pathBin,'analysisData.rda'))
+write.dta(aData, file=paste0(pathData, '/analysisData.dta'))
 ###############################################################

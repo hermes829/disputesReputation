@@ -76,6 +76,6 @@ panelBalance=function(ivs, dv, group, time, regData){
 	data=na.omit(regData[,Avars])[,c(group, time)]
 	obsGroup=by(data, data[,group], nrow)
 	obsGroup=data.frame(cbind(ccode=names(obsGroup), obs=as.vector(obsGroup)))
-	obsGroup$obs=numSM(obsGroup$obs)
+	obsGroup$obs=num(obsGroup$obs)
 	obsGroup[order(obsGroup[,2], decreasing=F),]	
 }

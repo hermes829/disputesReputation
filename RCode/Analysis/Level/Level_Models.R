@@ -3,22 +3,8 @@ if(Sys.info()["user"]=="janus829" | Sys.info()["user"]=="s7m"){
 	source('~/Research/RemmerProjects/disputesReputation/RCode/setup.R') }
 ####
 
-# Main modeling file
-
 ### Load data
 load(paste0(pathBin, 'analysisData.rda'))
-
-# Bring in upperincome data
-load(paste0(pathData,'/Old/modelData.rda'))
-ui = modelData[,c('cname', 'upperincome', 'oecd', 'lacus')] %>% unique()
-toDrop = setdiff(aData$cname, modelData$cname)
-aData = aData[which(!aData$cname %in% toDrop),]
-
-# Subset to post 1987
-aData = aData[aData$year>=1987,]
-# aData = aData[aData$year>=1987 & aData$year<2007,]
-# aData = aData[aData$year>=2007,]
-# aData = aData[aData$year>=2007 & aData$year<2012,]
 #######################################################################################
 # Setting up models
 dv='invProf'; dvName='Investment Profile'; fileFE='LinvProfFE.rda'
@@ -46,7 +32,7 @@ ivs=c(ivDisp, ivOther)
 ivAll=lapply(ivDisp, function(x) FUN= c( lagLab(x,1), lagLab(ivOther,1) ) )
 
 # Setting up variables names for display
-ivDispName=c('All ICSID Disputes', 'ICSID Treaty-Based', 'Unsettled ICSID', 'ICSID-UNCTAD' )
+ivDispName=c('All ICSID Disputes', 'ICSID Treaty-Based', 'ICSID-UNCTAD' )
 ivOtherName=c(
 	'\\%$\\Delta$ GDP'
 	, 'Ln(Pop.)'

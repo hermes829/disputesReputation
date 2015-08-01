@@ -55,9 +55,9 @@ substrRight <- function(x, n){
   substr(x, nchar(x)-n+1, nchar(x))
 }
 
-pchLab=function(x,n){ paste('pch',n,'_',x,sep='') }
-lagLab=function(x,n){ paste('lag',n,'_',x,sep='') }
-pchLabName=function(x){ paste('\\%$\\Delta$ Change',x,sep=' ') }
+chLab=function(s='diff',x){ paste0(s,'_',x) }
+lagLab=function(x,n){ paste0('lag',n,'_',x) }
+chLabName=function(x){ paste0('\\%$\\Delta$ ',x) }
 lagLabName=function(x,mvs2=FALSE){ 
   if(!mvs2){ return(paste(x, '$_{t-1}$', sep='')) }
   if(mvs2){ return(paste(x, '$_{(t-1) + (t-2)}$', sep='')) }
