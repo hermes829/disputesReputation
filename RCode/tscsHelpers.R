@@ -9,7 +9,7 @@ lagTS <- function(x,l){
   c(rep(NA,l), x[ -cuts ] )
 }
 
-lagDataSM <- function(data, country_year, country, varsTOlag, lag)
+lagData <- function(data, country_year, country, varsTOlag, lag)
 {
   data <- data[order(data[,country_year]),]
   lagData <- apply(data[,varsTOlag], 2, 
