@@ -45,12 +45,24 @@ ivOtherName=c(
 ivsName=lapply(ivDispName, function(x) FUN= c(lagLabName(x,TRUE), lagLabName(ivOtherName)))
 #######################################################################################
 
+#####################################################################################
+### Create semi-balanced panel based off
+# All vars used in model
+temp=na.omit(aData[,c('cname','ccode','year', ivDisp, ivOther)])
+# Just ICRG
+# temp=na.omit(aData[,c('cname','ccode','year', 'Investment.Profile')])
+temp2=lapply(unique(temp$cname), function(x) FUN=nrow(temp[which(temp$cname %in% x), ]) )
+names(temp2)=unique(temp$cname); temp3=unlist(temp2)
+drop=names(temp3[temp3<quantile(temp3,probs=.5)])
+aData = aData[which(!aData$cname %in% drop),]
+#####################################################################################
+
 #######################################################################################
 # load var model
 modData = na.omit(aData[,c('cname','ccode','year', dv, ivDisp, ivOther)])
-modData$ccode = factor( modData$ccode  )
+modData$ccode = factor( num( modData$ccode ) )
 
 library(vars)
-varMod = VAR(y=modData[,dv], p=1, type='none', exogen=modData[,c(ivDisp[1], ivOther, 'ccode')])
+varMod = VAR(y=modData[,dv], p=1, type='none', exogen=modData[,c(ivDisp[1], ivOther)])
 summary(varMod)
 #######################################################################################
