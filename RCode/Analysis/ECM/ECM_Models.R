@@ -15,8 +15,8 @@ load(paste0(pathBin, 'analysisData.rda'))
 # i.ccode i.year if coecd ~=1 & year>1986, pairwise corr(psar1) 
 
 # Choosing DV
-dv='diff_invProf'; dvName='Investment Profile'
-ivDV=paste('lag1',substr(dv, 5, nchar(dv)),sep='')
+dv='pch_invProf'; dvName='Investment Profile'
+ivDV=paste0('lag1_',substr(dv, 5, nchar(dv)))
 
 # Cum. Dispute vars
 ivDisp=c( 'iDispC','iDispBC', 'iuDispC' )
@@ -33,9 +33,10 @@ ivOther=c(
 	)
 
 # Untrans IVs
+chLab = function(s='pch',x){ paste0(s,'_',x) } 
 ivs=c(ivDV, ivDisp, ivOther)
 ivAll=lapply(ivDisp, function(x) 
-	FUN= c(ivDV ,lagLab(x,1), lagLab(ivOther,1), chLab(x=x), chLab(x=ivOther)) )
+	FUN= c(ivDV ,lagLab(x,1), lagLab(ivOther,1), lagLab(chLab(x=x),1), lagLab(chLab(x=ivOther),1) ) )
 
 # Setting up variables names for display
 ivDispName=c('All ICSID Disputes', 'ICSID Treaty-Based', 'ICSID-UNCTAD' )
@@ -50,35 +51,35 @@ ivOtherName=c(
 	)
 ivsName=c(ivDispName, ivOtherName)
 ivAllNames=lapply(ivDispName, function(x) FUN= c(lagLabName(dvName) ,
-	lagLabName(x), lagLabName(ivOtherName), chLabName(x), chLabName(ivOtherName)) )
+	lagLabName(x), lagLabName(ivOtherName), lagLabName(chLabName(x)), lagLabName(chLabName(ivOtherName))) )
 
 # Add 20097 interaction terms
 aData$yr07 = ( aData$year >= 2007 ) + 0
 aData$lagLongInt = aData$lag1_iuDispC * aData$yr07
 aData$lagShortInt = aData$diff_iuDispC * aData$yr07
 
-ivAll[[3]] = c(ivAll[[3]], 'yr07', 'lagLongInt', 'lagShortInt')
+# ivAll[[3]] = c(ivAll[[3]], 'yr07', 'lagLongInt', 'lagShortInt')
 
-# Check to make sur everything exists in datafmrae
+# Check to make sur everything exists in dataframe
 ivAll %>% unlist() %>% unique() %>% setdiff(., names(aData)) %>% length %>% print()
 ###############################################################################
 
-###############################################################################
-### Check balance of panel
-panelBalance(ivs=ivAll[[1]], dv=dv, group='cname', time='year', regData=aData)
+# ###############################################################################
+# ### Check balance of panel
+# panelBalance(ivs=ivAll[[1]], dv=dv, group='cname', time='year', regData=aData)
 
-## Create balanced panel based off
-# All vars used in model
-temp=na.omit(aData[,c('cname','ccode','year', ivDV, ivDisp, ivOther)])
-temp2=lapply(unique(temp$cname), function(x) FUN=nrow(temp[which(temp$cname %in% x), ]) )
-names(temp2)=unique(temp$cname); temp3=unlist(temp2)
+# ## Create balanced panel based off
+# # All vars used in model
+# temp=na.omit(aData[,c('cname','ccode','year', ivDV, ivDisp, ivOther)])
+# temp2=lapply(unique(temp$cname), function(x) FUN=nrow(temp[which(temp$cname %in% x), ]) )
+# names(temp2)=unique(temp$cname); temp3=unlist(temp2)
 
-# Cutoff for dropping
-drop=names(temp3[temp3<10])
+# # Cutoff for dropping
+# drop=names(temp3[temp3<10])
 
-# New data
-aData = aData[which(!aData$cname %in% drop),]
-###############################################################################
+# # New data
+# aData = aData[which(!aData$cname %in% drop),]
+# ###############################################################################
 
 ###############################################################################
 # Running PCSE models with p-specific AR1 autocorr structure
@@ -88,6 +89,12 @@ modForm=lapply(ivAll, function(x)
 			'+ factor(ccode) + factor(year) - 1', collapse='') ))
 			# '+ factor(ccode) - 1', collapse='') ))
 
+aData=aData[aData$year<=2011,]
+lapply(ivAll, function(x){ 
+	slice = aData[,c(x,dv,'ccode','year')]
+	dim(na.omit(slice))
+ })
+
 modResults=lapply(modForm, function(x) FUN=panelAR(
 	x, aData, 'ccode', 'year', 
 	autoCorr = c("psar1"), panelCorrMethod="pcse",rhotype='breg', 
@@ -95,7 +102,7 @@ modResults=lapply(modForm, function(x) FUN=panelAR(
 modSumm=lapply(modResults, function(x) FUN=coeftest( x ) )
 # lapply(modSumm, function(x){ x[c(2,10),1:3] })
 
-modSumm[[3]]
+modSumm[[1]]
 
 # Saving results for further analysis
 # setwd(pathResults)
