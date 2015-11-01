@@ -45,8 +45,45 @@ disp$uDispB = 0 ; disp$uDispB[disp$Arbitration_Rules=='UNCITRAL' & disp$underBIT
 disp$iuDispB = 0 ; disp$iuDispB[(disp$iDispB==1 | disp$uDispB==1) & disp$underBIT==1] = 1
 disp$dispB = 1
 
+# Break out disputes by sector
+relSectors = c('oil, gas & mining', 'electricity & power')
+disp$oil = 0; disp$oil[disp$sector==relSectors[1]] = 1
+disp$elec = 0; disp$elec[disp$sector==relSectors[2]] = 1
+disp$oilElec = 0; disp$oilElec[disp$sector %in% relSectors] = 1
+# Split by arbitration tribunal
+disp$iOil = 0; disp$iOil[disp$oil==1 & disp$iDisp==1] = 1
+disp$uOil = 0; disp$uOil[disp$oil==1 & disp$uDisp==1] = 1
+disp$iuOil = 0; disp$iuOil[disp$oil==1 & disp$iuDisp==1] = 1
+#
+disp$iElec = 0; disp$iElec[disp$elec==1 & disp$iDisp==1] = 1
+disp$uElec = 0; disp$uElec[disp$elec==1 & disp$uDisp==1] = 1
+disp$iuElec = 0; disp$iuElec[disp$elec==1 & disp$iuDisp==1] = 1
+#
+disp$iOilElec = 0; disp$iOilElec[disp$oilElec==1 & disp$iDisp==1] = 1
+disp$uOilElec = 0; disp$uOilElec[disp$oilElec==1 & disp$uDisp==1] = 1
+disp$iuOilElec = 0; disp$iuOilElec[disp$oilElec==1 & disp$iuDisp==1] = 1
+# Split by whether dispute was filed under a bit
+disp$iOilB = 0 ; disp$iOilB[disp$iOil==1 & disp$underBIT==1] = 1
+disp$uOilB = 0 ; disp$uOilB[disp$uOil==1 & disp$underBIT==1] = 1
+disp$iuOilB = 0 ; disp$iuOilB[disp$iuOil==1 & disp$underBIT==1] = 1
+#
+disp$iElecB = 0 ; disp$iElecB[disp$iElec==1 & disp$underBIT==1] = 1
+disp$uElecB = 0 ; disp$uElecB[disp$uElec==1 & disp$underBIT==1] = 1
+disp$iuElecB = 0 ; disp$iuElecB[disp$iuElec==1 & disp$underBIT==1] = 1
+#
+disp$iOilElecB = 0 ; disp$iOilElecB[disp$iOilElec==1 & disp$underBIT==1] = 1
+disp$uOilElecB = 0 ; disp$uOilElecB[disp$uOilElec==1 & disp$underBIT==1] = 1
+disp$iuOilElecB = 0 ; disp$iuOilElecB[disp$iuOilElec==1 & disp$underBIT==1] = 1
+
 # Subset to relevant variables
-dispVars = apply(expand.grid(c('iDisp', 'uDisp', 'iuDisp', 'disp'),c('','B')), 1, function(x){ paste0(x[1],x[2]) })
+dispVars = apply(
+	expand.grid(
+		c('iDisp', 'uDisp', 'iuDisp', 'disp', 
+			'iOil', 'uOil', 'iuOil', 
+			'iElec', 'uElec', 'iuElec',
+			'iOilElec', 'uOilElec', 'iuOilElec'),
+		c('','B')
+	), 1, function(x){ paste0(x[1],x[2]) })
 relVars = c( 'ccode', 'startyear', dispVars)
 disp = disp[,relVars]
 
