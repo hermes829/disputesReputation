@@ -15,7 +15,7 @@ dyData=c('distMats') %>% paste0('.rda')
 for(pkg in pathBin %>% paste0(c(dvData, monData)) ) { load( pkg ) }; rm(list='pkg')
 
 # Merge disputes
-disputes = disputes[,c('cyear', names(disputes)[9:40])]
+disputes = disputes[,c('cyear', names(disputes)[9:ncol(disputes)])]
 aData = merge(icrg, disputes, by='cyear', all.x=TRUE, all.y=FALSE)
 
 # Merge kaopen

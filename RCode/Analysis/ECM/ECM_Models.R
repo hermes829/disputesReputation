@@ -18,8 +18,10 @@ load(paste0(pathBin, 'analysisData.rda'))
 dv='pch_invProf'; dvName='Investment Profile'
 ivDV=paste0('lag1_',substr(dv, 5, nchar(dv)))
 
-# Cum. Dispute vars
-ivDisp=c( 'iDispC','iDispBC', 'iuDispC' )
+# Cumulative disputes
+ivDisp=c( 'iDispC','iDispBC', 'iuDispC',
+	paste0(allCombos(c('i','u','iu'), allCombos( c('Oil','Elec','OilElec'), c('','B') ) ), 'C')
+)
 
 # Other covariates
 ivOther=c(
@@ -33,7 +35,7 @@ ivOther=c(
 	)
 
 # Untrans IVs
-chLab = function(s='pch',x){ paste0(s,'_',x) } 
+chLab = function(s='diff',x){ paste0(s,'_',x) } 
 ivs=c(ivDV, ivDisp, ivOther)
 ivAll=lapply(ivDisp, function(x) 
 	FUN= c(ivDV ,lagLab(x,1), lagLab(ivOther,1), lagLab(chLab(x=x),1), lagLab(chLab(x=ivOther),1) ) )
@@ -86,14 +88,14 @@ ivAll %>% unlist() %>% unique() %>% setdiff(., names(aData)) %>% length %>% prin
 modForm=lapply(ivAll, function(x) 
 	FUN=as.formula( 
 		paste(paste(dv, paste(x, collapse=' + '), sep=' ~ '), 
-			'+ factor(ccode) + factor(year) - 1', collapse='') ))
-			# '+ factor(ccode) - 1', collapse='') ))
+			# '+ factor(ccode) + factor(year) - 1', collapse='') ))
+			'+ factor(ccode) - 1', collapse='') ))
 
-aData=aData[aData$year<=2011,]
-lapply(ivAll, function(x){ 
-	slice = aData[,c(x,dv,'ccode','year')]
-	dim(na.omit(slice))
- })
+# aData=aData[aData$year<=2011,]
+# lapply(ivAll, function(x){ 
+# 	slice = aData[,c(x,dv,'ccode','year')]
+# 	dim(na.omit(slice))
+#  })
 
 modResults=lapply(modForm, function(x) FUN=panelAR(
 	x, aData, 'ccode', 'year', 

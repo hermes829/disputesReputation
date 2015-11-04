@@ -47,6 +47,8 @@ set.seed(6886)
 setwd(pathMain)
 
 # minor Helper functions
+allCombos = function(x,y){ as.vector(outer(x,y,paste0)) }
+
 cname = function(x){ countrycode(x, 'country.name', 'country.name') }
 
 trim <- function (x) gsub("^\\s+|\\s+$", "", x)

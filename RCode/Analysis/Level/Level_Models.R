@@ -10,11 +10,15 @@ load(paste0(pathBin, 'analysisData.rda'))
 dv='invProf'; dvName='Investment Profile'; fileFE='LinvProfFE.rda'
 
 # Cumulative disputes
-ivDisp=c( 'iDispC','iDispBC', 'iuDispC' )
+ivDisp=c( 'iDispC','iDispBC', 'iuDispC',
+	paste0(allCombos(c('i','u','iu'), allCombos( c('Oil','Elec','OilElec'), c('','B') ) ), 'C')
+)
 
-# Two year moving sum of disputes
-dispVars=c('iDisp', 'iDispB', 'iuDisp')
-ivDisp=paste0('mvs2_',dispVars)
+# # Two year moving sum of disputes
+# dispVars=c('iDisp', 'iDispB', 'iuDisp',
+# 	allCombos(c('i','u','iu'), allCombos( c('Oil','Elec','OilElec'), c('','B') ) )	
+# 	)
+# ivDisp=paste0('mvs2_',dispVars)
 
 # Other covariates
 ivOther=c(
@@ -70,7 +74,21 @@ modSumm=lapply(modResults, function(x) FUN=coeftest(x,
 	vcov=vcovHC(x,method='arellano',cluster="group")))
 
 # Peak at dispute var results
-print(lapply(modSumm, function(x) x[1,,drop=FALSE]))
+# do.call('rbind',lapply(modSumm, function(x) x[1,,drop=FALSE]))
+
+sub = res = data.frame( do.call('rbind',lapply(modSumm, function(x) x[1,,drop=FALSE])) )
+
+# Calculate sd effects
+sdEffect = function(var, coef, data){
+	beta = coef[var,1]
+	sdX = sd(data[,var],na.rm=T)
+	sdY = sd(data[,'invProf'],na.rm=T)
+	eff = beta*(sdX/sdY)
+	return(eff)
+}
+
+sub$eff = lapply(rownames(sub), function(x){ sdEffect(x,sub,aData) }) %>% unlist()
+sub[order(sub$eff),]
 
 # Saving results for further analysis
 # setwd(pathResults)
