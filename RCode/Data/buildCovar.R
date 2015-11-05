@@ -67,14 +67,16 @@ for(var in toLag){
 	aData$tmp = aData[,var] - aData[,paste0('lag1_', var)]
 	names(aData)[ncol(aData)] = paste0('diff_', var)		
 	# Calculate percent change from prev year
-	aData$tmp = aData[,paste0('diff_',var)] / aData[,paste0('lag1_',var)]
+	denom = ifelse( aData[,paste0('lag1_',var)]==0, 1, aData[,paste0('lag1_',var)])
+	aData$tmp = aData[,paste0('diff_',var)] / denom
 	names(aData)[ncol(aData)] = paste0('pch_', var)		
 
 	# Calculate lagged difference
 	aData$tmp = aData[,paste0('lag1_', var)] - aData[,paste0('lag2_', var)]
 	names(aData)[ncol(aData)] = paste0('lag1_diff_', var)
 	# Calculate percent change lagged
-	aData$tmp = aData[,paste0('lag1_diff_',var)] / aData[,paste0('lag2_',var)]
+	denom = ifelse( aData[,paste0('lag2_',var)]==0, 1, aData[,paste0('lag2_',var)])
+	aData$tmp = aData[,paste0('lag1_diff_',var)] / denom
 	names(aData)[ncol(aData)] = paste0('lag1_pch_', var)
 }
 
@@ -90,7 +92,7 @@ toDrop = setdiff(aData$cname, modelData$cname)
 aData = aData[which(!aData$cname %in% toDrop),]
 
 # Subset to post 1987
-aData = aData[aData$year>=1987,]
+aData = aData[aData$year>=1986,]
 ###############################################################
 
 ###############################################################
