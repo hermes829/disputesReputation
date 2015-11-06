@@ -10,7 +10,8 @@ load(paste0(pathBin, 'analysisData.rda'))
 dv='invProf'; dvName='Investment Profile'; fileFE='LinvProfFE.rda'
 
 # Cumulative disputes
-ivDisp=c( 'iDispC','iDispBC', 'iuDispC',
+ivDisp=c( 'iDispC','iDispBC', 'iuDispC', 
+	paste0(allCombos(c('oil', 'elec', 'oilElec'), c('', 'B')), 'C'),
 	paste0(allCombos(c('i','u','iu'), allCombos( c('Oil','Elec','OilElec'), c('','B') ) ), 'C')
 )
 

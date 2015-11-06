@@ -3,50 +3,51 @@ if(Sys.info()["user"]=="janus829" | Sys.info()["user"]=="s7m"){
 
 ###############################################################
 # Load in data
-disp = read.dta(paste0(pathRaw, 'UNCTAD_ISDS_LAC_2.dta'))
+# disp = read.dta(paste0(pathRaw, 'UNCTAD_ISDS_LAC_2.dta'))
+disp = read.dta('~/Dropbox/Research/RemmerProjects/disputesBook/Data/mergedDispute.dta')
 ###############################################################	
 
 ###############################################################	
 # Add cleaned country identifiers to disp using respondent var
 
-# Drop three cases in which no respondent identified/extra rows
-disp = disp[!is.na(disp$respondent),]
-
 # Drop one case that was brought against two countries
 disp = disp[disp$respondent!='France; United Kingdom',]
 
 # Add cname and ccode to disp
-disp$cname = countrycode(disp$respondent, 'country.name', 'country.name')
-
-# Fix one country labeling error
-disp$cname[disp$respondent=='Kyrgystan'] = 'KYRGYZSTAN'
+disp$cname = disp$cnameR
 
 # Add ccodes
-disp$ccode = panel$ccode[match(disp$cname, panel$cname)]
+disp$ccode = disp$ccodeR
+
+# Cleanup
+disp$arbitration_rules = trim( disp$arbitration_rules )
+disp$arbitration_rules[disp$arbitration_rules=='ICSD'] = 'ICSID'
+disp$arbitration_rules[disp$arbitration_rules=='Cairo RCICA'] = 'CRCICA'
+unique(disp$arbitration_rules)
 ###############################################################	
 
 ###############################################################	
 # Create disputes country-year dataset
 
 # disputes filed under a BIT?
-disp$underBIT = as.numeric( grepl("BIT", disp$Legal_Instrument) )
+disp$underBIT = as.numeric( grepl("BIT", disp$legal_instrument) )
 
 # Disputes brought through any legal instrument
 # arbitration tribunal specific variables
 ## ICSID // UNCITRAL // ICSID-UNCITRAL // All
-disp$iDisp = 0 ; disp$iDisp[disp$Arbitration_Rules=='ICSID' | disp$Arbitration_Rules=='ICSID AF'] = 1
-disp$uDisp = 0 ; disp$uDisp[disp$Arbitration_Rules=='UNCITRAL'] = 1
+disp$iDisp = 0 ; disp$iDisp[disp$arbitration_rules=='ICSID' | disp$arbitration_rules=='ICSID AF'] = 1
+disp$uDisp = 0 ; disp$uDisp[disp$arbitration_rules=='UNCITRAL'] = 1
 disp$iuDisp = 0 ; disp$iuDisp[disp$iDisp==1 | disp$uDisp==1] = 1
 disp$disp = 1
 
 # Disputes brought only through BITs
-disp$iDispB = 0 ; disp$iDispB[(disp$Arbitration_Rules=='ICSID' | disp$Arbitration_Rules=='ICSID AF') & disp$underBIT==1] = 1
-disp$uDispB = 0 ; disp$uDispB[disp$Arbitration_Rules=='UNCITRAL' & disp$underBIT==1] = 1
+disp$iDispB = 0 ; disp$iDispB[(disp$arbitration_rules=='ICSID' | disp$arbitration_rules=='ICSID AF') & disp$underBIT==1] = 1
+disp$uDispB = 0 ; disp$uDispB[disp$arbitration_rules=='UNCITRAL' & disp$underBIT==1] = 1
 disp$iuDispB = 0 ; disp$iuDispB[(disp$iDispB==1 | disp$uDispB==1) & disp$underBIT==1] = 1
 disp$dispB = 1
 
 # Break out disputes by sector
-relSectors = c('oil, gas & mining', 'electricity & power')
+relSectors = c("OIL, GAS  & MINING", 'ELECTRICITY & POWER')
 disp$oil = 0; disp$oil[disp$sector==relSectors[1]] = 1
 disp$elec = 0; disp$elec[disp$sector==relSectors[2]] = 1
 disp$oilElec = 0; disp$oilElec[disp$sector %in% relSectors] = 1
@@ -63,14 +64,17 @@ disp$iOilElec = 0; disp$iOilElec[disp$oilElec==1 & disp$iDisp==1] = 1
 disp$uOilElec = 0; disp$uOilElec[disp$oilElec==1 & disp$uDisp==1] = 1
 disp$iuOilElec = 0; disp$iuOilElec[disp$oilElec==1 & disp$iuDisp==1] = 1
 # Split by whether dispute was filed under a bit
+disp$oilB = 0 ; disp$oilB[disp$oil==1 & disp$underBIT==1] = 1
 disp$iOilB = 0 ; disp$iOilB[disp$iOil==1 & disp$underBIT==1] = 1
 disp$uOilB = 0 ; disp$uOilB[disp$uOil==1 & disp$underBIT==1] = 1
 disp$iuOilB = 0 ; disp$iuOilB[disp$iuOil==1 & disp$underBIT==1] = 1
 #
+disp$elecB = 0 ; disp$elecB[disp$elec==1 & disp$underBIT==1] = 1
 disp$iElecB = 0 ; disp$iElecB[disp$iElec==1 & disp$underBIT==1] = 1
 disp$uElecB = 0 ; disp$uElecB[disp$uElec==1 & disp$underBIT==1] = 1
 disp$iuElecB = 0 ; disp$iuElecB[disp$iuElec==1 & disp$underBIT==1] = 1
 #
+disp$oilElecB = 0 ; disp$oilElecB[disp$oilElec==1 & disp$underBIT==1] = 1
 disp$iOilElecB = 0 ; disp$iOilElecB[disp$iOilElec==1 & disp$underBIT==1] = 1
 disp$uOilElecB = 0 ; disp$uOilElecB[disp$uOilElec==1 & disp$underBIT==1] = 1
 disp$iuOilElecB = 0 ; disp$iuOilElecB[disp$iuOilElec==1 & disp$underBIT==1] = 1
@@ -79,9 +83,9 @@ disp$iuOilElecB = 0 ; disp$iuOilElecB[disp$iuOilElec==1 & disp$underBIT==1] = 1
 dispVars = apply(
 	expand.grid(
 		c('iDisp', 'uDisp', 'iuDisp', 'disp', 
-			'iOil', 'uOil', 'iuOil', 
-			'iElec', 'uElec', 'iuElec',
-			'iOilElec', 'uOilElec', 'iuOilElec'),
+			'oil', 'iOil', 'uOil', 'iuOil', 
+			'elec', 'iElec', 'uElec', 'iuElec',
+			'oilElec', 'iOilElec', 'uOilElec', 'iuOilElec'),
 		c('','B')
 	), 1, function(x){ paste0(x[1],x[2]) })
 relVars = c( 'ccode', 'startyear', dispVars)

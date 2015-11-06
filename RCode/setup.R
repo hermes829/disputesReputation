@@ -27,9 +27,9 @@ loadPkg=function(toLoad){
 
 toLoad=c('foreign', 'countrycode', 'openxlsx', 'gdata', 'ggplot2',
   'reshape', 'scales', 'plyr', 'doBy', 'WDI', 'zoo', 'panelAR', 'magrittr',
-  'lme4', 'plm', 'lmtest', 'xtable', 'apsrtable', 'tikzDevice', 'MASS',
+  'lme4', 'plm', 'lmtest', 'xtable', 'apsrtable', 'MASS',
   'RColorBrewer')
-
+# 'tikzDevice',
 loadPkg(toLoad)
 
 # ggplot theme
