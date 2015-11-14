@@ -10,16 +10,20 @@ load(paste0(pathBin, 'analysisData.rda'))
 dv='invProf'; dvName='Investment Profile'; fileFE='LinvProfFE.rda'
 
 # Cumulative disputes
-ivDisp=c( 'iDispC','iDispBC', 'iuDispC', 
-	paste0(allCombos(c('oil', 'elec', 'oilElec'), c('', 'B')), 'C'),
-	paste0(allCombos(c('i','u','iu'), allCombos( c('Oil','Elec','OilElec'), c('','B') ) ), 'C')
-)
+# ivDisp=c(
+	# 'dispC','dispBC','iDispC','iDispBC', 'uDispC', 'uDispBC', 'iuDispC', 'iuDispBC', 
+	# paste0(allCombos(c('oil', 'elec', 'oilElec'), c('', 'B')), 'C'),
+# 	paste0(allCombos(c('i','u','iu'), allCombos( c('Oil','Elec','OilElec'), c('','B') ) ), 'C')
+# )
 
-# # Two year moving sum of disputes
-# dispVars=c('iDisp', 'iDispB', 'iuDisp',
-# 	allCombos(c('i','u','iu'), allCombos( c('Oil','Elec','OilElec'), c('','B') ) )	
-# 	)
-# ivDisp=paste0('mvs2_',dispVars)
+# Two year moving sum of disputes
+dispVars=c(
+	'iDisp','iDispB', 'niDisp','niDispB', 
+	allCombos(c('i','ni'), allCombos( c('Oil','Elec','OilElec'), c('','B') ) )		
+	# 'disp','dispB','iDisp','iDispB', 'uDisp', 'uDispB', 'iuDisp', 'iuDispB', 
+	# allCombos(c('i','u','iu'), allCombos( c('Oil','Elec','OilElec'), c('','B') ) )	
+	)
+ivDisp=paste0('mvs2_',dispVars)
 
 # Other covariates
 ivOther=c(
@@ -89,7 +93,7 @@ sdEffect = function(var, coef, data){
 }
 
 sub$eff = lapply(rownames(sub), function(x){ sdEffect(x,sub,aData) }) %>% unlist()
-sub[order(sub$eff),]
+sub[order(sub$eff),c(1,3,5)]
 
 # Saving results for further analysis
 # setwd(pathResults)
