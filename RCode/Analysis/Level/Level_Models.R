@@ -96,7 +96,9 @@ sub$eff = lapply(rownames(sub), function(x){ sdEffect(x,sub,aData) }) %>% unlist
 sub[order(sub$eff),c(1,3,5)]
 
 # Saving results for further analysis
-# setwd(pathResults)
+setwd(pathResults)
+fileFE2 = strsplit(fileFE, '\\.') %>% unlist() %>% paste(.,collapse='v2.')
+save(modResults, modSumm, ivAll, dv, ivs, file=fileFE2)
 # save(modResults, modSumm, ivAll, dv, ivs, ivsName, dvName, file=fileFE)
 # save(modResults, modSumm, ivAll, dv, ivs, ivsName, dvName, file=paste0('B',fileFE))
 #######################################################################################

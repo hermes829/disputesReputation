@@ -3,11 +3,13 @@
 ### Load setup
 source('~/Research/RemmerProjects/disputesReputation/RCode/setup.R')
 setwd(pathData)
-load('modelData.rda')
+load(paste0(pathBin, 'analysisData.rda'))
+modelData=aData
 
 ####################################################################
 setwd(pathResults)
-load('LinvProfFE.rda'); dv='Investment Profile'; modNames=ivsName
+# load('LinvProfFE.rda'); dv='Investment Profile'; modNames=ivsName
+load('LinvProfFEv2.rda'); dv='Investment Profile'; modNames=ivsName=ivAll
 
 preds=NULL
 for(ii in 1:length(modResults)){
@@ -30,7 +32,7 @@ for(ii in 1:length(modResults)){
   # Plotting density distributions
   vi=varDef[1,1]
   sims=10000
-  simData=na.omit(modelData[,c(varDef[,1],'Investment_Profile')])
+  simData=na.omit(modelData[,c(varDef[,1],'invProf')])
   vRange=quantile(simData[,vi],probs=seq(0,1,.01))[c('0%','99%')]
   intercept=FALSE
   specX=FALSE
@@ -54,8 +56,8 @@ for(ii in 1:length(modResults)){
   ##########
   # Draw pred values from mvnorm
   draws = mvrnorm(n = sims, estimates[vars2], varcov[vars2,vars2])
-  modelPreds = draws %*% t(scenario)
-  modelExp = apply(modelPreds, 2, function(x) FUN=rnorm(sims, x, error))
+  modelExp = modelPreds = draws %*% t(scenario)
+  # modelExp = apply(modelPreds, 2, function(x) FUN=rnorm(sims, x, error))
 
   modelPreds=modelPreds+mean(fixef(x))
   colnames(modelPreds)=c(paste0('lo',vi),paste0('hi',vi))
@@ -79,7 +81,7 @@ tmp = tmp + theme(
   panel.grid.minor=element_blank(), axis.title.y=element_text(vjust=1)
   )
 setwd(pathGraphics)
-tikz(file='simResults.tex',width=8,height=6,standAlone=F)
+# tikz(file='simResults.tex',width=8,height=6,standAlone=F)
 tmp
-dev.off()
+# dev.off()
 ###################################################################
