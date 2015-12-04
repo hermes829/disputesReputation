@@ -53,13 +53,18 @@ disp$niDispB = disp$dispB - disp$iDispB
 # Break out disputes by sector
 relSectors = c("OIL, GAS  & MINING", 'ELECTRICITY & POWER')
 disp$oil = 0; disp$oil[disp$sector==relSectors[1]] = 1
+disp$noil = 0; disp$noil[disp$sector!=relSectors[1]] = 1
 disp$elec = 0; disp$elec[disp$sector==relSectors[2]] = 1
 disp$oilElec = 0; disp$oilElec[disp$sector %in% relSectors] = 1
+disp$noilElec = 0; disp$noilElec[!disp$sector %in% relSectors] = 1
 # Split by arbitration tribunal
 disp$iOil = 0; disp$iOil[disp$oil==1 & disp$iDisp==1] = 1
+disp$iNOil = 0; disp$iNOil[disp$noil==1 & disp$iDisp==1] = 1
 disp$niOil = disp$oil - disp$iOil
 disp$uOil = 0; disp$uOil[disp$oil==1 & disp$uDisp==1] = 1
+disp$uNOil = 0; disp$uNOil[disp$noil==1 & disp$uDisp==1] = 1
 disp$iuOil = 0; disp$iuOil[disp$oil==1 & disp$iuDisp==1] = 1
+disp$iuNOil = 0; disp$iuNOil[disp$noil==1 & disp$iuDisp==1] = 1
 #
 disp$iElec = 0; disp$iElec[disp$elec==1 & disp$iDisp==1] = 1
 disp$niElec = disp$elec - disp$iElec
@@ -67,15 +72,20 @@ disp$uElec = 0; disp$uElec[disp$elec==1 & disp$uDisp==1] = 1
 disp$iuElec = 0; disp$iuElec[disp$elec==1 & disp$iuDisp==1] = 1
 #
 disp$iOilElec = 0; disp$iOilElec[disp$oilElec==1 & disp$iDisp==1] = 1
+disp$iNOilElec = 0; disp$iNOilElec[disp$noilElec==1 & disp$iDisp==1] = 1
 disp$niOilElec = disp$oilElec - disp$iOilElec
 disp$uOilElec = 0; disp$uOilElec[disp$oilElec==1 & disp$uDisp==1] = 1
 disp$iuOilElec = 0; disp$iuOilElec[disp$oilElec==1 & disp$iuDisp==1] = 1
+disp$iuNOilElec = 0; disp$iuNOilElec[disp$noilElec==1 & disp$iuDisp==1] = 1
 # Split by whether dispute was filed under a bit
 disp$oilB = 0 ; disp$oilB[disp$oil==1 & disp$underBIT==1] = 1
+disp$noilB = 0 ; disp$noilB[disp$noil==1 & disp$underBIT==1] = 1
 disp$iOilB = 0 ; disp$iOilB[disp$iOil==1 & disp$underBIT==1] = 1
+disp$iNOilB = 0 ; disp$iNOilB[disp$iNOil==1 & disp$underBIT==1] = 1
 disp$niOilB = disp$oilB - disp$iOilB
 disp$uOilB = 0 ; disp$uOilB[disp$uOil==1 & disp$underBIT==1] = 1
 disp$iuOilB = 0 ; disp$iuOilB[disp$iuOil==1 & disp$underBIT==1] = 1
+disp$iuNOilB = 0 ; disp$iuNOilB[disp$iuNOil==1 & disp$underBIT==1] = 1
 #
 disp$elecB = 0 ; disp$elecB[disp$elec==1 & disp$underBIT==1] = 1
 disp$iElecB = 0 ; disp$iElecB[disp$iElec==1 & disp$underBIT==1] = 1
@@ -84,18 +94,21 @@ disp$uElecB = 0 ; disp$uElecB[disp$uElec==1 & disp$underBIT==1] = 1
 disp$iuElecB = 0 ; disp$iuElecB[disp$iuElec==1 & disp$underBIT==1] = 1
 #
 disp$oilElecB = 0 ; disp$oilElecB[disp$oilElec==1 & disp$underBIT==1] = 1
+disp$noilElecB = 0 ; disp$noilElecB[disp$noilElec==1 & disp$underBIT==1] = 1
 disp$iOilElecB = 0 ; disp$iOilElecB[disp$iOilElec==1 & disp$underBIT==1] = 1
+disp$iNOilElecB = 0 ; disp$iNOilElecB[disp$iNOilElec==1 & disp$underBIT==1] = 1
 disp$niOilElecB = disp$oilElecB - disp$iOilElecB
 disp$uOilElecB = 0 ; disp$uOilElecB[disp$uOilElec==1 & disp$underBIT==1] = 1
 disp$iuOilElecB = 0 ; disp$iuOilElecB[disp$iuOilElec==1 & disp$underBIT==1] = 1
+disp$iuNOilElecB = 0 ; disp$iuNOilElecB[disp$iuNOilElec==1 & disp$underBIT==1] = 1
 
 # Subset to relevant variables
 dispVars = apply(
 	expand.grid(
 		c('iDisp', 'uDisp', 'iuDisp', 'disp', 'niDisp',
-			'oil', 'iOil', 'niOil', 'uOil', 'iuOil', 
+			'oil', 'noil', 'iOil', 'iNOil','niOil', 'uOil', 'iuOil', 'iuNOil', 
 			'elec', 'iElec', 'niElec', 'uElec', 'iuElec',
-			'oilElec', 'iOilElec', 'niOilElec', 'uOilElec', 'iuOilElec'),
+			'oilElec', 'noilElec', 'iOilElec', 'iNOilElec', 'niOilElec', 'uOilElec', 'iuOilElec', 'iuNOilElec'),
 		c('','B')
 	), 1, function(x){ paste0(x[1],x[2]) })
 relVars = c( 'ccode', 'startyear', dispVars)
