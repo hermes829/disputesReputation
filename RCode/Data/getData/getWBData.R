@@ -19,7 +19,6 @@ wbVars = c(
 	'NE.IMP.GNFS.ZS', # Imports of goods and services (% of GDP)
 	'BX.KLT.DINV.WD.GD.ZS', # Foreign direct investment, net inflows (% of GDP)
 	'NE.EXP.GNFS.ZS', # Exports of goods and services (% of GDP)
-	'DT.ODA.ODAT.GN.ZS', # Net ODA received (% of GNI)
 	'PA.NUS.FCRF', # xrate
 	'NY.GDP.DEFL.ZS', # gdp deflator
 	'NY.GDP.DEFL.KD.ZG' # inflation
@@ -83,13 +82,11 @@ wbData$rfdi = wbData$fdi * wbData$toReal
 wbData$gdpLog = log(wbData$gdp)
 wbData$gdpCapLog = log(wbData$gdpCap)
 wbData$popLog = log(wbData$pop)
-wbData$fdiLog = log( wbData$fdi + abs(min(wbData$fdi, na.rm=TRUE)) + 1 )
-wbData$rfdiLog = log( wbData$rfdi + abs(min(wbData$rfdi, na.rm=TRUE)) + 1 )
 wbData$inflLog = log( wbData$infl + abs(min(wbData$infl, na.rm=TRUE)) + 1 )
 ############################
 
 ############################
 # Save
-worldBank = wbData[,c('cyear', wbVarsClean, 'rfdi', 'gdpLog', 'gdpCapLog', 'popLog', 'fdiLog', 'rfdiLog', 'inflLog')]
+worldBank = wbData[,c('cyear', wbVarsClean, 'rfdi', 'gdpLog', 'gdpCapLog', 'popLog', 'inflLog')]
 save(worldBank, file=paste0(pathBin, 'worldBank.rda'))
 ############################

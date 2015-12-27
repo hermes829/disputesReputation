@@ -98,6 +98,11 @@ shortNames = c(
 cbind(names(icrg)[c(3,8:ncol(icrg))], shortNames)
 # Replace
 names(icrg)[c(3,8:ncol(icrg))] = shortNames
+
+# Create ICRG property rights measure
+# Investment Profile +  Bureaucracy Quality +  Corruption + Law and Order
+# First rescale each to be between 0 and 10
+icrg$propRights = apply(icrg[,c('invProf','burQual','corr','lawOrd')],2,function(x){rescale(x,10,0)}) %>% apply(., 1, sum)
 ###############################################################
 
 ###############################################################

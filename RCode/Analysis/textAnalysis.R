@@ -48,3 +48,11 @@ tikz(file='histICSID', width=8, height=4, standAlone=F)
 tmp
 dev.off()
 ###################################################################
+
+###################################################################
+# Save data
+textYr = table(textData$year) %>% cbind(year=names(.),count=.) %>% apply(., 2, num) %>% data.frame(.,stringsAsFactors=FALSE,row.names=NULL) 
+textYr = setdiff(1986:2014, textYr$year) %>% cbind(year=., count=0) %>% rbind(textYr, .) %>% .[order(.$year),]
+textYr = textYr[textYr$year>=1986,]
+save(textYr, file=paste0(pathBin, 'textYr.rda'))
+###################################################################

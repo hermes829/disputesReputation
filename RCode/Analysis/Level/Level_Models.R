@@ -5,25 +5,18 @@ if(Sys.info()["user"]=="janus829" | Sys.info()["user"]=="s7m"){
 
 ### Load data
 load(paste0(pathBin, 'analysisData.rda'))
+load(paste0(pathBin, 'textYr.rda'))
+aData$storyCnt =  textYr$count[match(aData$year, textYr$year)]
+aData$storyCntLog = log( aData$storyCnt + 1 )
 #######################################################################################
 # Setting up models
 dv='invProf'; dvName='Investment Profile'; fileFE='LinvProfFE.rda'
 
-# Cumulative disputes
-# ivDisp=c(
-	# 'dispC','dispBC','iDispC','iDispBC', 'uDispC', 'uDispBC', 'iuDispC', 'iuDispBC', 
-	# paste0(allCombos(c('oil', 'elec', 'oilElec'), c('', 'B')), 'C'),
-# 	paste0(allCombos(c('i','u','iu'), allCombos( c('Oil','Elec','OilElec'), c('','B') ) ), 'C')
-# )
-
-# Two year moving sum of disputes
-dispVars=c(
-	'iDisp','iDispB', 'niDisp','niDispB', 
-	allCombos(c('i','ni'), allCombos( c('Oil','Elec','OilElec'), c('','B') ) )		
-	# 'disp','dispB','iDisp','iDispB', 'uDisp', 'uDispB', 'iuDisp', 'iuDispB', 
-	# allCombos(c('i','u','iu'), allCombos( c('Oil','Elec','OilElec'), c('','B') ) )	
-	)
-ivDisp=paste0('mvs2_',dispVars)
+# disputes
+dispVars =  c( 'iDispB')
+dispLabs = c('ICSID' )
+ivDisp=c( paste0('mvs2_',dispVars), paste0('mvs5_',dispVars), paste0(dispVars, 'C') )
+ivDispName = c( lagLabName(dispLabs,T,2), lagLabName(dispLabs,T,5), paste0('Cumulative ', lagLabName(dispLabs,F) ))
 
 # Other covariates
 ivOther=c(
@@ -41,7 +34,6 @@ ivs=c(ivDisp, ivOther)
 ivAll=lapply(ivDisp, function(x) FUN= c( lagLab(x,1), lagLab(ivOther,1) ) )
 
 # Setting up variables names for display
-ivDispName=c('All ICSID Disputes', 'ICSID Treaty-Based', 'ICSID-UNCTAD' )
 ivOtherName=c(
 	'\\%$\\Delta$ GDP'
 	, 'Ln(Pop.)'
@@ -68,7 +60,8 @@ ivsName=lapply(ivDispName, function(x) FUN= c(lagLabName(x,TRUE), lagLabName(ivO
 
 #######################################################################################
 # Running fixed effect models with plm
-plmData=pdata.frame( aData[,c(dv, unique(unlist(ivAll)), 'ccode', 'year') ], 
+aData$year2 = aData$year
+plmData=pdata.frame( aData[,c(dv, unique(unlist(ivAll)), 'ccode', 'year', 'year2', 'storyCnt', 'storyCntLog') ], 
 			index=c('ccode','year') )
 
 modForm=lapply(ivAll, function(x) 
@@ -79,7 +72,7 @@ modSumm=lapply(modResults, function(x) FUN=coeftest(x,
 	vcov=vcovHC(x,method='arellano',cluster="group")))
 
 # Peak at dispute var results
-# do.call('rbind',lapply(modSumm, function(x) x[1,,drop=FALSE]))
+do.call('rbind',lapply(modSumm, function(x) x[1,,drop=FALSE]))
 
 sub = res = data.frame( do.call('rbind',lapply(modSumm, function(x) x[1,,drop=FALSE])) )
 
@@ -97,35 +90,41 @@ sub[order(sub$eff),c(1,3,5)]
 
 # Saving results for further analysis
 setwd(pathResults)
-fileFE2 = strsplit(fileFE, '\\.') %>% unlist() %>% paste(.,collapse='v2.')
-save(modResults, modSumm, ivAll, dv, ivs, file=fileFE2)
+# fileFE2 = strsplit(fileFE, '\\.') %>% unlist() %>% paste(.,collapse='v2.')
+# save(modResults, modSumm, ivAll, dv, ivs, file=fileFE2)
 # save(modResults, modSumm, ivAll, dv, ivs, ivsName, dvName, file=fileFE)
 # save(modResults, modSumm, ivAll, dv, ivs, ivsName, dvName, file=paste0('B',fileFE))
 #######################################################################################
 
-# Aside with interaction of year and dispute
-plmData$yr07=ifelse(num(plmData$year)>=2007,1,0)
-plmData$dispYr07=plmData$lag1_mvs2_iDisp*plmData$yr07
-form=formula(paste0('invProf ~ lag1_mvs2_iDisp + yr07 + dispYr07 + lag1_gdpGr + lag1_popLog + 
+#######################################################################################
+# Interaction terms
+# mvs2_disp 
+plmData$yr07 = ifelse(num(plmData$year2)>=2007,1,0)
+plmData$dispYr07 = plmData$lag1_mvs2_iDispB * plmData$yr07
+
+form=formula(paste0('invProf ~ lag1_mvs2_iDispB + yr07 + dispYr07 + lag1_gdpGr + lag1_popLog + 
     lag1_inflLog + lag1_intConf + lag1_rbitNoDuplC + 
     lag1_kaopen + lag1_polity'))
 modRes=plm(form, data=plmData, model='within')
 coeftest(modRes, vcov=vcovHC(modRes,method='arellano',cluster="group"))
 
+# mvs5_disp 
+plmData$yr07 = ifelse(num(plmData$year2)>=2007,1,0)
+plmData$dispYr07 = plmData$lag1_mvs5_iDispB * plmData$yr07
 
-plmData$yr07=ifelse(num(plmData$year)>=2007,1,0)
-plmData$dispYr07=plmData$lag1_mvs2_iDispB*plmData$yr07
-form=formula(paste0('invProf ~ lag1_mvs2_iDispB + yr07 + dispYr07 + lag1_gdpGr + lag1_popLog + 
+form=formula(paste0('invProf ~ lag1_mvs5_iDispB + yr07 + dispYr07 + lag1_gdpGr + lag1_popLog + 
     lag1_inflLog + lag1_intConf + lag1_rbitNoDuplC + 
-    lag1_kaopen + lag_polity'))
+    lag1_kaopen + lag1_polity'))
 modRes=plm(form, data=plmData, model='within')
 coeftest(modRes, vcov=vcovHC(modRes,method='arellano',cluster="group"))
 
+# dispC
+plmData$yr07 = ifelse(num(plmData$year2)>=2007,1,0)
+plmData$dispYr07 = plmData$lag1_iDispBC * plmData$yr07
 
-plmData$yr07=ifelse(num(plmData$year)>=2007,1,0)
-plmData$dispYr07=plmData$lag1_mvs2_iuDisp*plmData$yr07
-form=formula(paste0('invProf ~ lag1_mvs2_iuDisp + yr07 + dispYr07 + lag1_gdpGr + lag1_popLog + 
+form=formula(paste0('invProf ~ lag1_iDispBC + yr07 + dispYr07 + lag1_gdpGr + lag1_popLog + 
     lag1_inflLog + lag1_intConf + lag1_rbitNoDuplC + 
-    lag1_kaopen + lag_polity'))
+    lag1_kaopen + lag1_polity'))
 modRes=plm(form, data=plmData, model='within')
 coeftest(modRes, vcov=vcovHC(modRes,method='arellano',cluster="group"))
+#######################################################################################

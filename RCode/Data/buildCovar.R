@@ -96,6 +96,21 @@ aData = aData[aData$year>=1986,]
 ###############################################################
 
 ###############################################################
+# log fdi
+aData$fdiLog = log( aData$fdi + abs(min(aData$fdi, na.rm=TRUE)) + 1 )
+aData$rfdiLog = log( aData$rfdi + abs(min(aData$rfdi, na.rm=TRUE)) + 1 )
+###############################################################
+
+###############################################################
+# Add global FDI var
+tmp = summaryBy(rfdi + fdi + rfdiLog + fdiLog ~ year, data=aData, FUN=c(sum, mean), na.rm=TRUE)
+aData$globMeanRFDI = tmp$rfdi.mean[match(aData$year, tmp$year)]
+aData$globMeanFDI = tmp$fdi.mean[match(aData$year, tmp$year)]
+aData$globSumRFDI = tmp$rfdi.sum[match(aData$year, tmp$year)]
+aData$globSumFDI = tmp$fdi.sum[match(aData$year, tmp$year)]
+###############################################################
+
+###############################################################
 # Save
 save(aData, file=paste0(pathBin,'analysisData.rda'))
 write.dta(aData, file=paste0(pathData, '/analysisData.dta'))

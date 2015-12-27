@@ -23,9 +23,7 @@ aData = aData[aData$year>=1987,]
 dv='invProf'; dvName='Investment Profile'; fileFE='LinvProfFE.rda'
 
 # Cumulative disputes
-ivDisp=c( 'iDispC','iDispBC', 'iuDispC',
-	paste0(allCombos(c('i','u','iu'), allCombos( c('Oil','Elec','OilElec'), c('','B') ) ), 'C')
-)
+ivDisp=c( 'iDispC','iDispBC', 'iuDispC', 'niDispC' )
 
 # # Two year moving sum of disputes
 # dispVars=c('iDisp', 'iDispB', 'iuDisp',
@@ -80,23 +78,22 @@ for(ii in 1:length(yrs)){
 
 	# Combining results
 	dispSumm=do.call(rbind, lapply(modSumm,function(x)FUN=x[2,,drop=FALSE]))
+	dispSumm=dispSumm[which(rownames(dispSumm) %in% lagLab(ivDisp, 1)), ]
 	coefCross=rbind(coefCross, cbind(dispSumm,cross=yrs[ii]))	
 }
-coefCross=coefCross[which(!rownames(coefCross) %in% 'lag_pch_gdp'),]
 ###############################################################################
 
-# ###############################################################################
-# # Plotting
+###############################################################################
+# Plotting
 VARS=unique(rownames(coefCross))
-ivDispName=c('All ICSID Disputes', 'ICSID Treaty-Based', 'ICSID-UNCTAD' )
-ivDispName = ivDisp
-VARSname=lagLabName(ivDispName,TRUE)
+ivDispName=c('All ICSID', 'ICSID Treaty-Based', 'ICSID-UNCTAD', 'Not ICSID' )
+VARSname=lagLabName(ivDispName,FALSE)
 
 tmp = ggcoefplot(coefData=coefCross, 
 	vars=VARS, varNames=VARSname,
   Noylabel=FALSE, coordFlip=FALSE, revVar=FALSE,
-  facet=TRUE, facetColor=FALSE, colorGrey=TRUE,
-  facetName='cross', facetDim=c(7,3), 
+  facet=TRUE, facetColor=FALSE, colorGrey=FALSE,
+  facetName='cross', facetDim=c(2,2), 
   # facetBreaks=seq(yrs[1],2014,3),
   # facetLabs=seq(yrs[1],2014,3),
   facetBreaks=yrs,

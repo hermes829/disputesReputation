@@ -6,7 +6,7 @@
 source('~/Research/RemmerProjects/disputesReputation/RCode/setup.R')
 
 # Load remmer/minhas data
-load(paste0(pathData, '/modelData.rda'))
+load(paste0(pathData, '/Old/modelData.rda'))
 names(modelData)[which(names(modelData) == 'lagcbdcrisis')] = 'lag_cbdcrisis'
 
 # Add measure for exchange rate volatility
@@ -36,37 +36,54 @@ sumNA = function(x){ sum(x, na.rm=TRUE) }
 modelData$globFDI = with(modelData, ave(r_fdi, year, FUN=sumNA	))
 modelData$globLnFDI = with(modelData, ave(LNr_fdi, year, FUN=sumNA))
 
+load(paste0(pathBin, 'analysisData.rda'))
+modelData$cyear = paste0(modelData$ccode, modelData$year)
+modelData$iDisp = aData$iDisp[match(modelData$cyear, aData$cyear)]
+modelData$iDispB = aData$iDisp[match(modelData$cyear, aData$cyear)]
+modelData$iDispC = aData$iDispC[match(modelData$cyear, aData$cyear)]
+modelData$iDispBC = aData$iDispC[match(modelData$cyear, aData$cyear)]
+modelData$mvs2_iDisp = aData$mvs2_iDisp[match(modelData$cyear, aData$cyear)]
+modelData$mvs2_iDispB = aData$mvs2_iDisp[match(modelData$cyear, aData$cyear)]
+modelData$mvs5_iDisp = aData$mvs5_iDisp[match(modelData$cyear, aData$cyear)]
+modelData$mvs5_iDispB = aData$mvs5_iDisp[match(modelData$cyear, aData$cyear)]
+
+# Redo logging
+modelData$LNfdi = log( modelData$fdi + abs(min(modelData$fdi, na.rm=TRUE)) + 1 )
+modelData$LNr_fdi = log( modelData$r_fdi + abs(min(modelData$r_fdi, na.rm=TRUE)) + 1 )
+
+modelData$r_fdi = aData$rfdi[match(modelData$cyear, aData$cyear)]
+modelData$LNr_fdi = aData$rfdiLog[match(modelData$cyear, aData$cyear)]
+modelData$fdi = aData$fdi[match(modelData$cyear, aData$cyear)]
+modelData$LNfdi = aData$fdiLog[match(modelData$cyear, aData$cyear)]
+
 # Vars from modelData
 # FDI
-dv = c('r_fdi', 'LNr_fdi')
+dv = c('r_fdi', 'LNr_fdi','fdi','LNfdi')
 # IVs
 ctrls = c(
-	'lag_ratifiedbits',
-	'lag_cbdcrisis',
-	'lag_domestic9',
-	'lag_External_Conflict',
-	'lag_polity',
-	'lag_Property_Rights',
-	'lag_LNpopulation',
-	'lag_LNr_gdpCAP',
-	'pch_r_gdp',
-	'lag_xRateVol',	
-	'lag_kaopen',
+	'lag_ratifiedbits', 
+	# 'lag_cbdcrisis', 
+	# 'lag_domestic9',
+	'lag_External_Conflict', 
+	'lag_polity', 
+	'lag_Property_Rights', 
+	'lag_LNpopulation', 
+	'lag_LNr_gdpCAP', 
+	# 'pch_r_gdp', 
+	# 'lag_xRateVol',
+	'lag_kaopen', 
 	'globFDI'
 	)
 
+dispVars=c('iDisp', 'iDispB')
 # Cumulative disputes
-ivDisp=c('cum_kicsidcase','cum_icsidtreaty_case',
-	'cumunsettled_icsid_treaty','cumcunctadcase','cum_alltreaty' )
-
+ivDisp=paste0(dispVars,'C')
 # Two year moving sum of disputes
-dispVars=c('kicsidcase', 'icsidtreaty_case', 
-	'unsettled_icsid_treaty', 'alltreaty')
 ivDisp2=paste0('mvs2_',dispVars)
 ivDisp5=paste0('mvs5_',dispVars)
 
 # Subset modeldata
-modelData = modelData[,c('country','ccode','year',dv,ctrls,ivDisp,ivDisp2,ivDisp5)]
+modelData = modelData[,c('country','ccode','year','cyear',dv,ctrls,ivDisp,ivDisp2,ivDisp5)]
 
 # Save
 save(dv, ctrls, ivDisp, dispVars, ivDisp2, ivDisp5, modelData, file=paste0(pathData, '/apExt.rda'))
