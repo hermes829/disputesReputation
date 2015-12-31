@@ -13,8 +13,8 @@ aData$storyCntLog = log( aData$storyCnt + 1 )
 dv='invProf'; dvName='Investment Profile'; fileFE='LinvProfFE.rda'
 
 # disputes
-dispVars =  c( 'iDispB')
-dispLabs = c('ICSID' )
+dispVars =  c( 'iDispB', 'niDisp')
+dispLabs = c('ICSID', 'Not ICSID' )
 ivDisp=c( paste0('mvs2_',dispVars), paste0('mvs5_',dispVars), paste0(dispVars, 'C') )
 ivDispName = c( lagLabName(dispLabs,T,2), lagLabName(dispLabs,T,5), paste0('Cumulative ', lagLabName(dispLabs,F) ))
 
@@ -90,10 +90,8 @@ sub[order(sub$eff),c(1,3,5)]
 
 # Saving results for further analysis
 setwd(pathResults)
-# fileFE2 = strsplit(fileFE, '\\.') %>% unlist() %>% paste(.,collapse='v2.')
-# save(modResults, modSumm, ivAll, dv, ivs, file=fileFE2)
-# save(modResults, modSumm, ivAll, dv, ivs, ivsName, dvName, file=fileFE)
-# save(modResults, modSumm, ivAll, dv, ivs, ivsName, dvName, file=paste0('B',fileFE))
+fileFE2 = strsplit(fileFE, '\\.') %>% unlist() %>% paste(.,collapse='v2.')
+save(modResults, modSumm, ivAll, dv, ivs, ivsName, dvName, file=fileFE2)
 #######################################################################################
 
 #######################################################################################
@@ -128,3 +126,17 @@ form=formula(paste0('invProf ~ lag1_iDispBC + yr07 + dispYr07 + lag1_gdpGr + lag
 modRes=plm(form, data=plmData, model='within')
 coeftest(modRes, vcov=vcovHC(modRes,method='arellano',cluster="group"))
 #######################################################################################
+
+yrD=data.frame(year=sort(unique(aData$year)))
+yrD$cntr = 1:nrow(yrD)
+yrD$cntr = ifelse(yrD$year>=2010,1,0) 
+aData$cntr = yrD$cntr[match(aData$year, yrD$year)]
+
+aData$dispVar = aData$lag1_iDispBC
+aData$dispYr = aData$dispVar*aData$cntr
+form=formula(paste0('invProf ~ dispVar + cntr + dispYr + lag1_gdpGr + lag1_popLog + 
+    lag1_inflLog + lag1_intConf + lag1_rbitNoDuplC + 
+    lag1_kaopen + lag1_polity + factor(ccode) -1'))
+
+mod = lm(form, data=aData)
+coeftest(mod)[1:3,]

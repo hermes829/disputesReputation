@@ -22,14 +22,11 @@ aData = aData[aData$year>=1987,]
 # Set up models
 dv='invProf'; dvName='Investment Profile'; fileFE='LinvProfFE.rda'
 
-# Cumulative disputes
-ivDisp=c( 'iDispC','iDispBC', 'iuDispC', 'niDispC' )
-
-# # Two year moving sum of disputes
-# dispVars=c('iDisp', 'iDispB', 'iuDisp',
-# 	allCombos(c('i','u','iu'), allCombos( c('Oil','Elec','OilElec'), c('','B') ) )	
-# 	)
-# ivDisp=paste0('mvs2_',dispVars)
+# dispute var
+dispVars = c( 'iDispB', 'iDispB' )
+ivDisp=paste0(dispVars, 'C') # Cumulative
+# ivDisp=paste0('mvs2_',dispVars) # Two year moving sum of disputes
+# ivDisp = c('iDispBC', 'mvs2_iDispB', 'mvs5_iDispB')
 
 # Other covariates
 ivOther=c(
@@ -46,38 +43,37 @@ ivOther=c(
 ivs=c(ivDisp, ivOther)
 ivAll=lapply(ivDisp, function(x) FUN= c( lagLab(x,1), lagLab(ivOther,1) ) )
 
-modForm=lapply(ivAll, function(x) 
-	FUN=as.formula( paste(dv, paste(x, collapse=' + '), sep=' ~ ') ))
+modForm=lapply(ivAll, function(x){
+	as.formula( 
+		paste(dv, paste(x, collapse=' + '), sep=' ~ ')
+		# paste0(paste(dv, paste(x, collapse=' + '), sep=' ~ '), '+ factor(ccode)-1')
+		)
+	})
 ###############################################################################
 
 ###############################################################################
 # Run yearly models
-yrs=1995:2014
-
-# Add yearly breaks
-# aData$yrBrk = cut(aData$year, 7)
-# yrs = unique(aData$yrBrk)
-
+yrs=1990:2014
 coefCross=NULL
 for(ii in 1:length(yrs)){
 
 	# By year
-	slice=aData[which(aData$year %in% yrs[ii]), ]
-	modResults=lapply(modForm, function(x) FUN=lm(x, data=slice) )	
-	modSumm=lapply(modResults, function(x) FUN=coeftest(x))			
-	
-	# # By buckets of years
-	# slice=aData[which(aData$yrBrk %in% yrs[ii]), ]
-	# plmData=pdata.frame( slice[,c(dv, unique(unlist(ivAll)), 'ccode', 'year') ], 
-	# 			index=c('ccode','year') )
-	# modForm=lapply(ivAll, function(x) 
-	# 	FUN=as.formula( paste(dv, paste(x, collapse=' + '), sep=' ~ ') ))
-	# modResults=lapply(modForm, function(x) FUN=plm(x, data=plmData, model='within') )
-	# modSumm=lapply(modResults, function(x) FUN=coeftest(x, 
-	# 	vcov=vcovHC(x,method='arellano',cluster="group")))
+	slice=aData[which(aData$year == yrs[ii]), ]
+	regData=slice[,c('ccode','year',dv, unique(unlist(ivAll)))] %>% na.omit()
+	mult = lapply(ivAll, function(x){ sd(regData[,x[1]])/sd(regData[,dv]) })
+	modResults=lapply(modForm, function(x) FUN=lm(x, data=regData) )	
+	modSumm=lapply(modResults, function(x) FUN=coeftest(x))
 
 	# Combining results
-	dispSumm=do.call(rbind, lapply(modSumm,function(x)FUN=x[2,,drop=FALSE]))
+	dispSumm=do.call(rbind, 
+		lapply(1:length(modSumm),function(x){
+			if( sum( grepl('Disp', rownames(modSumm[[x]])) ) == 0 ){
+				missVar = modResults[[x]] $model %>% names() %>% .[2]
+				empty = matrix(NA, nrow=1, ncol=4, dimnames=list(missVar, NULL))
+				return(empty) }
+			betaStats=modSumm[[x]][2,,drop=FALSE]
+			betaStats[1:2]=betaStats[1:2]*mult[[x]]
+			return(betaStats) } ) )
 	dispSumm=dispSumm[which(rownames(dispSumm) %in% lagLab(ivDisp, 1)), ]
 	coefCross=rbind(coefCross, cbind(dispSumm,cross=yrs[ii]))	
 }
@@ -86,16 +82,15 @@ for(ii in 1:length(yrs)){
 ###############################################################################
 # Plotting
 VARS=unique(rownames(coefCross))
-ivDispName=c('All ICSID', 'ICSID Treaty-Based', 'ICSID-UNCTAD', 'Not ICSID' )
+# ivDispName=c('Cumulative', '2 year', '5 year' )
+ivDispName = c('ICSID','ICSID')
 VARSname=lagLabName(ivDispName,FALSE)
 
 tmp = ggcoefplot(coefData=coefCross, 
 	vars=VARS, varNames=VARSname,
   Noylabel=FALSE, coordFlip=FALSE, revVar=FALSE,
   facet=TRUE, facetColor=FALSE, colorGrey=FALSE,
-  facetName='cross', facetDim=c(2,2), 
-  # facetBreaks=seq(yrs[1],2014,3),
-  # facetLabs=seq(yrs[1],2014,3),
+  facetName='cross', facetDim=c(1,3), 
   facetBreaks=yrs,
   facetLabs=yrs,  
   allBlack=FALSE
@@ -112,7 +107,7 @@ tmp
 ###############################################################################
 # Substantive effect
 sims=1000
-yrs=1995:2014
+yrs=2000:2014
 modelYrPreds=NULL
 for(Year in yrs){
 	slice=aData[which(aData$year %in% Year), ]
@@ -123,7 +118,7 @@ for(Year in yrs){
 	vars=names(coef(yrMod[[1]]))[c(-1,-2)]
 	means=apply(slice[,vars], 2, function(x) mean(x, na.rm=TRUE))
 	dispVar=lapply(yrMod, function(x) names(coef(x))[2] )
-	minMaxDisp=lapply(dispVar, function(x) quantile(slice[,x], probs=c(0,.99), na.rm=TRUE) )
+	minMaxDisp=lapply(dispVar, function(x) quantile(slice[,x], probs=c(0,1), na.rm=TRUE) )
 	scen=lapply(minMaxDisp, function(x) rbind( c(1, x[1], means), c(1, x[2], means) ) )
 	
 	# sims
@@ -141,6 +136,7 @@ for(Year in yrs){
 
 # Aggregate
 qSM=function(x){quantile(x, probs=c(0.025,0.975))}
+qSM=function(x){quantile(x, probs=c(0.05,0.95))}
 aggData=lapply(unique(modelYrPreds$varYr), function(x){ modelYrPreds[modelYrPreds$varYr==x,] })
 aggStats=do.call('rbind', lapply(aggData, function(x){
 	stats=t(apply(x[,1:2], 2, function(y){ c(mean(y), qSM(y)) }))
@@ -154,12 +150,11 @@ aggStats$Year=num(unlist(lapply(strsplit(char(aggStats$varYr), '__'), function(x
 
 # Plot labeling
 aggStats$Scenario=mapVar(aggStats$Scenario, c('Low','High'), paste0(c('Zero ', 'High '), 'Disputes $\\; \\; \\;$'))
-aggStats$dispVar=mapVar(aggStats$dispVar, paste0('lag_', ivDisp), lagLabName(ivDispName,TRUE) )
-# aggStats$Year[aggStats$Scenario=='Zero Disputes']=aggStats$Year[aggStats$Scenario=='Zero Disputes \;\;\;']-.12
+aggStats$dispVar=mapVar(aggStats$dispVar, lagLab(ivDisp,1), lagLabName(ivDispName,FALSE) )
 
 tmp=ggplot(aggStats, aes(x=Year, color=Scenario)) + scale_color_grey(start=.6, end=0)
 tmp=tmp + geom_linerange(aes(ymax=qhi,ymin=qlo), lwd=.75) + geom_point(aes(y=mu,shape=Scenario), cex=2.5) 
-tmp=tmp + scale_x_continuous('',breaks=seq(yrs[1], 2011, 3)) + ylab('Predicted Investment Profile Rating')
+tmp=tmp + scale_x_continuous('',breaks=seq(yrs[1], 2014, 2)) + ylab('Predicted Investment Profile Rating')
 tmp=tmp + facet_wrap(~dispVar) 
 tmp=tmp + theme(
 	panel.grid=element_blank(),
@@ -168,7 +163,7 @@ tmp=tmp + theme(
 	axis.ticks=element_blank(),
 	legend.position='top', legend.title=element_blank())
 setwd(pathGraphics)
-tikz(file='crossValSim.tex',width=8,height=6,standAlone=F)
+# tikz(file='crossValSim.tex',width=8,height=6,standAlone=F)
 tmp
-dev.off()
+# dev.off()
 ###############################################################################

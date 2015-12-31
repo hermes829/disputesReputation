@@ -8,7 +8,6 @@ modelData=aData
 
 ####################################################################
 setwd(pathResults)
-# load('LinvProfFE.rda'); dv='Investment Profile'; modNames=ivsName
 load('LinvProfFEv2.rda'); dv='Investment Profile'; modNames=ivsName=ivAll
 
 preds=NULL
@@ -57,7 +56,6 @@ for(ii in 1:length(modResults)){
   # Draw pred values from mvnorm
   draws = mvrnorm(n = sims, estimates[vars2], varcov[vars2,vars2])
   modelExp = modelPreds = draws %*% t(scenario)
-  # modelExp = apply(modelPreds, 2, function(x) FUN=rnorm(sims, x, error))
 
   modelPreds=modelPreds+mean(fixef(x))
   colnames(modelPreds)=c(paste0('lo',vi),paste0('hi',vi))

@@ -10,7 +10,7 @@ load(paste0(pathBin, 'analysisData.rda'))
 dv='rfdiLog'; dvName='Ln(FDI)'; fileFE='fdiFE.rda'
 
 # disputes
-dispVars =  c( 'iDisp')
+dispVars =  c( 'iDispB')
 dispLabs = c('ICSID' )
 ivDisp=c( paste0('mvs2_',dispVars), paste0('mvs5_',dispVars), paste0(dispVars, 'C') )
 ivDispName = c( lagLabName(dispLabs,T,2), lagLabName(dispLabs,T,5), paste0('Cumulative ', lagLabName(dispLabs,F) ))
