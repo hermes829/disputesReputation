@@ -107,7 +107,7 @@ tmp
 ###############################################################################
 # Substantive effect
 sims=1000
-yrs=2000:2014
+yrs=1990:2014
 modelYrPreds=NULL
 for(Year in yrs){
 	slice=aData[which(aData$year %in% Year), ]
