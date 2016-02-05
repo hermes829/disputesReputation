@@ -23,17 +23,16 @@ aData = aData[aData$year>=1987,]
 dv='invProf'; dvName='Investment Profile'; fileFE='LinvProfFE.rda'
 
 # dispute var
-dispVars = c( 'iDispB', 'iDispB' )
-ivDisp=paste0(dispVars, 'C') # Cumulative
-# ivDisp=paste0('mvs2_',dispVars) # Two year moving sum of disputes
-# ivDisp = c('iDispBC', 'mvs2_iDispB', 'mvs5_iDispB')
+ivDisp = c('mvs2_iDispB', 'mvs5_iDispB','iDispBC')
 
 # Other covariates
 ivOther=c(
 	'gdpGr'
+	,'gdpCapLog'
 	,'popLog'
 	,'inflLog'
 	, 'intConf'	
+	,'extConf'
 	,'rbitNoDuplC'	
 	,'kaopen'	
 	,'polity'
@@ -82,9 +81,7 @@ for(ii in 1:length(yrs)){
 ###############################################################################
 # Plotting
 VARS=unique(rownames(coefCross))
-# ivDispName=c('Cumulative', '2 year', '5 year' )
-ivDispName = c('ICSID','ICSID')
-VARSname=lagLabName(ivDispName,FALSE)
+VARSname=c('ICSID (past two years)','ICSID (past five years)','Cumulative ICSID$_{t-1}$')
 
 tmp = ggcoefplot(coefData=coefCross, 
 	vars=VARS, varNames=VARSname,
@@ -107,7 +104,7 @@ tmp
 ###############################################################################
 # Substantive effect
 sims=1000
-yrs=1990:2014
+yrs=1994:2014
 modelYrPreds=NULL
 for(Year in yrs){
 	slice=aData[which(aData$year %in% Year), ]

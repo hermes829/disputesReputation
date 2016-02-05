@@ -13,17 +13,19 @@ aData$storyCntLog = log( aData$storyCnt + 1 )
 dv='invProf'; dvName='Investment Profile'; fileFE='LinvProfFE.rda'
 
 # disputes
-dispVars =  c( 'iDispB', 'niDisp')
-dispLabs = c('ICSID', 'Not ICSID' )
+dispVars =  c( 'iDispB')
+dispLabs = c('ICSID' )
 ivDisp=c( paste0('mvs2_',dispVars), paste0('mvs5_',dispVars), paste0(dispVars, 'C') )
 ivDispName = c( lagLabName(dispLabs,T,2), lagLabName(dispLabs,T,5), paste0('Cumulative ', lagLabName(dispLabs,F) ))
 
 # Other covariates
 ivOther=c(
 	'gdpGr'
+	,'gdpCapLog'
 	,'popLog'
 	,'inflLog'
 	, 'intConf'	
+	,'extConf'
 	,'rbitNoDuplC'	
 	,'kaopen'	
 	,'polity'
@@ -36,9 +38,11 @@ ivAll=lapply(ivDisp, function(x) FUN= c( lagLab(x,1), lagLab(ivOther,1) ) )
 # Setting up variables names for display
 ivOtherName=c(
 	'\\%$\\Delta$ GDP'
+	,'Ln(GDP per capita)'
 	, 'Ln(Pop.)'
 	, 'Ln(Inflation)'	
 	, 'Internal Stability'	
+	, 'External Stability'
 	,'Ratif. BITs'	
 	,'Capital Openness'	
 	,'Polity'
@@ -83,48 +87,81 @@ save(modResults, modSumm, ivAll, dv, ivs, ivsName, dvName, file=fileFE2)
 #######################################################################################
 
 #######################################################################################
-# Interaction terms
-# mvs2_disp 
-plmData$yr07 = ifelse(num(plmData$year2)>=2007,1,0)
-plmData$dispYr07 = plmData$lag1_mvs2_iDispB * plmData$yr07
+# Creating APSR like tables
+fileTable='LfeResultsInvProfile.tex'
+captionTable='Regression on investment profile using country fixed effects, robust standard errors in parentheses. $^{**}$ and $^{*}$ indicate significance at $p< 0.05 $ and $p< 0.10 $, respectively.'
+varDef = cbind( unique(unlist(ivAll)),  unique(unlist(ivsName)) )
+varDef = varDef[c(1,nrow(varDef)-1,nrow(varDef),2:(nrow(varDef)-2)),]
 
-form=formula(paste0('invProf ~ lag1_mvs2_iDispB + yr07 + dispYr07 + lag1_gdpGr + lag1_popLog + 
-    lag1_inflLog + lag1_intConf + lag1_rbitNoDuplC + 
-    lag1_kaopen + lag1_polity'))
-modRes=plm(form, data=plmData, model='within')
-coeftest(modRes, vcov=vcovHC(modRes,method='arellano',cluster="group"))
+digs=3; noModels=length(modSumm)
+tableResults = matrix('', nrow=2*length(varDef[,1]), ncol=1+noModels)
+tableResults[,1] = rep(varDef[,1],2)
+colnames(tableResults) = c('Variable','Model 1', 'Model 2', 'Model 3')
+for(ii in 2:ncol(tableResults)){
+	temp = modSumm[[ii-1]]
+	n = modResults[[ii-1]]$df.residual
+	temp = temp[match(tableResults[,'Variable'], rownames(temp)),]
+	estims = temp[1:nrow(varDef),'Estimate']
+	estims = round(as.numeric(as.character(estims)),digs)
+	tvals = abs(temp[1:nrow(varDef),'t value'])
+	tvals = round(as.numeric(as.character(tvals)),digs)
+	estims = ifelse(tvals>=qt(0.975,n) & !is.na(tvals) & tvals<qt(0.995,n), 
+		paste('$', estims,'^{\\ast}$',sep=''), estims)
+	estims = ifelse(tvals>=qt(0.995,n) & !is.na(tvals), 
+		paste('$', estims,'^{\\ast\\ast}$',sep=''), estims)	
+	estims = ifelse(is.na(estims),'',estims)
+	tableResults[1:nrow(varDef),ii] = estims
+	serrors = temp[(nrow(varDef)+1):nrow(tableResults),'Std. Error']
+	serrors = round(as.numeric(as.character(serrors)),digs)
+	serrors = paste('(',serrors,')',sep='')
+	serrors = ifelse(serrors=='(NA)','',serrors)
+	tableResults[(nrow(varDef)+1):nrow(tableResults),ii] = serrors
+}
 
-# mvs5_disp 
-plmData$yr07 = ifelse(num(plmData$year2)>=2007,1,0)
-plmData$dispYr07 = plmData$lag1_mvs5_iDispB * plmData$yr07
+# Reorganizing rows and variable labels
+tableFinal = NULL
+for(ii in 1:nrow(varDef)){
+	temp = cbind('', t(tableResults[ii+nrow(varDef),2:ncol(tableResults)]))
+	tableFinal = rbind(tableFinal, tableResults[ii,], temp) }
 
-form=formula(paste0('invProf ~ lag1_mvs5_iDispB + yr07 + dispYr07 + lag1_gdpGr + lag1_popLog + 
-    lag1_inflLog + lag1_intConf + lag1_rbitNoDuplC + 
-    lag1_kaopen + lag1_polity'))
-modRes=plm(form, data=plmData, model='within')
-coeftest(modRes, vcov=vcovHC(modRes,method='arellano',cluster="group"))
+# Adding other info
+sSize = cbind('n', t(as.vector(mapply(x=modResults, 
+	function(x) FUN=length(x$residuals)))))
+gSize = cbind('N', t(as.vector(mapply(x=modResults, 
+	function(x) FUN=length(x$residuals)-x$df.residual-length(x$coefficient)))))
+rSQ = cbind('$R^{2}$', t(as.vector(mapply(x=modResults,
+		function(x) FUN=round(summary(x)$r.squared[1],2) ))))
+arSQ = cbind('Adj. $R^{2}$', t(as.vector(mapply(x=modResults,
+		function(x) FUN=round(summary(x)$r.squared[2],2) ))))
+rmse = round(mapply(x=modResults, function(x) FUN=sqrt(mean(x$residuals^2))),2)
+fRmse = cbind('RMSE', t(rmse))
+tableFinal = rbind(tableFinal, sSize, gSize, rSQ, arSQ, fRmse)
+nStats=5
+temp=varDef[match(tableFinal[,'Variable'], varDef[,1]),2]
+temp[which(is.na(temp))]=tableFinal[,'Variable'][which(is.na(temp))]
+tableFinal[,'Variable']=temp
 
-# dispC
-plmData$yr07 = ifelse(num(plmData$year2)>=2007,1,0)
-plmData$dispYr07 = plmData$lag1_iDispBC * plmData$yr07
+# Add & before every period
+tableFinal[,2:ncol(tableFinal)]=apply(tableFinal[,2:ncol(tableFinal)], c(1,2), 
+	function(x){ 
+		if( grepl('\\$', x) ){ gsub('\\$*\\.', '$&$.', x)
+		} else { gsub('\\.', '&.', x) } })
 
-form=formula(paste0('invProf ~ lag1_iDispBC + yr07 + dispYr07 + lag1_gdpGr + lag1_popLog + 
-    lag1_inflLog + lag1_intConf + lag1_rbitNoDuplC + 
-    lag1_kaopen + lag1_polity'))
-modRes=plm(form, data=plmData, model='within')
-coeftest(modRes, vcov=vcovHC(modRes,method='arellano',cluster="group"))
+setwd(pathGraphics)
+print.xtable(xtable(tableFinal, align='llccc', caption=captionTable),
+	include.rownames=FALSE,
+	sanitize.text.function = identity,
+	hline.after=c(0,0,nrow(varDef)*2,nrow(varDef)*2+nStats,nrow(varDef)*2+nStats),
+	size="footnotesize",	
+	file=fileTable )
 #######################################################################################
 
-yrD=data.frame(year=sort(unique(aData$year)))
-yrD$cntr = 1:nrow(yrD)
-yrD$cntr = ifelse(yrD$year>=2010,1,0) 
-aData$cntr = yrD$cntr[match(aData$year, yrD$year)]
-
-aData$dispVar = aData$lag1_iDispBC
-aData$dispYr = aData$dispVar*aData$cntr
-form=formula(paste0('invProf ~ dispVar + cntr + dispYr + lag1_gdpGr + lag1_popLog + 
-    lag1_inflLog + lag1_intConf + lag1_rbitNoDuplC + 
-    lag1_kaopen + lag1_polity + factor(ccode) -1'))
-
-mod = lm(form, data=aData)
-coeftest(mod)[1:3,]
+#######################################################################################
+# fix up r squared
+modForm=lapply(ivAll, function(x){
+	as.formula( paste0(paste(dv,  paste(x, collapse=' + '), sep=' ~ '), ' + factor(ccode) - 1')) })
+modResults=lapply(modForm, function(x) FUN=lm(x, data=aData) )
+lapply(modResults, function(x){
+	c(summary(x)$'r.squared', summary(x)$'adj.r.squared')
+	})
+#######################################################################################

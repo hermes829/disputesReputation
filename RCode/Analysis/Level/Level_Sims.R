@@ -68,18 +68,25 @@ summPreds=data.frame(t(summPreds)); colnames(summPreds)=c('mean','lo','hi')
 summPreds$scen=rep(LETTERS[1:2],nrow(summPreds)/2)
 summPreds$disp=rep(unlist(lapply(modNames, function(x) x[1])), each=2)
 
+# Relabel facets
+summPreds$disp[summPreds$disp=='lag1_mvs2_iDispB'] = 'ICSID (past two years)'
+summPreds$disp[summPreds$disp=='lag1_mvs5_iDispB'] = 'ICSID (past five years)'
+summPreds$disp[summPreds$disp=='lag1_iDispBC'] = 'Cumulative ICSID$_{t-1}$'
+summPreds$disp = factor(summPreds$disp, levels=c('ICSID (past two years)','ICSID (past five years)','Cumulative ICSID$_{t-1}$'))
+
+# plot
 tmp=ggplot(summPreds, aes(x=factor(scen), y=mean,ymax=hi,ymin=lo,group=disp))
 tmp=tmp+geom_linerange() + geom_point() + facet_wrap(~ disp)
 tmp=tmp+ylab('Predicted Investment Profile Rating')
 tmp=tmp+scale_x_discrete('',labels=c(
   'A'='Zero Disputes', 'B'='High Disputes'))  
-tmp=tmp+scale_y_continuous(breaks=c(0,4,8,12),labels=c(0,4,8,12))
+tmp=tmp+scale_y_continuous(breaks=seq(0,12,2),labels=seq(0,12,2))
 tmp = tmp + theme(
   axis.ticks=element_blank(), panel.grid.major=element_blank(),
   panel.grid.minor=element_blank(), axis.title.y=element_text(vjust=1)
   )
 setwd(pathGraphics)
-# tikz(file='simResults.tex',width=8,height=6,standAlone=F)
+tikz(file='simResults.tex',width=8,height=4,standAlone=F)
 tmp
-# dev.off()
+dev.off()
 ###################################################################

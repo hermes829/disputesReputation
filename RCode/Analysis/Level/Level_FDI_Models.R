@@ -17,19 +17,19 @@ ivDispName = c( lagLabName(dispLabs,T,2), lagLabName(dispLabs,T,5), paste0('Cumu
 
 # Other covariates
 ivOther=c(
-	'gdpGr', 'gdpCapLog', 'popLog','inflLog', 'xrate',
-	'intConf','sbitNoDuplC', 'kaopen', 'polity', 'propRights'
+	'gdpGr', 'gdpCapLog', 'popLog','inflLog',
+	'intConf', 'extConf',
+	'sbitNoDuplC', 'kaopen', 'polity', 'propRights'
 	)
 ivs=c(ivDisp, ivOther)
-ivAll=lapply(ivDisp, function(x) FUN= c( lagLab(x,1), lagLab(ivOther,1) ) )
 ivAll=lapply(ivDisp, function(x) FUN= c( lagLab(x,1), lagLab(ivOther,1), 'globSumRFDI' ) )
 
 # Setting up variables names for display
 ivOtherName=c(
-	'\\%$\\Delta$ GDP', 'Ln(GDP per capita)', 'Ln(Pop.)', 'Ln(Inflation)', 'Exchange Rate',
-	'Internal Stability','Signed BITs','Capital Openness','Polity', 'Property Rights'
+	'\\%$\\Delta$ GDP', 'Ln(GDP per capita)', 'Ln(Pop.)', 'Ln(Inflation)', 
+	'Internal Stability','External Stability',
+	'Ratified BITs','Capital Openness','Polity', 'Property Rights'
 	)
-ivsName=lapply(1:length(ivDispName), function(x){ c(ivDispName[x], lagLabName(ivOtherName) ) })
 ivsName=lapply(1:length(ivDispName), function(x){ c(ivDispName[x], lagLabName(ivOtherName), 'World FDI') })
 #######################################################################################
 
@@ -72,12 +72,6 @@ for(ii in 2:ncol(tableResults)){
 		paste('$', estims,'^{\\ast}$',sep=''), estims)
 	estims = ifelse(tvals>=qt(0.995,n) & !is.na(tvals), 
 		paste('$', estims,'^{\\ast\\ast}$',sep=''), estims)	
-	# estims = ifelse(tvals>=qt(0.975,n) & !is.na(tvals) & tvals<qt(0.995,n), 
-	# 	paste('$', estims,'^{\\ast}$',sep=''), estims)
-	# estims = ifelse(tvals>=qt(0.995,n) & !is.na(tvals) & tvals<qt(0.9995,n), 
-	# 	paste('$', estims,'^{\\ast\\ast}$',sep=''), estims)
-	# estims = ifelse(tvals>=qt(0.9995,n) & !is.na(tvals), 
-	# 	paste('$', estims,'^{\\ast\\ast\\ast}$',sep=''), estims)			
 	estims = ifelse(is.na(estims),'',estims)
 	tableResults[1:nrow(varDef),ii] = estims
 	serrors = temp[(nrow(varDef)+1):nrow(tableResults),'Std. Error']
@@ -119,10 +113,18 @@ tableFinal[,2:ncol(tableFinal)]=apply(tableFinal[,2:ncol(tableFinal)], c(1,2),
 setwd(pathGraphics)
 print.xtable(xtable(tableFinal, align='llccc', caption=captionTable),
 	include.rownames=FALSE,
-	# sanitize.text.function = function(x) x,
-	# sanitize.text.function=function(str)gsub("_","\\_",str,fixed=TRUE),
 	sanitize.text.function = identity,
 	hline.after=c(0,0,nrow(varDef)*2,nrow(varDef)*2+nStats,nrow(varDef)*2+nStats),
 	size="footnotesize",	
 	file=fileTable )
+#######################################################################################
+
+#######################################################################################
+# fix up r squared
+modForm=lapply(ivAll, function(x){
+	as.formula( paste0(paste(dv,  paste(x, collapse=' + '), sep=' ~ '), ' + factor(ccode) - 1')) })
+modResults=lapply(modForm, function(x) FUN=lm(x, data=aData) )
+lapply(modResults, function(x){
+	c(summary(x)$'r.squared', summary(x)$'adj.r.squared')
+	})
 #######################################################################################
