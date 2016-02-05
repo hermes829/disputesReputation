@@ -46,18 +46,6 @@ ivOtherName=c(
 ivsName=lapply(ivDispName, function(x) FUN= c(lagLabName(x,TRUE), lagLabName(ivOtherName)))
 #######################################################################################
 
-# #####################################################################################
-# ### Create semi-balanced panel based off
-# # All vars used in model
-# temp=na.omit(aData[,c('cname','ccode','year', ivDisp, ivOther)])
-# # Just ICRG
-# # temp=na.omit(aData[,c('cname','ccode','year', 'Investment.Profile')])
-# temp2=lapply(unique(temp$cname), function(x) FUN=nrow(temp[which(temp$cname %in% x), ]) )
-# names(temp2)=unique(temp$cname); temp3=unlist(temp2)
-# drop=names(temp3[temp3<quantile(temp3,probs=.25)])
-# aData = aData[which(!aData$cname %in% drop),]
-# #####################################################################################
-
 #######################################################################################
 # Running fixed effect models with plm
 aData$year2 = aData$year
