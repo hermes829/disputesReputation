@@ -30,14 +30,14 @@ ivDisp = c('iDispBC', 'mvs2_iDispB', 'mvs5_iDispB')
 
 # Other covariates
 ivOther=c(
-	'sbitNoDuplC', 'intConf', 'extConf',
-	'polity', 	'propRights', 'popLog',
-	'gdpCapLog', 'gdpGr', 'xrate', 'kaopen'
+	'gdpGr', 'gdpCapLog', 'popLog','inflLog',
+	'intConf', 'extConf',
+	'sbitNoDuplC', 'kaopen', 'polity', 'propRights'
 	)
 
 # Untrans IVs
 ivs=c(ivDisp, ivOther)
-ivAll=lapply(ivDisp, function(x) FUN= c( lagLab(x,1), lagLab(ivOther,1) ) )
+ivAll=lapply(ivDisp, function(x) FUN= c( lagLab(x,1), lagLab(ivOther,1), 'globSumRFDI' ) )
 
 modForm=lapply(ivAll, function(x){
 	as.formula( 
