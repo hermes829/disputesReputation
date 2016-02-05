@@ -246,6 +246,7 @@ n & 26&03 & 26&03 & 26&03 \\
 \end{tabular}
 }
 \caption{Regression on investment profile using country fixed effects, robust standard errors in parentheses. $^{**}$ and $^{*}$ indicate significance at $p< 0.05 $ and $p< 0.10 $, respectively.} 
+\label{tab:dispRepLevel}
 \end{table}
 \FloatBarrier
 
@@ -255,27 +256,25 @@ Moving to our dispute measures, each has a significant and negative effect on re
 
 To explore this issue more fully, we utilize a simulation-based approach. For each model, we set up two scenarios, one in which the disputes variable is set to zero and another where it is set to three, which approximates the 99$^{th}$ percentile value for each of the dispute measures. All other covariates are set to their median value. Next, we conduct 1,000 random draws from a multivariate normal to obtain distributions for the point estimates of each of the regression coefficients. After obtaining these distributions, we calculate the predicted value of reputation given the conditions set by the two scenarios. The result of this analysis is visualized in Figure \ref{fig:subEffect}. A solid circle is used to designate the mean estimate for each scenario and the line widths designate where 95 percent of the values for a given scenario fall. For each of the dispute variables shown, there is less than a one point difference in the predicted investment profile rating predicted by the zero and high dispute scenarios. In addition to this relatively minimal difference, the level of uncertainty around these predictions is quite large. Taken together these characteristics of the data challenge the broad claim that dispute initiation generates significant reputational costs for offending countries.
 
+The fact that the level of uncertainty around our predicted values is so high, however, raises an interesting question. As we discussed earlier, the assumption that international institutions automatically generate adverse effects with regards to country reputation is questionable. Developing a system of effective enforcement is likely to take time as is reputational change. Much of the literature on investment treaties, however, assumes that dispute involvement entails predcitable costs, regardless of time period. This is an unnecessary assumption that we examine more closely by unpacking potential temporal variation in the effect that ICSID disputes have on a country's reputation.
+
 % \newpage
 
 \begin{figure}[ht]
-	\vspace{4cm}
 	\centering
 	\caption{Substantive Effect of Disputes on Investment Profile}
 	\label{fig:subEffect}
 	% \includegraphics[width=1\textwidth]{graphics/simResults.pdf}
-	\resizebox{.8\textwidth}{!}{\input{graphics/simResults}}
+	\resizebox{1\textwidth}{!}{\input{graphics/simResults}}
 	\caption*{Note: Here we show a typical country's predicted rating on investment profile under a scenario where a country faces a minimum versus the 99$^{th}$ percentile number of disputes, for each of the dispute variables this is equal to 3. Results were obtained by using simulations that accounted for inferential uncertainty. The point estimates here represent the mean predicted ratings and the line represents the 95\% level of uncertainty associated with these estimates.}
 \end{figure}
 \FloatBarrier
 
 % \newpage
 
-The fact that the level of uncertainty around our predicted values is so high, however, raises an interesting question. As we discussed earlier, the assumption that international institutions automatically generate adverse effects with regards to country reputation is questionable. Developing a system of effective enforcement is likely to take time as is reputational change. Much of the literature on investment treaties, however, assumes that dispute involvement entails predcitable costs, regardless of time period. This is an unnecessary assumption that we examine more closely by unpacking potential temporal variation in the effect that ICSID disputes have on a country's reputation.
-
-To explore this issue, we rerun the analysis shown in Table \ref{tab:dispRepLevel} on a series of yearly level pooled models for the 1995--2011 period.\footnote{We begin our period for analysis here at 1995 because the infrequency of disputes before that date leads to cases in which no country had a dispute within the last two years.} All the control variables included in Table \ref{tab:dispRepLevel} are used here as well. Since our substantive interest is in how the effect of disputes has changed over time, for the sake of space we only show the coefficient results for our dispute measures in Figure \ref{fig:dispEffectYear}. The dot in each line represents the coefficient estimate for a disputes variable in a given year, with the line width representing the 95 percent confidence interval around that point estimate. Coefficient estimates that are significant at a 95 percent confidence interval are colored in black. 
+To explore this issue, we rerun the analysis shown in Table \ref{tab:dispRepLevel} on a series of yearly level pooled models for the 1994--2011 period.\footnote{We begin our period for analysis here at 1994 because the infrequency of disputes before that date leads to cases in which no country had a dispute within the last two years.} All the control variables included in Table \ref{tab:dispRepLevel} are used here as well. Since our substantive interest is in how the effect of disputes has changed over time, for the sake of space we only show the coefficient results for our dispute measures in Figure \ref{fig:dispEffectYear}. The dot in each line represents the coefficient estimate for a disputes variable in a given year, with the line width representing the 95 percent confidence interval around that point estimate. Coefficient estimates that are significant at a 95 percent confidence interval are colored in black. 
 
 \begin{figure}[ht]
-	\vspace{4cm}
 	\centering
 	\caption{Change in Effect of Disputes Over Time}
 	\label{fig:dispEffectYear}
@@ -284,12 +283,11 @@ To explore this issue, we rerun the analysis shown in Table \ref{tab:dispRepLeve
 \end{figure}
 \FloatBarrier
 
-We find significant variation in how the effect of disputes on reputation has changed over time. Prior to 2007, the estimated impact of disputes is quite imprecisely measured. After that point in time, the precision of the estimated effect narrows dramatically. Across all four dispute variables, there exists a clear negative relationship between the initiation of disputes within the past two years and perceptions of a country's investment reputation.\footnote{As a check on the results from this series of pooled models, we add a binary variable that equals one after 2006 and zero otherwise to each of the models shown in Table \ref{tab:dispRepLevel}. We then add an interaction between the binary variable and the dispute measure for each model. In each case, we find that the binary variable and the interaction term have a significant negative effect, at a 95\% confidence interval, on reputation. We choose, however, to present the results from the series of pooled models to more clearly highlight the increasing negative effect of disputes over time.} 
+We find significant variation in how the effect of disputes on reputation has changed over time. Prior to 2006, the estimated impact of disputes tends to be imprecisely measured. After that point in time, the precision of the estimated effect narrows dramatically. Across each parameterization of the dispute variable, there exists a clear negative relationship between the initiation of disputes and perceptions of a country's investment reputation.\footnote{As a check on the results from this series of pooled models, we add a binary variable that equals one after 2006 and zero otherwise to each of the models shown in Table \ref{tab:dispRepLevel}. We then add an interaction between the binary variable and the dispute measure for each model. In each case, we find that the binary variable and the interaction term have a significant negative effect, at a 95\% confidence interval, on reputation. We choose, however, to present the results from the series of pooled models to more clearly highlight the increasing negative effect of disputes over time.} 
 
 Similar, to our fixed effects analysis, we gauge the substantive meaning of this finding using a simulation-based approach. Figure \ref{fig:dispEffectYearSim} visualizes the results of our simulation. The grey line and circle denote the scenario in which all the control variables are set to their median and the disputes variable is set to zero. The dark line and triangle denote the scenario in which the control variable are again set to their median but the disputes variable is set to its 99$^{th}$ percentile value for each dispute measure. The line width again designates where 95 percent of the predicted values for a particular scenario fall. 
 
 \begin{figure}[ht]
-	\vspace{4cm}
 	\centering
 	\caption{Substantive Effect of Changes in Disputes}
 	\label{fig:dispEffectYearSim}
@@ -298,17 +296,17 @@ Similar, to our fixed effects analysis, we gauge the substantive meaning of this
 \end{figure}
 \FloatBarrier
 
-Looking across the results shown in this figure, we can see that pre-2007, the predicted investment profile ratings given these two scenarios practically overlap. After 2007, however, we can clearly see a divergence in the reputation of countries that have faced disputes and those have not. Countries that have gone without facing disputes typically receive investment profile ratings of 8, while those that have had a high number of disputes within the past two years have predicted ratings that are almost two points less. 
+Looking across the results shown in this figure, we can see that pre-2006, the predicted investment profile ratings given these two scenarios tends to overlap. After 2006, however, we can clearly see a divergence in the reputation of countries that have faced disputes and those have not. Countries that have gone without facing disputes typically receive investment profile ratings of 8, while those that have had a high number of disputes within the past two years have predicted ratings that are almost two points less. 
 
 % \newpage
 
 \section*{Increasing Information and Media Attention}
 
-Thus as expected we find that disputes have little effect on FDI flows. Yet, this null finding should still be surprising given the frequency with which ICSID has made it into headlines of major newspapers in recent years. The opportunities that ICSID provide to MNCs to challenge the domestic policies of sovereign states is very unique. MNCs have received significant publicity for suing at tribunals over ICSID over issues such as tobacco regulation,\footnote{Cite Phillip Morris cases here against Australia and Uruguay} caused consternation among a broad swath of NGOs,\footnote{cite protests against ICSID from GMOs, environmentalists, trade lobbies, etc.} and even among sovereign states as an increasing number have sought to roll back the international commitments that bound them to ICSID.\footnote{reference south africa, india, and even australia} 
+% Thus as expected we find that disputes have little effect on FDI flows. Yet, this null finding should still be surprising given the frequency with which ICSID has made it into headlines of major newspapers in recent years. The opportunities that ICSID provide to MNCs to challenge the domestic policies of sovereign states is very unique. MNCs have received significant publicity for suing at tribunals over ICSID over issues such as tobacco regulation,\footnote{Cite Phillip Morris cases here against Australia and Uruguay} caused consternation among a broad swath of NGOs,\footnote{cite protests against ICSID from GMOs, environmentalists, trade lobbies, etc.} and even among sovereign states as an increasing number have sought to roll back the international commitments that bound them to ICSID.\footnote{reference south africa, india, and even australia} 
 
-In addition to the institutional opaqueness behind ICSID decision making processes and rulings, up until quite recently there was very little knowledge among even MNCs with regards to the system of investment protection that had been set up by BITs. Yackee conducts a study of the legal counsel at large US MNCs with significant investment activities abroad and finds that over two thirds had no knowledge about BITs. This finding of relative ignorance is mirrored in other studies as well, for example, see ...
+% In addition to the institutional opaqueness behind ICSID decision making processes and rulings, up until quite recently there was very little knowledge among even MNCs with regards to the system of investment protection that had been set up by BITs. Yackee conducts a study of the legal counsel at large US MNCs with significant investment activities abroad and finds that over two thirds had no knowledge about BITs. This finding of relative ignorance is mirrored in other studies as well, for example, see ...
 
-Yet, this began to change towards 2005. 
+% Yet, this began to change towards 2005. 
 
 The preceding empirical results are consistent with the argument that reputational enforcement of treaty commitments is contingent on institutional design and associated information costs. In accordance with theoretical expectation, the impact of investor-state disputes has been relatively marginal over the broader time period of our analysis, and reputational effects only begin to materialize since 2007. The obvious question is what accounts for this trend? Has information about ISDS processes expanded significantly over time, buttressing our theoretical expectations about the importance of information flows? We cite three sources of evidence about a change in information availability in support of such a claim. 
 

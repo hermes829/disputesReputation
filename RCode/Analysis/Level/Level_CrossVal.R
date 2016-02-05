@@ -52,7 +52,7 @@ modForm=lapply(ivAll, function(x){
 
 ###############################################################################
 # Run yearly models
-yrs=1990:2014
+yrs=1994:2014
 coefCross=NULL
 for(ii in 1:length(yrs)){
 
@@ -92,13 +92,13 @@ tmp = ggcoefplot(coefData=coefCross,
   facetLabs=yrs,  
   allBlack=FALSE
   )
-tmp=tmp + ylab('$\\beta$ for Dispute Variables')
+tmp=tmp + ylab('$\\beta$ for Dispute Variables') + scale_x_discrete(breaks=seq(1990,2014,4),labels=seq(1990,2014,4))
 tmp=tmp + theme(axis.title.y=element_text(vjust=1))
 # tmp=tmp+scale_color_manual(values=brewer.pal(9,'Greys')[c(5,9,7)])
-# setwd(pathGraphics)
-# tikz(file='crossValLevel.tex',width=8,height=6,standAlone=F)
+setwd(pathGraphics)
+tikz(file='crossValLevel.tex',width=8,height=3.5,standAlone=F)
 tmp
-# dev.off()
+dev.off()
 ###############################################################################
 
 ###############################################################################
@@ -133,7 +133,6 @@ for(Year in yrs){
 
 # Aggregate
 qSM=function(x){quantile(x, probs=c(0.025,0.975))}
-qSM=function(x){quantile(x, probs=c(0.05,0.95))}
 aggData=lapply(unique(modelYrPreds$varYr), function(x){ modelYrPreds[modelYrPreds$varYr==x,] })
 aggStats=do.call('rbind', lapply(aggData, function(x){
 	stats=t(apply(x[,1:2], 2, function(y){ c(mean(y), qSM(y)) }))
@@ -147,11 +146,11 @@ aggStats$Year=num(unlist(lapply(strsplit(char(aggStats$varYr), '__'), function(x
 
 # Plot labeling
 aggStats$Scenario=mapVar(aggStats$Scenario, c('Low','High'), paste0(c('Zero ', 'High '), 'Disputes $\\; \\; \\;$'))
-aggStats$dispVar=mapVar(aggStats$dispVar, lagLab(ivDisp,1), lagLabName(ivDispName,FALSE) )
+aggStats$dispVar=mapVar(aggStats$dispVar, VARS, VARSname )
 
 tmp=ggplot(aggStats, aes(x=Year, color=Scenario)) + scale_color_grey(start=.6, end=0)
 tmp=tmp + geom_linerange(aes(ymax=qhi,ymin=qlo), lwd=.75) + geom_point(aes(y=mu,shape=Scenario), cex=2.5) 
-tmp=tmp + scale_x_continuous('',breaks=seq(yrs[1], 2014, 2)) + ylab('Predicted Investment Profile Rating')
+tmp=tmp + scale_x_continuous('',breaks=seq(yrs[1], 2014, 4)) + ylab('Predicted Investment Profile Rating')
 tmp=tmp + facet_wrap(~dispVar) 
 tmp=tmp + theme(
 	panel.grid=element_blank(),
@@ -160,7 +159,7 @@ tmp=tmp + theme(
 	axis.ticks=element_blank(),
 	legend.position='top', legend.title=element_blank())
 setwd(pathGraphics)
-# tikz(file='crossValSim.tex',width=8,height=6,standAlone=F)
+tikz(file='crossValSim.tex',width=8,height=4.5,standAlone=F)
 tmp
-# dev.off()
+dev.off()
 ###############################################################################

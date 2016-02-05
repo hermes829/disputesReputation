@@ -86,7 +86,7 @@ tmp = tmp + theme(
   panel.grid.minor=element_blank(), axis.title.y=element_text(vjust=1)
   )
 setwd(pathGraphics)
-tikz(file='simResults.tex',width=8,height=4,standAlone=F)
+tikz(file='simResults.tex',width=8,height=3.2,standAlone=F)
 tmp
 dev.off()
 ###################################################################
