@@ -23,10 +23,10 @@ aData = aData[aData$year>=1987,]
 dv='rfdiLog'; dvName='Investment Profile'; fileFE='LinvProfFE.rda'
 
 # dispute var
-dispVars = c( 'iDispB', 'iDispB' )
-ivDisp=paste0(dispVars, 'C') # Cumulative
-# ivDisp=paste0('mvs2_',dispVars) # Two year moving sum of disputes
-# ivDisp = c('iDispBC', 'mvs2_iDispB', 'mvs5_iDispB')
+# dispVars = c( 'iDispB', 'iDispB' )
+# ivDisp=paste0(dispVars, 'C') # Cumulative
+ivDisp=paste0('mvs2_',dispVars) # Two year moving sum of disputes
+ivDisp = c('iDispBC', 'mvs2_iDispB', 'mvs5_iDispB')
 
 # Other covariates
 ivOther=c(
@@ -42,7 +42,6 @@ ivAll=lapply(ivDisp, function(x) FUN= c( lagLab(x,1), lagLab(ivOther,1) ) )
 modForm=lapply(ivAll, function(x){
 	as.formula( 
 		paste(dv, paste(x, collapse=' + '), sep=' ~ ')
-		# paste0(paste(dv, paste(x, collapse=' + '), sep=' ~ '), '+ factor(ccode)-1')
 		)
 	})
 ###############################################################################
@@ -78,8 +77,8 @@ for(ii in 1:length(yrs)){
 ###############################################################################
 # Plotting
 VARS=unique(rownames(coefCross))
-# ivDispName=c('Cumulative', '2 year', '5 year' )
-ivDispName = c('ICSID','ICSID')
+ivDispName=c('Cumulative', '2 year', '5 year' )
+# ivDispName = c('ICSID','ICSID')
 VARSname=lagLabName(ivDispName,FALSE)
 
 tmp = ggcoefplot(coefData=coefCross, 

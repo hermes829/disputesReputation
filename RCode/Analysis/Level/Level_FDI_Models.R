@@ -17,19 +17,19 @@ ivDispName = c( lagLabName(dispLabs,T,2), lagLabName(dispLabs,T,5), paste0('Cumu
 
 # Other covariates
 ivOther=c(
-	'sbitNoDuplC', 'intConf', 'extConf',
-	'polity', 	'propRights', 'popLog',
-	'gdpCapLog', 'gdpGr', 'xrate', 'kaopen'
+	'gdpGr', 'gdpCapLog', 'popLog','inflLog', 'xrate',
+	'intConf','sbitNoDuplC', 'kaopen', 'polity', 'propRights'
 	)
 ivs=c(ivDisp, ivOther)
+ivAll=lapply(ivDisp, function(x) FUN= c( lagLab(x,1), lagLab(ivOther,1) ) )
 ivAll=lapply(ivDisp, function(x) FUN= c( lagLab(x,1), lagLab(ivOther,1), 'globSumRFDI' ) )
 
 # Setting up variables names for display
 ivOtherName=c(
-	'Signed BITs', 'Internal Stability', 'External Stability',
-	'Polity', 'Property Rights', 'Ln(Population)', 	'Ln(GDP per capita)',
-	'\\%$\\Delta$ GDP', 'Exchange Rate', 'Capital Openness'
+	'\\%$\\Delta$ GDP', 'Ln(GDP per capita)', 'Ln(Pop.)', 'Ln(Inflation)', 'Exchange Rate',
+	'Internal Stability','Signed BITs','Capital Openness','Polity', 'Property Rights'
 	)
+ivsName=lapply(1:length(ivDispName), function(x){ c(ivDispName[x], lagLabName(ivOtherName) ) })
 ivsName=lapply(1:length(ivDispName), function(x){ c(ivDispName[x], lagLabName(ivOtherName), 'World FDI') })
 #######################################################################################
 
