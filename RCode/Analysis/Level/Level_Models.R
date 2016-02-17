@@ -13,8 +13,8 @@ aData$storyCntLog = log( aData$storyCnt + 1 )
 dv='invProf'; dvName='Investment Profile'; fileFE='LinvProfFE.rda'
 
 # disputes
-dispVars =  c( 'iDispB')
-dispLabs = c('ICSID' )
+dispVars =  c( 'iDispB', 'dispB')
+dispLabs = c('ICSID', 'All' )
 ivDisp=c( paste0('mvs2_',dispVars), paste0('mvs5_',dispVars), paste0(dispVars, 'C') )
 ivDispName = c( lagLabName(dispLabs,T,2), lagLabName(dispLabs,T,5), paste0('Cumulative ', lagLabName(dispLabs,F) ))
 

@@ -23,7 +23,10 @@ aData = aData[aData$year>=1987,]
 dv='invProf'; dvName='Investment Profile'; fileFE='LinvProfFE.rda'
 
 # dispute var
-ivDisp = c('mvs2_iDispB', 'mvs5_iDispB','iDispBC')
+ivDisp = c(
+	'mvs2_iDispB', 'mvs5_iDispB','iDispBC', 
+	'mvs2_dispB', 'mvs5_dispB','dispBC'
+	)
 
 # Other covariates
 ivOther=c(
@@ -66,7 +69,7 @@ for(ii in 1:length(yrs)){
 	# Combining results
 	dispSumm=do.call(rbind, 
 		lapply(1:length(modSumm),function(x){
-			if( sum( grepl('Disp', rownames(modSumm[[x]])) ) == 0 ){
+			if( sum( grepl(c('ispB'), rownames(modSumm[[x]])) ) == 0 ){
 				missVar = modResults[[x]] $model %>% names() %>% .[2]
 				empty = matrix(NA, nrow=1, ncol=4, dimnames=list(missVar, NULL))
 				return(empty) }
@@ -81,13 +84,16 @@ for(ii in 1:length(yrs)){
 ###############################################################################
 # Plotting
 VARS=unique(rownames(coefCross))
-VARSname=c('ICSID (past two years)','ICSID (past five years)','Cumulative ICSID$_{t-1}$')
+VARSname=c(
+	'ICSID (past two years)','ICSID (past five years)','Cumulative ICSID$_{t-1}$',
+	'All (past two years)','All (past five years)','Cumulative All$_{t-1}$'	
+	)
 
 tmp = ggcoefplot(coefData=coefCross, 
 	vars=VARS, varNames=VARSname,
   Noylabel=FALSE, coordFlip=FALSE, revVar=FALSE,
   facet=TRUE, facetColor=FALSE, colorGrey=FALSE,
-  facetName='cross', facetDim=c(1,3), 
+  facetName='cross', facetDim=c(2,3), 
   facetBreaks=yrs,
   facetLabs=yrs,  
   allBlack=FALSE
@@ -96,9 +102,9 @@ tmp=tmp + ylab('$\\beta$ for Dispute Variables') + scale_x_discrete(breaks=seq(1
 tmp=tmp + theme(axis.title.y=element_text(vjust=1))
 # tmp=tmp+scale_color_manual(values=brewer.pal(9,'Greys')[c(5,9,7)])
 setwd(pathGraphics)
-tikz(file='crossValLevel.tex',width=8,height=3.5,standAlone=F)
+# tikz(file='crossValLevel.tex',width=8,height=3.5,standAlone=F)
 tmp
-dev.off()
+# dev.off()
 ###############################################################################
 
 ###############################################################################

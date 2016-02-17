@@ -13,7 +13,7 @@ dv='rfdiLog'; dvName='Ln(FDI)'; fileFE='fdiFE.rda'
 dispVars =  c( 'iDispB')
 dispLabs = c('ICSID' )
 ivDisp=c( paste0('mvs2_',dispVars), paste0('mvs5_',dispVars), paste0(dispVars, 'C') )
-ivDispName = c( lagLabName(dispLabs,T,2), lagLabName(dispLabs,T,5), paste0('Cumulative ', lagLabName(dispLabs,F) ))
+ivDispName = c( dName(dispLabs,2), dName(dispLabs,5), dName(dispLabs) )
 
 # Other covariates
 ivOther=c(
@@ -31,6 +31,49 @@ ivOtherName=c(
 	'Ratified BITs','Capital Openness','Polity', 'Property Rights'
 	)
 ivsName=lapply(1:length(ivDispName), function(x){ c(ivDispName[x], lagLabName(ivOtherName), 'World FDI') })
+#######################################################################################
+
+#######################################################################################
+# Simple correlation analysis
+
+# Across sample
+slice = na.omit( aData[,c(dv, lagLab(ivDisp, 1), 'ccode', 'year') ] )
+length( unique(slice$ccode)  ); length( unique(slice$year)  ) ; sort( unique(slice$year)  )
+cor(aData[,c(dv, lagLab(ivDisp, 1))], use='pairwise.complete.obs')[,1] %>% round(., 3)
+sMods = lapply(ivDisp, function(d){
+	dForm = paste(dv, lagLab(d, 1), sep='~') %>% formula()
+	lm(dForm, data=aData) %>% coeftest() %>% .[2,] %>% return(.) }) %>% do.call('rbind', .) 
+rownames(sMods) = ivDispName
+
+# By country
+cntries = char( unique(aData$ccode) )
+corrMat = matrix(NA, nrow=length(cntries), ncol=length(ivDisp), dimnames=list(cntries, ivDisp))
+for(c in cntries){
+	slice = aData[aData$ccode==c,]
+	if( sum(apply(slice[,ivDisp], 2, sum, na.rm=TRUE))==0 ){ corrMat[c,] = NA } else {
+		corr = cor(slice[,c(dv, ivDisp)] , method='pearson')  
+		corrMat[c,] = corr[2:nrow(corr), 1]
+	}
+}
+corrMat = corrMat[apply(corrMat, 1, function(x){ sum(is.na(x)) }) != 6,]
+ggCorr = data.frame(corrMat, row.names=NULL, stringsAsFactors=FALSE)
+ggCorr$ccode = rownames(corrMat)
+ggCorr = melt(ggCorr, id='ccode')
+ggCorr$variable = mapVar(ggCorr$variable, ivDisp, ivDispName)
+
+tmp = ggplot(na.omit(ggCorr), aes(x=factor(ccode), y=value))
+tmp = tmp + geom_point() + geom_hline(yintercept=0, color='red')
+tmp = tmp + ylab(expression(rho['(FDI, Disputes)'])) + xlab('Countries')
+tmp = tmp + facet_wrap(~variable, nrow=1) + ylim(-1,1)
+tmp = tmp + theme(
+	legend.position='none', legend.title=element_blank(),
+    axis.ticks=element_blank(), panel.grid.major=element_blank(),
+    panel.grid.minor=element_blank(),
+    axis.text.x = element_blank()
+	)
+tmp
+setwd(pathGraphics)
+ggsave(filename='corrFDI.pdf', plot=tmp, width=8, height=3.5)
 #######################################################################################
 
 #######################################################################################

@@ -61,8 +61,9 @@ lagLab=function(x,n){ paste0('lag',n,'_',x) }
 chLabName=function(x){ paste0('\\%$\\Delta$ ',x) }
 lagLabName=function(x,mvs=FALSE, mvsNum=NULL){ 
   if(!mvs){ return(paste0(x, '$_{t-1}$')) }
-  if(mvs){ return(paste0(x, '$_{(t-1) + (t-',mvsNum,')}$')) }
-}
+  if(mvs){ return(paste0(x, '$_{(t-1) + (t-',mvsNum,')}$')) } }
+dName = function(x, t=NULL){
+  if(is.null(t)){ paste0('Cumulative ', x, '$_{t-1}$') } else { paste(x, ' (past', t, 'years)') } }
 
 # Log transformations for vars with negative values
 logNeg <- function(z){
