@@ -34,46 +34,71 @@ ivsName=lapply(1:length(ivDispName), function(x){ c(ivDispName[x], lagLabName(iv
 #######################################################################################
 
 #######################################################################################
-# Simple correlation analysis
-
-# Across sample
-slice = na.omit( aData[,c(dv, lagLab(ivDisp, 1), 'ccode', 'year') ] )
-length( unique(slice$ccode)  ); length( unique(slice$year)  ) ; sort( unique(slice$year)  )
-cor(aData[,c(dv, lagLab(ivDisp, 1))], use='pairwise.complete.obs')[,1] %>% round(., 3)
-sMods = lapply(ivDisp, function(d){
-	dForm = paste(dv, lagLab(d, 1), sep='~') %>% formula()
-	lm(dForm, data=aData) %>% coeftest() %>% .[2,] %>% return(.) }) %>% do.call('rbind', .) 
-rownames(sMods) = ivDispName
-
+# Simple mod analysis
 # By country
+getInts = function(res){ 
+	c(mu=res[1], hi95=res[1]+qnorm(.975)*res[2], lo95=res[1]-qnorm(.975)*res[2],
+		hi90=res[1]+qnorm(.95)*res[2], lo90=res[1]-qnorm(.95)*res[2] )  }
 cntries = char( unique(aData$ccode) )
-corrMat = matrix(NA, nrow=length(cntries), ncol=length(ivDisp), dimnames=list(cntries, ivDisp))
+mat = matrix(NA, nrow=length(cntries), ncol=length(ivDisp), dimnames=list(cntries, ivDisp))
+csMods = list(rho=mat, mu=mat, hi95=mat, lo95=mat, hi90=mat, lo90=mat)
 for(c in cntries){
 	slice = aData[aData$ccode==c,]
-	if( sum(apply(slice[,ivDisp], 2, sum, na.rm=TRUE))==0 ){ corrMat[c,] = NA } else {
-		corr = cor(slice[,c(dv, ivDisp)] , method='pearson')  
-		corrMat[c,] = corr[2:nrow(corr), 1]
+	for(d in ivDisp){
+		if( sum(slice[,d], na.rm=TRUE)>1 ){
+			dForm = paste(dv, lagLab(d, 1), sep='~') %>% formula()
+			cdCoef = lm(dForm, data=slice) %>% coeftest() %>% .[2,1:2] ; names(cdCoef) = NULL; cdCoef = getInts(cdCoef)
+			rho = cor(slice[,c(dv, d)], method='pearson')[1,2]
+			csMods[['rho']][c,d] = rho ;csMods[['mu']][c,d] = cdCoef['mu'] ; csMods[['hi95']][c,d] = cdCoef['hi95'] 
+			csMods[['lo95']][c,d] = cdCoef['lo95']; csMods[['hi90']][c,d] = cdCoef['hi90'] ; csMods[['lo90']][c,d] = cdCoef['lo90']
+		}
 	}
 }
-corrMat = corrMat[apply(corrMat, 1, function(x){ sum(is.na(x)) }) != 6,]
-ggCorr = data.frame(corrMat, row.names=NULL, stringsAsFactors=FALSE)
-ggCorr$ccode = rownames(corrMat)
-ggCorr = melt(ggCorr, id='ccode')
-ggCorr$variable = mapVar(ggCorr$variable, ivDisp, ivDispName)
+tmp = lapply(csMods, function(x){ melt(x) %>% mutate(., id=paste0(X1, X2)) %>% na.omit() %>% return(.) })
+ggCoef = tmp[['mu']]
+for(v in c('rho', as.vector(outer(c('hi','lo'), c('95','90'), paste0)))){
+	ggCoef$tmp = tmp[[v]][,3][match(ggCoef$id, tmp[[v]][,4] )] ; names(ggCoef)[ncol(ggCoef)] = v }
 
-tmp = ggplot(na.omit(ggCorr), aes(x=factor(ccode), y=value))
-tmp = tmp + geom_point() + geom_hline(yintercept=0, color='red')
-tmp = tmp + ylab(expression(rho['(FDI, Disputes)'])) + xlab('Countries')
-tmp = tmp + facet_wrap(~variable, nrow=1) + ylim(-1,1)
+# Calculate for full sample using fixed effects & rbind
+fullID='All'
+fullCoef = lapply(ivDisp, function(d){
+	dForm = paste0(paste(dv, lagLab(d,1), sep='~'), ' + factor(ccode)-1') %>% formula()
+	dCoef = lm(dForm, data=aData) %>% coeftest() %>% .[1,1:2] ; names(dCoef) = NULL; dCoef = getInts(dCoef) ; names(dCoef)[1] = ''
+	rho = cor(aData[,c(dv,d)], method='pearson', use='complete.obs')[1,2]
+	c(X1=fullID, X2=d, value=dCoef[1], id=paste0(fullID,d), rho=rho, dCoef[2:length(dCoef)])
+	}) %>% do.call('rbind', .) %>% data.frame()
+for(v in names(fullCoef)[!names(fullCoef) %in% c('X1', 'X2', 'id')]){ fullCoef[,v] = num(fullCoef[,v]) }
+ggCoef = rbind(ggCoef, fullCoef)
+
+# Adjust var names
+ggCoef$X2 = mapVar(ggCoef$X2, ivDisp, ivDispName)
+ggCoef$cntry = panel$CNTRY_NAME[match(ggCoef$X1, panel$ccode)] ; ggCoef$cntry[ggCoef$X1==fullID] = fullID
+ggCoef$cAbb = countrycode(ggCoef$cntry, 'country.name', 'cowc') ; ggCoef$cAbb[ggCoef$X1==fullID] = fullID
+# ggCoef$cAbb = factor(ggCoef$cAbb, levels=unique(ggCoef$cAbb[order(ggCoef$value)]))
+ggCoef$cAbb = factor(ggCoef$cAbb, levels=c(char(sort(unique(ggCoef$cAbb[ggCoef$cAbb!=fullID]))), fullID))
+ggCoef$col = '#1a1a1a' ; ggCoef$col[ggCoef$X1==fullID] = '#3288bd'
+ggCols = unique(ggCoef$col) ; names(ggCols) = ggCoef$cAbb
+
+tmp = ggplot(ggCoef, aes(x=cAbb, y=value, ymin=lo90, ymax=hi90, color=col, pch=col, width=0.8))
+tmp = tmp + geom_hline(yintercept=0, color='red') + geom_point()
+tmp = tmp + scale_x_discrete(expand=c(0.01,0)) + scale_y_continuous(limits=c(-.2,1.4),breaks=seq(-.2,1.4,.4))
+tmp = tmp + geom_vline(xintercept=58.5, color='#3288bd', linetype='dashed')
+# tmp = tmp + geom_linerange()
+tmp = tmp + ylab('$\\beta$ for Dispute Variables') + xlab('Countries')
+# tmp = tmp + ylab('$\\rho$_{(Log(FDI), Disputes)}') + xlab('Countries') + ylim(-1,1)
+tmp = tmp + facet_wrap(~X2, nrow=1, scales='free')
+tmp = tmp + scale_color_manual(values=ggCols)
 tmp = tmp + theme(
 	legend.position='none', legend.title=element_blank(),
     axis.ticks=element_blank(), panel.grid.major=element_blank(),
     panel.grid.minor=element_blank(),
-    axis.text.x = element_blank()
+    axis.text.x = element_text(angle=45,size=3.5)
 	)
 tmp
 setwd(pathGraphics)
-ggsave(filename='corrFDI.pdf', plot=tmp, width=8, height=3.5)
+tikz(file='corrFDI.tex',width=8,height=3.5,standAlone=F)
+tmp
+dev.off()
 #######################################################################################
 
 #######################################################################################

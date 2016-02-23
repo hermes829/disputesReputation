@@ -129,24 +129,26 @@ We begin our analysis of the consequences of alleged investment treaty violation
 In choosing our model specification, we closely mirror the choices made in earlier works. For our dependent variable we use logged, net FDI flows at the country-year level of analysis. \citeauthor{allee:peinhardt:2011} highlight the importance of choosing this dependent variable as it best enables them to test how their reputational argument should apply to both current and potential investors. Specifically, they note that, ``firms who currently have investment in a country are likely to reconsider the investment climate in the host country \ldots on an ongoing basis'' and ``potential new investors are likely to reconsider whether a potential host country \ldots has been a defendant in ICSID disputes.''\footnote{\citet[p. 419--420]{allee:peinhardt:2011}} Accounting for both outflows and inflows introduces important variation, which the extant arguments in the literature would suggest can be explained by countries facing a higher number of ICSID disputes. 
 
 \nocite{icsid:2014}
-Our key independent variable measures the number of ICSID disputes a country has faced and to construct this we turn to the publicly maintained records that ICSID provides.\footnote{\citet[p. 7, 10]{icsid:2015}} Using these records, we create three versions of the disputes variable, a counter of how many disputes a country has faced in the past two years, in the past five years, and a cumulative count. Given our arguments in the preceding section, our expectation is that each of these variables will have a minimal and uncertain effect on FDI flows.\footnote{We do not advance any hypotheses about the effects of winning or losing disputes because a high proportion of registered ICSID cases (39 percent at the ICSID as of late 2013) have not been concluded, and there is no reason to think that those belonging to the concluded set are representative of the broader universe. As suggested above, ``concluded'' is also a potentially misleading label even as applied to ICSID cases inasmuch as a dispute decided by an arbitral panel at one point in time is subject to further revision and annulment proceedings as well as supplementary annulment proceedings. According to the ICSID's caseload statistics, 28 percent of all awards rendered by the ICSID between 1972 and 2013 led to applications for annulment\citep[p. 17]{icsid:2014}. The distinction between ``concluded'' and ``pending'' cases is accordingly rather blurry.} Before wading into our full model specification we first run a series of simple correlations between our dispute variables and logged, FDI flows. Table~\ref{tab:aggCorr}, shows the results of this exercise for a 
+Our key independent variable measures the number of ICSID disputes a country has faced and to construct this we turn to the publicly maintained records that ICSID provides.\footnote{\citet[p. 7, 10]{icsid:2015}} Using these records, we create three versions of the disputes variable, a counter of how many disputes a country has faced in the past two years, in the past five years, and a cumulative count. Given our arguments in the preceding section, our expectation is that each of these variables will have a minimal and uncertain effect on FDI flows.\footnote{We do not advance any hypotheses about the effects of winning or losing disputes because a high proportion of registered ICSID cases (39 percent at the ICSID as of late 2013) have not been concluded, and there is no reason to think that those belonging to the concluded set are representative of the broader universe. As suggested above, ``concluded'' is also a potentially misleading label even as applied to ICSID cases inasmuch as a dispute decided by an arbitral panel at one point in time is subject to further revision and annulment proceedings as well as supplementary annulment proceedings. According to the ICSID's caseload statistics, 28 percent of all awards rendered by the ICSID between 1972 and 2013 led to applications for annulment\citep[p. 17]{icsid:2014}. The distinction between ``concluded'' and ``pending'' cases is accordingly rather blurry.} 
 
-\begin{table}[ht]
-\centering
-\begin{tabular}{lccc}
-~ & ICSID (past 2 years) & ICSID (past 5 years) & Cumulative ICSID$_{t-1}$ \\ \hline
-$\rho_{FDI, Disputes}$ & 0.039 & 0.050 & 0.039 \\
-\end{tabular}
-\caption{Correlation coefficient between disputes and logged, FDI flows across a sample of 109 non-upper income countries from 1986 to 2014.}
-\label{tab:aggCorr}
-\end{table}
+Before moving towards adding in our set of control variables, we run a simple analysis to determine the bivariate relationship between our dispute variables and logged, FDI flows. To do this, we take every country that had at least one dispute and run a simple linear model with logged, FDI flows as our dependent variable and a lagged version of the dispute measure as the sole independent variable -- we do this separately for the three dispute measures.\footnote{For each of these models we have 29 observations for every country.} The results are shown in Figure~\ref{fig:corrFDI}. In each of these panels, the black points represent the effect that a dispute is expected to have on FDI flows for a particular dispute variable and country during the period of 1986 to 2014. If disputes had costly effects on FDI flows, we would expect to see the majority of points to fall below the red line in these panels, as this would indicate a negative relationship between disputes and FDI flows. However, we find the exact opposite for the vast majority of countries. We also run a model across the full panel of 112 lower income countries, here we include both countries that had disputes and did not, using fixed effects for each country, and the dispute coefficient results of this analysis are included in blue on the far right of each panel. There again we find little evidence of disputes having an adverse effect on FDI flows in this still simple bivariate analysis. 
+
+% \begin{table}[ht]
+% \centering
+% \begin{tabular}{lccc}
+% ~ & ICSID (past 2 years) & ICSID (past 5 years) & Cumulative ICSID$_{t-1}$ \\ \hline
+% $\rho_{FDI, Disputes}$ & 0.039 & 0.050 & 0.039 \\
+% \end{tabular}
+% \caption{Correlation coefficient between disputes and logged, FDI flows across a sample of 109 non-upper income countries from 1986 to 2014.}
+% \label{tab:aggCorr}
+% \end{table}
 
 \begin{figure}[ht]
 	\centering
-	\caption{Correlation Between FDI and Lagged Disputes by Country}
+	\caption{Correlation Between Log(FDI) and Lagged Disputes by Country}
 	\label{fig:corrFDI}
 	\includegraphics[width=1\textwidth]{graphics/corrFDI.pdf}
-	\caption*{Note: Here we show the correlation coefficients between our dispute variables and logged FDI flows for each country.}
+	\caption*{Note: Here we show the correlation coefficients between our dispute variables and logged FDI flows for each country with at least one dispute recorded from 1986 to 2014.}
 \end{figure}
 \FloatBarrier
 
