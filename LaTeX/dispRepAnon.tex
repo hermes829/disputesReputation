@@ -145,14 +145,15 @@ Before moving towards adding in our set of control variables, we run a simple an
 
 \begin{figure}[ht]
 	\centering
-	\caption{Correlation Between Log(FDI) and Lagged Disputes by Country}
+	\caption{Bivariate Relationship Between Log(FDI) and Lagged Disputes}
 	\label{fig:corrFDI}
-	\includegraphics[width=1\textwidth]{graphics/corrFDI.pdf}
-	\caption*{Note: Here we show the correlation coefficients between our dispute variables and logged FDI flows for each country with at least one dispute recorded from 1986 to 2014.}
+	% \includegraphics[width=1\textwidth]{graphics/corrFDI.pdf}
+	\resizebox{1\textwidth}{!}{\input{graphics/corrFDI}}	
+	\caption*{Note: Here we show the bivariate relationship between disputes and FDI flows through a series of regressions for every country, in black, and then a regression using fixed effects for all countries, in blue, during the period of 1986 to 2014.}
 \end{figure}
 \FloatBarrier
 
-The control variables utilized in the analysis include the cumulative number of BITs ratified by a country, which we derive from the UNCTAD database.\footnote{\citet{unctad:2013c}} Given that investment treaties are designed to convey relatively broad signals to the international investment community, we expect the number of ratified BITs to be positively related to reputation. Since the goal of the analysis is to estimate the impact of investor-state dispute involvement vis-\`{a}-vis other variables that we expect to affect a state's reputation with the international investment community, we also include economic dynamism, level of development, market size, macroeconomic stability, political violence in the country, risk to government from foreign action, financial openness, political democracy, level of property rights protection, and total world FDI in a given year. We operationalize these variables, respectively, on the basis of GDP growth,\footnote{\citet{worldbank:2013}} logged GDP per capita,\footnote{Ibid} population,\footnote{Ibid} the rate of inflation,\footnote{Ibid} internal and stability,\footnote{\citet{prs:2013}} financial openness (from \citeauthor{chinn:ito:2008}),\footnote{\citet{chinn:ito:2008}} polity ratings,\footnote{Specifically, we use the Polity 2 score from the Polity IV project developed by \citet{marshall2013polity}.} and the sum of net FDI flows in a given year -- all of which, with the exception of inflation, we expect to exercise a positive influence on international reputation.
+Though this bivariate analysis is useful as a starting point, adding in a series of controls is essential to control for possible confounders. To do this, we add in a large set of controls that have been previously used in the FDI literature. Specifically, to account for macroeconomic factors that might affect FDI flows we add in GDP growth, logged GDP per capita, logged population, and logged inflation.\footnote{We gather each of these measures from the \citet{worldbank:2013}.} Additionally, we add a set of measures from the International Country Risk Guide (ICRG) to account for the level of political violence in the country and the risk to the ruling government from foreign action.\footnote{\citet{prs:2013}} Next, we add in a set of institutional measures that have been identified to be related with FDI flows: financial openness,\footnote{\citet{chinn:ito:2008}} political democracy,\footnote{Specifically, we use the Polity 2 score from the Polity IV project developed by \citet{marshall2013polity}.} and level of property rights protection.\footnote{\citet{prs:2013}} Last to account for global trends in FDI flows, we add in a yearly level variable that sums up the net FDI flows in a given year across all countries in the world.
 
 Our sample includes all lower and middle-income nations for which data are available. We exclude upper income nations from the analysis because their role in the international investment regime differs significantly from that of lower and middle-income nations.\footnote{This is the same exclusion criteria used by \citet{allee:peinhardt:2011}. Specifically, we follow their case selection rule of excluding those countries that were members of the OECD at the beginning of the time period of the analysis. Applying different case selection rules, such as removing upper income countries as defined by the Word Bank leads to similar results.} The time period covered by the statistical analysis ranges from 1987, when the first treaty-based dispute was brought to international arbitration, to 2014, yielding an unbalanced time-series panel of more than 2,500 observations covering 101 countries. The results of this analysis are shown in Table~\ref{tab:dispFDI}.
 
@@ -199,7 +200,7 @@ n & 25&72 & 25&72 & 25&72 \\
   N && 101 && 101 && 101 \\ 
   $R^{2}$ & 0&.03 & 0&.03 & 0&.03 \\ 
   % Adj. $R^{2}$ & 0&.99 & 0&.99 & 0&.99 \\ 
-  RMSE & 0&.49 & 0&.49 & 0&.49 \\ 
+  % RMSE & 0&.49 & 0&.49 & 0&.49 \\ 
    \hline
 \hline
 \end{tabular}
@@ -212,53 +213,65 @@ As expected, the results for our parameterizations of ICSID disputes each consis
 
 \section*{Research Hypotheses, Data, and Methodology}
 
-Building on the theoretical arguments outlined above about the narrow, uncertain, and limited information conveyed by ISDS processes, we hypothesize that the reputational impact of state involvement in investment dispute processes is at best limited. For the purposes of this analysis, reputation is defined in terms of the Investment Profile rating of the International Country Risk Guide (ICRG),\footnote{\citet{prs:2013}} which is designed to offer international investors guidance with respect to the risks of investing in particular countries. The Investment Profile rating represents one component of overall investment risk in the ICRG rating system, and it focuses specifically on risk in the area of contract viability/expropriation, profit repatriation, and payment delays on a scale ranging from 1 to 12. These ratings begin in 1984 and cover a total of 140 countries. The perceptual assessments of the ICRG have been used extensively in prior research in international political economy, including Allee and Peinhart's work on the impact of ICSID investment disputes. But whereas prior research has employed the ICRG data and other perceptually based and partially overlapping rankings, such as the ``rule of law,'' ``law and order,'' and ``property rights'', as control variables, we draw upon reputational data to provide a direct assessment of the causal mechanism widely presumed to link disputes with investor behavior.
+Building on the theoretical arguments outlined above about the narrow, uncertain, and limited information conveyed by ISDS processes, we hypothesize that the reputational impact of state involvement in an international investor-state dispute is at best limited. Since the institutional edifice upon which the arbitration system is built provides little reliable information to investors, we expect this hypothesis to hold across, regardless of dispute venue. Nevertheless, to take advantage of the theoretical leverage that variations in institutional rules offer with respect to our argument about information flows, we investigate potential differences in the reputational impact of  ICSID versus  non-ICSID dispute settlement. To the extent that information matters, we expect that the institutional visibility, scope of legal authority, and transparency of the ICSID relative to other arbitral venues enhance the reputational costs of dispute involvement at ICSID. Additionally, to the extent that dispute involvement has reputational effects, we expect these to revolve around cumulative dispute involvement. Hence whereas an individual dispute conveys limited information to the international investment community, we hypothesize that an extended record of alleged treaty violations accumulated over time is likely to yield greater adverse reputational consequences.  
 
-Our key independent variables accounting for the formal initiation of investor-state dispute arbitration at ICSID remain the same as before. Additionally, the control variables remain similar as well, the one change we make here is that we no longer include the ICRG measure of property rights as an independent variable. Including this variables in the analysis may create problems of endogeneity as well as a bias towards underestimating the impact of disputes on reputation. Our sample for this reputation analysis is still composed of lower and middle-income nations. In total, we have over 2,600 observations for over a 100 countries from 1987 to 2014.
+We do not advance any hypotheses about the effects of winning or losing disputes because a third of registered treaty-based disputes have not been concluded, and there is no reason to think that those belonging to the concluded set are representative of the broader universe. As suggested above, ``concluded'' is also a potentially misleading label even as applied to ICSID cases inasmuch as a dispute decided by an arbitral panel at one point in time is subject to further revision and annulment proceedings as well as supplementary annulment proceedings.  distinction between ``concluded'' and ``pending'' cases is accordingly rather blurry. 
+
+For the purposes of this analysis, reputation is defined in terms of the Investment Profile rating of the International Country Risk Guide (ICRG),\footnote{\citet{prs:2013}} which is designed to offer international investors guidance with respect to the risks of investing in particular countries. The Investment Profile rating represents one component of overall investment risk in the ICRG rating system, and it focuses specifically on risk in the area of contract viability/expropriation, profit repatriation, and payment delays on a scale ranging from 1 to 12. These ratings begin in 1984 and cover a total of 140 countries. The perceptual assessments of the ICRG have been used extensively in prior research in international political economy, including Allee and Peinhart's work on the impact of ICSID investment disputes. But whereas prior research has employed the ICRG data and other perceptually based and partially overlapping rankings, such as the ``rule of law,'' ``law and order,'' and ``property rights'', as control variables, we draw upon reputational data to provide a direct assessment of the causal mechanism widely presumed to link disputes with investor behavior.
+
+The key independent variable in the analysis is again the formal initiation of investor-state dispute arbitration over a two year, five year, and cumulative interval. Further to investigate our hypothesis about differences in the reputational impact of disputes originating at the ICSID versus other venues we create three additional versions of this dispute variable for non-ICSID disputes (examples of other venues include Cairo Regional Centre for International Commercial Arbitration, Stockholm Chamber of Commerce, UNCITRAL).\footnote{The documentation of codings for treaty-based ICSID disputes is available on request to the authors.} 
+
+ The control variables utilized in the analysis include the cumulative number of BITs ratified by a country, which we derive from the UNCTAD database.\footnote{\citet{unctad:2013c}} Given that investment treaties are designed to convey relatively broad signals to the international investment community, we expect the number of ratified BITs to be positively related to reputation. Since the goal of the analysis is to estimate the impact of investor-state dispute involvement vis-\`{a}-vis other variables that we expect to affect a state's reputation with the international investment community, we also include economic dynamism, market size, macroeconomic stability, internal conflict, financial openness, and political democracy. We operationalize these variables, respectively, on the basis of GDP growth,\footnote{\citet{worldbank:2013}} population,\footnote{Ibid} the rate of inflation,\footnote{Ibid} internal stability,\footnote{\citet{prs:2013}} financial openness (from \citeauthor{chinn:ito:2008}),\footnote{\citet{chinn:ito:2008}} and polity ratings\footnote{Specifically, we use the Polity 2 score from the Polity IV project developed by \citet{marshall2013polity}.} -- all of which with the exception of inflation we expect to exercise a positive influence on international reputation.\footnote{While there other variables that might be considered theoretically relevant to the study of investment reputation, we have opted for those utilized in prior IPE research with broad country coverage and limited overlap with other variables. Excluded under the latter criterion are other reputational measures, such as the rule of law and property rights protection, as well as the external conflict measure utilized by Allee and Peinhardt, which includes external pressures, such as diplomatic pressures, trade restrictions, and sanctions, resulting from investor-state disputes. Including such variables in the analysis may create problems of endogeneity as well as a bias towards underestimating the impact of disputes on reputation.} As with our FDI analysis, our sample includes all lower and middle-income nations for which data are available. The time period covered by the statistical analysis ranges from 1987, when the first treaty-based dispute was brought to international arbitration, to 2014, yielding an unbalanced time-series panel of approximately 2,600 observations and 100 countries.
 
 \section*{Empirical Results}
 
 We begin the analysis of the effects of dispute involvement on perceptions of investment climate using a fixed effects framework with robust standard errors. Table \ref{tab:dispRepLevel} displays the results of this analysis. The lagged number of ratified BITs has a positive impact on reputations with the marginal effect of ratifying an additional ten treaties, equating to a 0.3 point change in reputation. Additionally, so-called ``country fundamentals'' matter: countries with higher levels of economic growth, greater market size, more capital account openness, more democracy, and higher levels of internal stability have stronger reputations. Also as expected, high rates of inflation have adverse reputational effects.
 
 % latex table generated in R 3.2.2 by xtable 1.7-4 package
-% Fri Feb  5 01:13:48 2016
+% Wed Feb 24 09:51:28 2016
 \begin{table}[ht]
 \centering
 {\footnotesize
-\begin{tabular}{lr@{} lr@{}lr@{}lr@{}lr@{}}
- Variable && Model 1 && Model 2 && Model 3 \\ 
+\begin{tabular}{lr@{} lr@{}lr@{}lr@{} lr@{}lr@{}lr@{} }
+ Variable && Model 1 && Model 2 && Model 3 && Model 4 && Model 5 && Model 6 \\ 
   \hline
 \hline
-ICSID (past two years) & $-0$&$.130^{\ast\ast}$ &&  &&  \\ 
-   & (0&.049) &&  &&  \\ 
-  ICSID (past five years) &&  & $-0$&$.090^{\ast}$ &&  \\ 
-   &&  & (0&.039) &&  \\ 
-  Cumulative ICSID$_{t-1}$ &&  &&  & $-0$&$.066^{\ast}$ \\ 
-   &&  &&  & (0&.027) \\ 
-  \%$\Delta$ GDP$_{t-1}$ & $0$&$.016^{\ast}$ & $0$&$.016^{\ast}$ & $0$&$.016^{\ast}$ \\ 
-   & (0&.006) & (0&.006) & (0&.006) \\ 
-  Ln(GDP per capita)$_{t-1}$ & 0&.701 & 0&.687 & 0&.720 \\ 
-   & (0&.391) & (0&.389) & (0&.391) \\ 
-  Ln(Pop.)$_{t-1}$ & $2$&$.608^{\ast\ast}$ & $2$&$.617^{\ast\ast}$ & $2$&$.647^{\ast\ast}$ \\ 
-   & (0&.382) & (0&.382) & (0&.382) \\ 
-  Ln(Inflation)$_{t-1}$ & $-0$&$.277^{\ast\ast}$ & $-0$&$.283^{\ast\ast}$ & $-0$&$.294^{\ast\ast}$ \\ 
-   & (0&.077) & (0&.076) & (0&.076) \\ 
-  Internal Stability$_{t-1}$ & $0$&$.202^{\ast\ast}$ & $0$&$.202^{\ast\ast}$ & $0$&$.201^{\ast\ast}$ \\ 
-   & (0&.034) & (0&.034) & (0&.034) \\ 
-  External Stability$_{t-1}$ & -0&.006 & -0&.008 & -0&.011 \\ 
-   & (0&.037) & (0&.037) & (0&.037) \\ 
-  Ratif. BITs$_{t-1}$ & $0$&$.025^{\ast}$ & $0$&$.027^{\ast\ast}$ & $0$&$.029^{\ast\ast}$ \\ 
-   & (0&.01) & (0&.01) & (0&.01) \\ 
-  Capital Openness$_{t-1}$ & $0$&$.195^{\ast\ast}$ & $0$&$.192^{\ast\ast}$ & $0$&$.181^{\ast\ast}$ \\ 
-   & (0&.067) & (0&.066) & (0&.067) \\ 
-  Polity$_{t-1}$ & $0$&$.012^{\ast\ast}$ & $0$&$.012^{\ast\ast}$ & $0$&$.012^{\ast\ast}$ \\ 
-   & (0&.003) & (0&.003) & (0&.003) \\ 
+ICSID (past two years) & $-0$&$.13^{\ast\ast}$ &&  &&  &&  &&  &&  \\ 
+   & (0&.049) &&  &&  &&  &&  &&  \\ 
+  Non-ICSID (past two years) &&  & -0&.049 &&  &&  &&  &&  \\ 
+   &&  & (0&.131) &&  &&  &&  &&  \\ 
+  ICSID (past five years) &&  &&  & $-0$&$.09^{\ast}$ &&  &&  &&  \\ 
+   && &&  & (0&.039) &&  &&  &&  \\ 
+  Non-ICSID (past five years) &&  &&  &&  & -0&.046 &&  &&  \\ 
+   &&  &&  &&  & (0&.107) &&  &&  \\    
+  Cumulative ICSID$_{t-1}$ &&  &&  &&  &&  & $-0$&$.066^{\ast}$ &&  \\ 
+   &&  &&  &&  &&  & (0&.027) &&  \\ 
+  Cumulative Non-ICSID$_{t-1}$ &&  &&  &&  &&  &&  & -0&.066 \\ 
+   && &&  &&  &&  &&  & (0&.078) \\    
+  \%$\Delta$ GDP$_{t-1}$ & $0$&$.016^{\ast}$ & $0$&$.015^{\ast}$ & $0$&$.016^{\ast}$ & $0$&$.015^{\ast}$ & $0$&$.016^{\ast}$ & $0$&$.015^{\ast}$ \\ 
+   & (0&.006) & (0&.006) & (0&.006) & (0&.006) & (0&.006) & (0&.006) \\ 
+  Ln(GDP per capita)$_{t-1}$ & 0&.701 & 0&.763 & 0&.687 & 0&.768 & 0&.72 & 0&.786 \\ 
+   & (0&.391) & (0&.397) & (0&.389) & (0&.399) & (0&.391) & (0&.402) \\ 
+  Ln(Pop.)$_{t-1}$ & $2$&$.608^{\ast\ast}$ & $2$&$.599^{\ast\ast}$ & $2$&$.617^{\ast\ast}$ & $2$&$.601^{\ast\ast}$ & $2$&$.647^{\ast\ast}$ & $2$&$.593^{\ast\ast}$ \\ 
+   & (0&.382) & (0&.385) & (0&.382) & (0&.385) & (0&.382) & (0&.386) \\ 
+  Ln(Inflation)$_{t-1}$ & $-0$&$.277^{\ast\ast}$ & $-0$&$.27^{\ast\ast}$ & $-0$&$.283^{\ast\ast}$ & $-0$&$.271^{\ast\ast}$ & $-0$&$.294^{\ast\ast}$ & $-0$&$.273^{\ast\ast}$ \\ 
+   & (0&.077) & (0&.079) & (0&.076) & (0&.079) & (0&.076) & (0&.078) \\ 
+  Internal Stability$_{t-1}$ & $0$&$.202^{\ast\ast}$ & $0$&$.203^{\ast\ast}$ & $0$&$.202^{\ast\ast}$ & $0$&$.203^{\ast\ast}$ & $0$&$.201^{\ast\ast}$ & $0$&$.201^{\ast\ast}$ \\ 
+   & (0&.034) & (0&.034) & (0&.034) & (0&.034) & (0&.034) & (0&.034) \\ 
+  External Stability$_{t-1}$ & -0&.006 & -0&.004 & -0&.008 & -0&.004 & -0&.011 & -0&.003 \\ 
+   & (0&.037) & (0&.037) & (0&.037) & (0&.037) & (0&.037) & (0&.037) \\ 
+  Ratif. BITs$_{t-1}$ & $0$&$.025^{\ast}$ & $0$&$.022^{\ast}$ & $0$&$.027^{\ast\ast}$ & $0$&$.022^{\ast}$ & $0$&$.029^{\ast\ast}$ & $0$&$.024^{\ast}$ \\ 
+   & (0&.01) & (0&.01) & (0&.01) & (0&.01) & (0&.01) & (0&.011) \\ 
+  Capital Openness$_{t-1}$ & $0$&$.195^{\ast\ast}$ & $0$&$.198^{\ast\ast}$ & $0$&$.192^{\ast\ast}$ & $0$&$.196^{\ast\ast}$ & $0$&$.181^{\ast\ast}$ & $0$&$.195^{\ast\ast}$ \\ 
+   & (0&.067) & (0&.067) & (0&.066) & (0&.067) & (0&.067) & (0&.067) \\ 
+  Polity$_{t-1}$ & $0$&$.012^{\ast\ast}$ & $0$&$.012^{\ast\ast}$ & $0$&$.012^{\ast\ast}$ & $0$&$.012^{\ast\ast}$ & $0$&$.012^{\ast\ast}$ & $0$&$.012^{\ast\ast}$ \\ 
+   & (0&.003) & (0&.003) & (0&.003) & (0&.003) & (0&.003) & (0&.003) \\ 
    \hline
-n & 26&03 & 26&03 & 26&03 \\ 
-  N & 1&01 & 1&01 & 1&01 \\ 
-  $R^{2}$ & 0&.43 & 0&.43 & 0&.44 \\ 
-  % Adj. $R^{2}$ & 0&.97 & 0&.97 & 0&.97 \\ 
-  RMSE & 1&.29 & 1&.29 & 1&.28 \\ 
+n & 26&03 & 26&03 & 26&03 & 26&03 & 26&03 & 26&03 \\ 
+  N & 10&1 & 10&1 & 10&1 & 10&1 & 10&1 & 10&1 \\ 
+  $R^{2}$ & 0&.43 & 0&.43 & 0&.43 & 0&.43 & 0&.44 & 0&.43 \\ 
+  % Adj. $R^{2}$ & 0&.41 & 0&.41 & 0&.42 & 0&.41 & 0&.42 & 0&.41 \\ 
+  % RMSE & 1&.29 & 1&.29 & 1&.29 & 1&.29 & 1&.28 & 1&.29 \\ 
    \hline
 \hline
 \end{tabular}
@@ -269,11 +282,9 @@ n & 26&03 & 26&03 & 26&03 \\
 \FloatBarrier
 
 % \newpage
+Moving to our dispute measures the first result we highlight is that the effect of non-ICSID disputes on reputation is highly uncertain. This lack of a finding remains consistent across each version of the non-ICSID dispute variable.\footnote{A simple bivariate analysis shows that the effect is highly uncertain across countries as well.} Disputes filed at ICSID, however, do have a significant and adverse effect on FDI flows. However, it is unclear how much to make of the marginal differences in coefficient estimates, since our reputation variable ranges from 0 to 12 and the coefficient estimates only differ by fractions of a point. Additionally, even though the dispute measures show up as significant predictors in the model, their substantive impact on reputation is worthy of further exploration. 
 
-Moving to our dispute measures, each has a significant and negative effect on reputation. However, it is unclear how much to make of the marginal differences in coefficient estimates, since our reputation variable ranges from 0 to 12 and the coefficient estimates only differ by fractions of a point. Additionally, even though the dispute measures show up as significant predictors in the model, their substantive impact on reputation is worthy of further exploration. 
-
-To explore this issue more fully, we utilize a simulation-based approach. For each model, we set up two scenarios, one in which the disputes variable is set to zero and another where it is set to three, which approximates the 99$^{th}$ percentile value for each of the dispute measures. All other covariates are set to their median value. Next, we conduct 1,000 random draws from a multivariate normal to obtain distributions for the point estimates of each of the regression coefficients. After obtaining these distributions, we calculate the predicted value of reputation given the conditions set by the two scenarios. The result of this analysis is visualized in Figure \ref{fig:subEffect}. A solid circle is used to designate the mean estimate for each scenario and the line widths designate where 95 percent of the values for a given scenario fall. For each of the dispute variables shown, there is less than a one point difference in the predicted investment profile rating predicted by the zero and high dispute scenarios. In addition to this relatively minimal difference, the level of uncertainty around these predictions is quite large. Taken together these characteristics of the data challenge the broad claim that dispute initiation generates significant reputational costs for offending countries.
-
+To explore this issue more fully, we utilize a simulation-based approach. For each model, we set up two scenarios, one in which the disputes variable is set to zero and another where the relevant dispute variable is set to its 99$^{th}$ percentile.\footnote{This corresponds to three for ICSID disputes over the past two years, six for disputes over the past five years, and 10 for the cumulative number of disputes.} All other covariates are set to their median value. Next, we conduct 1,000 random draws from a multivariate normal to obtain distributions for the point estimates of each of the regression coefficients. After obtaining these distributions, we calculate the predicted value of reputation given the conditions set by the two scenarios. The result of this analysis is visualized in Figure \ref{fig:subEffect}. A solid circle is used to designate the mean estimate for each scenario and the line widths designate where 95 percent of the values for a given scenario fall. For each of the dispute variables shown, there is less than a one point difference in the predicted investment profile rating predicted by the zero and high dispute scenarios. In addition to this relatively minimal difference, the level of uncertainty around these predictions is quite large. Taken together these characteristics of the data challenge the broad claim that dispute initiation generates significant reputational costs for offending countries.
 % \newpage
 
 \begin{figure}[ht]
@@ -366,9 +377,9 @@ Second, since the early 2000s, there has been a dramatic expansion of electronic
 
 Third, since 2006 the ICSID has adopted new rules regarding transparency. Of particular importance are amendments to the ICSID's arbitration rules introduced in 2006, which mandate the Centre to publish excerpts of the legal reasoning applied by arbitration tribunals in reaching their decisions in specific cases.\footnote{\citet{yackee20112006,antonietti:2006}} Prior to this point, information about dispute arbitrations was only available with the consent of both parties. UNCITRAL has also recently adopted new rules on transparency effective April 1, 2014, although they only apply to treaties concluded prior to that date at the agreement of the disputing parties.\footnote{\citet[p. 33--40]{uncitral:2013}} It seems reasonable to assume that all three sets of changes have led to increased awareness of the cases brought before arbitration tribunals and enhanced the reputational consequences of investment dispute involvement.
 
-\section*{Short and Long Term Effects}
+\section*{Short Versus Long Term Effects}
 
-The main limitations of the preceding results are that they do not directly address the question of reputational \textit{change} nor allow us to distinguish between the short and long-term effects of alleged treaty violations. For this reason, we probe the impact of investment disputes further below on the basis of an error correction model (ECM). Contrary, to Allee and Peinhardt, who assert ``once an investment dispute emerges, investors will rethink their assessments of political risk,'' our central theoretical expectation is that individual disputes are unlikely to have immediate or significant consequences for a state's reputation with investors. To the extent that disputes matter, we expect instead that reputational costs only emerge slowly with the accumulation of arbitral claims and the growth of information about state behavior.\footnote{\citet[p. 402]{allee:peinhardt:2011}} In other words, the arguments relating state reputation to treaty compliance are arguably best understood as reflecting long-term equilibria rather than transitory or short-term effects.
+The main limitations of the preceding results are that they do not directly address the question of reputational \textit{change} nor allow us to distinguish between the short and long-term effects of alleged treaty violations. For this reason, we probe the impact of investment disputes further below on the basis of an error correction model (ECM). Whereas prior research has assumed that investment disputes lead investors to reassess political risk, our central theoretical expectation is that individual disputes have no immediate consequences for a state’s reputation with investors. To the extent that disputes matter, we expect instead that reputational costs only emerge slowly over time with the accumulation of arbitral claims and the growth of information about state behavior. In other words, the arguments relating state reputation to treaty compliance are arguably best understood as reflecting long-term equilibria rather than transitory or short-term effects. We further expect that the impact of dispute involvement is heavily dependent on information flows, making reputational damage more likely in the post-2006 period than earlier. Finally, given the visibility and transparency of the ICSID relative to other arbitral venues, we expect evidence of reputational damage to be most likely to emerge from disputes registered with the ICSID.
 
 Utilizing the same set of cases and variables as in the previous analysis, we assess these expectations on the basis of a model that includes the lagged dependent variable as well as both changes and lags of the independent variables as follows:
 
@@ -386,10 +397,9 @@ in which $\beta_{1}$ is the same as $\Phi$ in the error correction version of th
 
 Given problems of heteroskedasticity associated with cross-sectional time series research designs, as well as the relatively high ratio of panels to periods, the models are estimated with OLS and panel-corrected standard errors in accordance with the recommendations of \citeauthor{beck:katz:1995}.\footnote{\citet{beck:katz:1995}} The estimations are also corrected for panel-specific autocorrelation and country and time fixed effects to eliminate bias arising from omitted or unmeasured variables, which may not be completely exogenous with respect to other explanatory variables.
 
-The estimates for changes in investment reputation are presented in Table \ref{tab:ecm}. Beginning with the control variables, we see results that are weaker and only partially consistent with those reported above in Table \ref{tab:dispRepLevel}. Again the evidence suggests that GDP growth, population, and internal stability matter to reputation; but the other coefficients are statistically weak, with the exception of the coefficient for lagged reputation, which strongly underlines the tendency for investment profile ratings to remain relatively stable over time. 
+The estimates for changes in investment reputation are presented in Table \ref{tab:ecm}. Beginning with the control variables, we see results that are weaker and only partially consistent with those reported above in Table \ref{tab:dispRepLevel}. The evidence again suggests that GDP growth, population, and internal and external stability matter to reputation; but the other coefficients are statistically weak, with the exception of the coefficient for lagged reputation, which underlines the tendency for investment profile ratings to remain relatively stable over time. 
 
-For the variables of central theoretical interest, changes in dispute involvement and lagged levels of accumulated dispute involvement, the coefficients are decidedly weak. In accordance with theoretical expectation, in none of the columns are short-term increases in the number of arbitral claims registered against a state in the prior year statistically significant. At the same time, the results do offer some weak evidence that accumulated dispute involvement matters, at least for arbitral claims that are registered at the ICSID and not settled or discontinued prior to arbitration. As discussed above, these two categories of disputes are those about which the most information is publicly available, underlining the relevance of the transparency dimension for reputational sanctioning in the ISDS process. 
-
+For the variables of central theoretical interest, changes in dispute involvement and lagged levels of accumulated dispute involvement, the coefficients are decidedly weak. In accordance with theoretical expectation, in none of the columns are short-term increases in the number of arbitral claims registered against a state in the prior year statistically significant. In contrast to prior research, we also find that investor-state disputes, whether registered at the ICSID or all arbitral forums combined, have no reputational impact over the 1987-2006 period. Nevertheless, the results offer some evidence that accumulated dispute involvement at the comparatively transparent ICSID has begun to affect reputation in recent years. With the analysis extended to cover the post-2006 period, which roughly doubles the number of disputes included in the analysis, the coefficients for cumulative dispute involvement achieves statistical significance at the .05 level. This finding, which holds across both sets of data on disputes, helps to underline the importance of information availability and the relative transparency of dispute settlement processes for reputational sanctioning. 
 % \newpage
 
 \begin{table}[ht]
@@ -400,47 +410,51 @@ For the variables of central theoretical interest, changes in dispute involvemen
 \label{tab:ecm}
 \begin{tabular}{lr@{} lr@{}lr@{}lr@{}lr@{}}
 	\hline\hline
-	~ & \multicolumn{2}{c}{All ICSID} & \multicolumn{2}{c}{ICSID}  & \multicolumn{2}{c}{Unsettled$^{a}$} & \multicolumn{2}{c}{ICSID-} \\
-	~ & \multicolumn{2}{c}{Disputes} & \multicolumn{2}{c}{Treaty-Based} & \multicolumn{2}{c}{ICSID} &  \multicolumn{2}{c}{UNCTAD}  \\
+	~ & \multicolumn{4}{c}{ICSID} & \multicolumn{4}{c}{All Treaty} \\
+	~ & \multicolumn{2}{c}{1987-2006} & \multicolumn{2}{c}{1987-2014} & \multicolumn{2}{c}{1987-2006} & \multicolumn{2}{c}{1987-2014} \\
 	\hline
-  $\Delta$Registered & 0&.000 & -0&.015 & -0&.022 & -0&.007 \\
-  $\;\;$Disputes & (0&.015) & (0&.017) & (0&.018) & (0&.010) \\
-  Registered & -0&.003 & -0&.003 & -0&.004 & -0&.002 \\
-  $\;\;$Disputes$_{t-1}$ & (0&.002) &  (0&.001) & (0&.002) & (0&.001) \\
-  \multirow{2}{*}{$\Delta$Log(GDP)} & 1&.875 & 1&.870 & 1&.829 & 1&.834 \\
-  & (0&.893) & (0&.896) & (0&.893) & (0&.893) \\
-  \multirow{2}{*}{Log(GDP)$_{t-1}$} & -0&.014 & -0&.013 & -0&.010 & -0&.011\\
-  & (0&.025) & (0&.025) & (0&.025) & (0&.025) \\
-  \multirow{2}{*}{$\Delta$Log(Population)} & 23&.063 & 23&.083 & 23&.148 & 23&.166 \\
-  & (11&.499) & (11&.497) & (11&.503) & (11&.509)\\
-  \multirow{2}{*}{Log(Population)$_{t-1}$} & 0&.123 & 0&.122 & 0&.119 & 0&.119 \\
-  & (0&.094) & (0&.094) & (0&.094) & (0&.094) \\
-  \multirow{2}{*}{$\Delta$Log(Inflation)} & -0&.070 &  -0&.070 &  -0&.071 &  -0&.070 \\
-  & (0&.067) &  (0&.067) &  (0&.067) &  (0&.067) \\
-  \multirow{2}{*}{Log(Inflation)$_{t-1}$} & 0&.013 &  0&.013 &  0&.013 &  0&.013 \\
-  & (0&.018) &  (0&.018) &  (0&.018) &  (0&.018) \\
-  \multirow{2}{*}{$\Delta$Internal Stability} & 0&.026 & 0&.026 &  0&.026 &  0&.026 \\
-  & (0&.020) &  (0&.020) &  (0&.020) &  (0&.020) \\
-  \multirow{2}{*}{Internal Stability$_{t-1}$} & 0&.009 &  0&.009 &  0&.009 &  0&.009 \\
-  & (0&.004) &  (0&.004) &  (0&.004) &  (0&.004) \\
-  \multirow{2}{*}{$\Delta$Ratified BITs} & 0&.000 &  -0&.000 &  0&.000 &  0&.000 \\
-  & (0&.009) &  (0&.009) &  (0&.009) &  (0&.009) \\
-  \multirow{2}{*}{Ratified BITs$_{t-1}$} & 0&.001 & 0&.001 &  0&.001 &  0&.001 \\
-  & (0&.001) & (0&.001) &  (0&.001) &  (0&.001) \\
-  \multirow{2}{*}{$\Delta$Capital Openness} & -0&.001 & -0&.001 &  -0&.001 &  -0&.001 \\
+  $\Delta$Disputes & -0&.016 & -0&.011 & -0&.004 & -0&.004 \\
+~ & (0&.026) & (0&.015) & (0&.014) & (0&.009) \\
+  Disputes$_{t-1}$ & -0&.004 & -0&.003$^{\ast}$ & -0&.002 & -0&.001 \\
+  ~ & (0&.003) &  (0&.001) & (0&.002) & (0&.001) \\
+  \multirow{2}{*}{$\Delta$Log(GDP)} & 6&.692$^{\ast}$ & 5&.140$^{\ast}$ & 6&.585$^{\ast}$ & 5&.060$^{\ast}$ \\
+  & (3&.187) & (2&.259) & (3&.185) & (2&.258) \\
+  \multirow{2}{*}{Log(GDP)$_{t-1}$} & -0&.059 & -0&.022 & -0&.055 & -0&.020\\
+  & (0&.075) & (0&.049) & (0&.076) & (0&.049) \\
+  \multirow{2}{*}{$\Delta$Log(Population)} & 67&.285$^{\ast\ast}$ & 53&.966$^{\ast\ast}$ & 67&.924$^{\ast\ast}$ & 54&.273$^{\ast\ast}$ \\
+  & (20&.765) & (12&.915) & (20&.804) & (12&.935)\\
+  \multirow{2}{*}{Log(Population)$_{t-1}$} & -0&.019 & -0&.026 & -0&.024 & -0&.027 \\
+  & (0&.181) & (0&.073) & (0&.182) & (0&.073) \\
+  \multirow{2}{*}{$\Delta$Log(Inflation)} & -0&.049 &  -0&.055 &  -0&.049 &  -0&.055 \\
+  & (0&.058) &  (0&.039) &  (0&.058) &  (0&.039) \\
+  \multirow{2}{*}{Log(Inflation)$_{t-1}$} & 0&.031 &  0&.031 &  0&.031 &  0&.031$^{\ast}$ \\
+  & (0&.020) &  (0&.016) &  (0&.020) &  (0&.016) \\
+  \multirow{2}{*}{$\Delta$Internal Stability} & 0&.014 & 0&.015 &  0&.014 &  0&.016 \\
+  & (0&.020) &  (0&.017) &  (0&.020) &  (0&.017) \\
+  \multirow{2}{*}{Internal Stability$_{t-1}$} & 0&.015$^{\ast\ast}$ &  0&.011$^{\ast\ast}$ &  0&.015$^{\ast\ast}$ &  0&.011$^{\ast\ast}$ \\
+  & (0&.006) &  (0&.004) &  (0&.006) &  (0&.004) \\
+  \multirow{2}{*}{$\Delta$External Stability} & 0&.084$^{\ast\ast}$ & 0&.088$^{\ast\ast}$ &  0&.084$^{\ast\ast}$ &  0&.088$^{\ast\ast}$ \\
+  & (0&.026) &  (0&.024) &  (0&.026) &  (0&.024) \\
+  \multirow{2}{*}{External Stability$_{t-1}$} & -0&.002 &  0&.000 &  -0&.002 &  0&.000 \\
+  & (0&.005) &  (0&.004) &  (0&.005) &  (0&.004) \\
+  \multirow{2}{*}{$\Delta$Ratified BITs} & 0&.002 &  0&.000 &  0&.003 &  0&.000 \\
   & (0&.008) &  (0&.008) &  (0&.008) &  (0&.008) \\
-  \multirow{2}{*}{Capital Openness$_{t-1}$} & 0&.004 & 0&.004 &  0&.004 &  0&.004 \\
-  & (0&.008) & (0&.008) & (0&.008) & (0&.008) \\
-  \multirow{2}{*}{$\Delta$Polity} & 0&.002 & 0&.002 &  0&.002 &  0&.002  \\
-  & (0&.003) & (0&.003) &  (0&.003) &  (0&.003) \\
-  \multirow{2}{*}{Polity$_{t-1}$} & 0&.001 & 0&.001 &  0&.001 &  0&.001 \\
+  \multirow{2}{*}{Ratified BITs$_{t-1}$} & -0&.000 & -0&.000 &  -0&.000 & -0&.000 \\
+  & (0&.001) & (0&.001) &  (0&.001) &  (0&.001) \\
+  \multirow{2}{*}{$\Delta$Capital Openness} & 0&.000 & 0&.000 &  0&.000 &  0&.000 \\
+  & (0&.002) &  (0&.002) &  (0&.002) &  (0&.002) \\
+  \multirow{2}{*}{Capital Openness$_{t-1}$} & 0&.004 & -0&.001 &  0&.004 &  -0&.001 \\
+  & (0&.010) & (0&.007) & (0&.010) & (0&.007) \\
+  \multirow{2}{*}{$\Delta$Polity} & -0&.003 & -0&.002 &  -0&.003 & - 0&.002  \\
   & (0&.002) & (0&.002) &  (0&.002) &  (0&.002) \\
-    Investment & -0&.079 & -0&.079 & -0&.079 & -0&.079 \\
-  $\;\;$Profile$_{t-1}$ & (0&.010) & (0&.010) & (0&.010) & (0&.010) \\
+  \multirow{2}{*}{Polity$_{t-1}$} & 0&.001 & 0&.001 &  0&.001 &  0&.001 \\
+  & (0&.001) & (0&.000) &  (0&.001) &  (0&.000) \\
+    Investment & -0&.095$^{\ast\ast}$ & -0&.079$^{\ast\ast}$ & -0&.094$^{\ast\ast}$ & -0&.079$^{\ast\ast}$ \\
+  $\;\;$Profile$_{t-1}$ & (0&.012) & (0&.008) & (0&.012) & (0&.008) \\
 	\hline
-	$n$ & 2,&096 & 2,&096 & 2,&096 & 2,&096 \\
-	$N$ & 1&03 & 1&03 & 1&03 & 1&03 \\
-	$R^{2}$ & 0&.34 & 0&.34 & 0&.34 & 0&.34 \\
+	$n$ & 1,&708 & 2,&499 & 1,&708 & 2,&499 \\
+	$N$ & 1&01 & 1&01 & 1&01 & 1&01 \\
+	$R^{2}$ & 0&.38 & 0&.35 & 0&.38 & 0&.35 \\
 	\hline\hline
 \end{tabular}
 \caption*{Note: Dispute variables succeeded by ${t-1}$ measure the lagged cumulative total of disputes; variables preceded by $\Delta$ measure percentage changes. OLS estimates with fixed effects and panel-corrected standard errors in parentheses. Coefficients for time and country dummy variables not shown. \\ \textit{a}: The ``unsettled'' category excludes treaty disputes that were resolved via settlement or discontinuation prior to ICSID arbitration.}
@@ -450,21 +464,20 @@ For the variables of central theoretical interest, changes in dispute involvemen
 
 % \newpage
 
-Estimating the substantive effects of dispute involvement on the basis of the error correction form of the model presented above helps to clarify these results. Drawing on the coefficients for ICSID treaty-based disputes, for example, it can be calculated that with all other variables held constant the registration of a new arbitral claim against a state will only lead to a 0.02 point decline in investment reputation over the short run, which is roughly equivalent to a 0.3 percent decrease relative to the mean value of reputation for the set of cases under consideration. Although reputation will continue to decline further over time by an additional 0.04 points, or roughly 0.6 percent relative to mean reputation, the costs of an individual investor-state dispute are negligible. Even for the registration of three new disputes in a single year, the short-term impact is only an estimated 0.05 point decline in reputation (roughly 0.7 percent) with a further adjustment over the long run of 0.11 points, which approximates a 1.6 percent drop relative to average reputation. To place these figures in perspective, as of 2011 only seven countries in our data set had been involved in three or more ICSID treaty-based investment disputes in a single year. Consistent with the evidence presented above, it should further be emphasized that reputational costs have only reached significant levels in recent years with the dramatic expansion in publicity about ISDS. If the ECM analysis is limited to the pre-2007 period, not one of the lagged dispute coefficients presented in Table \ref{tab:ecm} achieves statistical significance at the 0.05 level. 
+Estimating the substantive effects of dispute involvement on the basis of the error correction form of the model presented above helps to clarify these results. Drawing on the coefficients for ICSID treaty-based disputes over the 1987-2014 period, for example, it can be calculated that with all other variables held constant the registration of a new arbitral claim against a state will only lead to a 0.01 point decline in investment reputation over the short run, which is roughly equivalent to a 0.1 percent decrease relative to the mean value of reputation for the set of cases under consideration. Although reputation will continue to decline further over time by an additional 0.003 points, the costs of an individual investor-state dispute are negligible. Even for the registration of three new ICSID disputes in a single year, the short-term impact is only an estimated 0.03 point decline in reputation (roughly 0.5 percent) with a further adjustment over the long run of 0.01. To place these figures in perspective, as of 2014 only six countries in our data set had been involved in three or more ICSID treaty-based investment disputes in a single year. 
 
 \section*{Conclusion}
 
-This paper makes an original contribution to the growing body of literature on international investor-state disputes by systematically studying their reputational consequences. Whereas prior research has claimed that alleged treaty violations are predictably translated into reduced foreign direct investment flows, we find no evidence of such an effect. We therefore turn to the analysis of reputational damage, which is the mechanism presumed to be brought into play by perceptions that a state has violated its treaty commitments. Drawing upon an original dataset that covers the investor-state dispute involvement of lower and middle income countries both at the ICSID and other international venues, we analyze the impact of investment disputes on levels of investment reputation as well as changes in that reputation over the 1987-2011 period. Contrary to the expectations generated by the theoretical literature on international political economy, as well as prior research on ISDS, our research suggests that the reputational costs of investment dispute involvement are heavily dependent on information flows. 
+This paper makes an original contribution to the growing body of literature on international investor-state disputes by systematically studying their consequences for both FDI flows and investment reputation. Whereas prior research has claimed that involvement in treaty-based investment dispute arbitration is predictably translated into reduced foreign direct investment flows, we find limited evidence of such an effect and only for period since 2006. We therefore turn to the analysis of reputational damage, which is the mechanism presumed to be brought into play by perceptions that a state has violated its treaty commitments. Drawing upon an original dataset that covers the investor-state dispute involvement of lower and middle income countries both at the ICSID and other international venues, we analyze the impact of investment disputes on investment reputation as well as changes in that reputation over the 1987-2014 period. Contrary to the expectations generated by the theoretical literature on international political economy, as well as prior research on ISDS, our research suggests that the reputational costs of investment dispute involvement are restricted and heavily dependent on information flows. 
 
-Focusing initially upon the impact of disputes registered over the prior two years, we find that investor-state disputes have a modest and contingent impact on reputation. The predicted value of investment reputation for countries involved in zero disputes is less than one point lower than that of countries scoring in the 99$^{th}$ percentile for dispute involvement. Moreover, these reputational differences revolve around observations for the post-2006 period during which access to information about dispute settlement processes exploded, both in response to changes in the rules governing international arbitration and mounting international publicity about ISDS. These findings are consistent across different types of disputes and arbitral venues. 
+Focusing initially upon the impact of disputes registered over the prior two years, our evidence indicates that investor-state disputes have a distinctly modest and contingent impact on reputation. The predicted value of investment reputation for countries involved in zero disputes is less than one point lower than that of countries scoring in the 99$^{th}$ percentile for dispute involvement. Moreover, these reputational differences revolve around observations for the post-2006 period during which access to information about dispute settlement processes exploded, both in response to changes in the rules governing international arbitration and mounting international publicity about ISDS. These findings are consistent across different types of disputes and arbitral venues. 
 
-Exploring the impact of arbitral claims on changes in investment reputation on the basis of an error correction model, we find very similar results. Reputational shifts are completely unrelated to short-term increases in the number of challenges registered against a state. More significant is the record of dispute involvement accumulated by a state over the long run, particularly at the ICSID; but the results are anything but robust and again depend on the inclusion of observations for the post 2006-period. 
+Exploring the impact of arbitral claims on changes in investment reputation on the basis of an error correction model, we find very similar results. Reputational shifts are completely unrelated to short-term increases in the number of challenges registered against a state. More significant is the record of dispute involvement accumulated by a state over the long run, particularly at the ICSID; but these results again revolve around the inclusion of observations for the post 2006-period and are anything but substantively significant.
 
-Taken together our three sets of findings on the impact of disputes on foreign investment, investment reputation, and changes in investment reputation substantively challenge the conclusions of prior research focusing on disputes registered at the ICSID between 1984 and 2006. Only in the post-2006 period have disputes manifested a reputational impact. Thus whereas the logic underlying the credible commitment story espoused in the BITs literature assumes that states incur statistically and substantively significant costs from allegations that they have violated their international agreements, we show that the effects of involvement in investor-state disputes are contingent on institutional design and information flows. 
+Taken together our three sets of findings on the impact of disputes on foreign investment, investment reputation, and changes in investment reputation substantively challenge the conclusions of prior research focusing on disputes registered at the ICSID between 1984 and 2006. Only in the post-2006 period have disputes manifested a reputational impact. Thus whereas the logic underlying the credible commitment story espoused in the BITs literature assumes that states incur statistically and substantively significant costs from allegations that they have violated their international agreements, we show that the effects of involvement in investor-state disputes are contingent on institutional design and information flows.
 
-% limited with regard to investment reputation and inconsequential with respect to FDI.
+These findings have significant implications for the broader body of literature on international institutions. Existing theory assumes that formal international commitments raise the ex post cost of defection, thereby creating incentives for states to comply with their treaty obligations. Our analysis significantly modifies this expectation by suggesting that the strength of the incentives for compliance vary with the breadth, visibility, and legitimacy of the monitoring, sanctioning, and enforcement mechanisms brought into play by particular sets of international institutions. Under the current ISDS regime, the monitoring of treaty compliance is externalized to individual private firms and ad hoc arbitral tribunals, whose deliberations are limited to the facts of a particular case, unpredictable, less than transparent, prolonged, and potentially reversible. Other characteristics of the ISDS regime have further reduced its effectiveness, including the contested legitimacy of international arbitral processes involving collisions between the treaty protections accorded investors and other sets of international norms. Notwithstanding the legal powers enjoyed by investors under international treaty agreements, the reputational risks of state involvement in ISDS processes have been accordingly attenuated. It is only since 2006, when important shifts took place in the access of investors to information about dispute processes, that reputational costs began to become significant. The central implication for future research is that reputational mechanisms for effective enforcement of international commitments are contingent on institutional design and associated information costs.
 
-These findings have significant implications for the broader body of literature on international institutions. Existing theory assumes that formal international commitments raise the ex post cost of defection, thereby creating incentives for states to comply with their treaty obligations. Our analysis significantly modifies this expectation by suggesting that the strength of the incentives for compliance vary with the breadth, visibility, and legitimacy of the monitoring, sanctioning, and enforcement mechanisms brought into play by particular sets of international institutions. Under the current ISDS regime, the monitoring of treaty compliance is externalized to individual private firms and ad hoc arbitral tribunals, whose deliberations are limited to the facts of a particular case, unpredictable, less than transparent, prolonged, and potentially reversible. Other characteristics of the ISDS regime have further reduced its effectiveness, including the contested legitimacy of international arbitral processes involving collisions between the treaty protections accorded investors and other sets of international norms. Notwithstanding the legal powers enjoyed by investors under international treaty agreements, the reputational risks of state involvement in ISDS processes have been accordingly attenuated. It is only since 2007, when important shifts took place in the access of investors to information about dispute processes that reputational costs began to become significant. The central implication for future research is that reputational mechanisms for effective treaty enforcement are contingent on institutional design and associated information costs. 
 
 \newpage
 

@@ -20,7 +20,7 @@ aData = aData[aData$year>=1987,]
 ###############################################################################
 # Model setup
 # Set up models
-dv='rfdiLog'; dvName='Investment Profile'; fileFE='LinvProfFE.rda'
+dv='rfdiLog'
 
 # dispute var
 # dispVars = c( 'iDispB', 'iDispB' )

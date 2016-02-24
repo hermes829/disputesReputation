@@ -11,6 +11,7 @@ setwd(pathResults)
 load('LinvProfFEv2.rda'); dv='Investment Profile'; modNames=ivsName=ivAll
 
 preds=NULL
+dRanges=list()
 for(ii in 1:length(modResults)){
 
   x=modResults[[ii]] # model results for vars similar across dispute variables
@@ -33,6 +34,7 @@ for(ii in 1:length(modResults)){
   sims=10000
   simData=na.omit(modelData[,c(varDef[,1],'invProf')])
   vRange=quantile(simData[,vi],probs=seq(0,1,.01))[c('0%','99%')]
+  dRanges[[ii]] = vRange
   intercept=FALSE
   specX=FALSE
   specY=TRUE
@@ -69,14 +71,18 @@ summPreds$scen=rep(LETTERS[1:2],nrow(summPreds)/2)
 summPreds$disp=rep(unlist(lapply(modNames, function(x) x[1])), each=2)
 
 # Relabel facets
+summPreds = summPreds[which(!summPreds$disp %in% c('lag1_mvs2_niDispB', 'lag1_mvs5_niDispB', 'lag1_niDispBC')),]
 summPreds$disp[summPreds$disp=='lag1_mvs2_iDispB'] = 'ICSID (past two years)'
 summPreds$disp[summPreds$disp=='lag1_mvs5_iDispB'] = 'ICSID (past five years)'
 summPreds$disp[summPreds$disp=='lag1_iDispBC'] = 'Cumulative ICSID$_{t-1}$'
-summPreds$disp = factor(summPreds$disp, levels=c('ICSID (past two years)','ICSID (past five years)','Cumulative ICSID$_{t-1}$'))
+summPreds$disp = factor(summPreds$disp, levels=c(
+  'ICSID (past two years)','ICSID (past five years)','Cumulative ICSID$_{t-1}$'
+  ))
 
 # plot
 tmp=ggplot(summPreds, aes(x=factor(scen), y=mean,ymax=hi,ymin=lo,group=disp))
-tmp=tmp+geom_linerange() + geom_point() + facet_wrap(~ disp)
+tmp=tmp+geom_linerange() + geom_point() + facet_wrap(~ disp,nrow=1)
+# tmp=tmp+geom_hline(yintercept=6.343028, color='red', linetype='dashed')
 tmp=tmp+ylab('Predicted Investment Profile Rating')
 tmp=tmp+scale_x_discrete('',labels=c(
   'A'='Zero Disputes', 'B'='High Disputes'))  
@@ -85,8 +91,8 @@ tmp = tmp + theme(
   axis.ticks=element_blank(), panel.grid.major=element_blank(),
   panel.grid.minor=element_blank(), axis.title.y=element_text(vjust=1)
   )
-setwd(pathGraphics)
-tikz(file='simResults.tex',width=8,height=3.2,standAlone=F)
+# setwd(pathGraphics)
+# tikz(file='simResults.tex',width=8,height=3.2,standAlone=F)
 tmp
-dev.off()
+# dev.off()
 ###################################################################

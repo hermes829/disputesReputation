@@ -13,9 +13,13 @@ aData$storyCntLog = log( aData$storyCnt + 1 )
 dv='invProf'; dvName='Investment Profile'; fileFE='LinvProfFE.rda'
 
 # disputes
-dispVars =  c( 'iDispB', 'dispB')
-dispLabs = c('ICSID', 'All' )
+dispVars =  c( 'iDispB', 'niDispB')
+dispLabs = c('ICSID', 'Not ICSID' )
 ivDisp=c( paste0('mvs2_',dispVars), paste0('mvs5_',dispVars), paste0(dispVars, 'C') )
+lagLabName = function(x,mvs=TRUE,y){
+	if(mvs){ return( paste0(x, ' (past ', y, ' years)') ) }
+	if(!mvs){ return( paste0(x, '$_{t-1}$') ) }
+}
 ivDispName = c( lagLabName(dispLabs,T,2), lagLabName(dispLabs,T,5), paste0('Cumulative ', lagLabName(dispLabs,F) ))
 
 # Other covariates
@@ -96,7 +100,7 @@ varDef = varDef[c(1,nrow(varDef)-1,nrow(varDef),2:(nrow(varDef)-2)),]
 digs=3; noModels=length(modSumm)
 tableResults = matrix('', nrow=2*length(varDef[,1]), ncol=1+noModels)
 tableResults[,1] = rep(varDef[,1],2)
-colnames(tableResults) = c('Variable','Model 1', 'Model 2', 'Model 3')
+colnames(tableResults) = c('Variable',paste0('Model',1:noModels))
 for(ii in 2:ncol(tableResults)){
 	temp = modSumm[[ii-1]]
 	n = modResults[[ii-1]]$df.residual
@@ -148,7 +152,7 @@ tableFinal[,2:ncol(tableFinal)]=apply(tableFinal[,2:ncol(tableFinal)], c(1,2),
 		} else { gsub('\\.', '&.', x) } })
 
 setwd(pathGraphics)
-print.xtable(xtable(tableFinal, align='llccc', caption=captionTable),
+print.xtable(xtable(tableFinal, align='llcccccc', caption=captionTable),
 	include.rownames=FALSE,
 	sanitize.text.function = identity,
 	hline.after=c(0,0,nrow(varDef)*2,nrow(varDef)*2+nStats,nrow(varDef)*2+nStats),
