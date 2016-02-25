@@ -7,7 +7,7 @@ if(Sys.info()["user"]=="janus829" | Sys.info()["user"]=="s7m"){
 load(paste0(pathBin, 'analysisData.rda'))
 #######################################################################################
 # Setting up models
-dv='invProf'; dvName='Ln(FDI)'; fileFE='fdiFE.rda'
+dv='rfdiLog'; dvName='Ln(FDI)'; fileFE='fdiFE.rda'
 
 # disputes
 dispVars =  c( 'iDispB')
@@ -96,7 +96,7 @@ tmp = tmp + theme(
 	)
 tmp
 setwd(pathGraphics)
-tikz(file='corrFDI.tex',width=15,height=3.5,standAlone=F)
+tikz(file='corrFDI.tex',width=15,height=4.5,standAlone=F)
 tmp
 dev.off()
 #######################################################################################
