@@ -102,13 +102,13 @@ tmp
 # dev.off()
 
 tmp=ggplot(ggCoef, aes(x=value))
-# tmp=tmp + geom_histogram(bins=80, fill='#bdbdbd', color='#969696')
-tmp=tmp + geom_density(fill='#bdbdbd')
+tmp=tmp + geom_histogram(bins=80, fill='#bdbdbd', color='#969696')
+# tmp=tmp + geom_density(fill='#bdbdbd')
 tmp=tmp + geom_vline(xintercept=0, color='red', linetype='solid')
 # tmp=tmp + geom_linerange(aes(x=fixefValue, ymin=19.33, ymax=19.67), color='#2b8cbe', size=1.3)
-tmp=tmp + scale_x_continuous('$\\beta$ for Dispute Variables', expand = c(0, 0), limits=c(-1.35,1.35)) 
-# tmp=tmp + scale_y_continuous('Count',expand = c(0, 0), labels=seq(0,20,5), limits=c(0,20))
-tmp=tmp + scale_y_continuous('Density',expand = c(0, 0))
+tmp=tmp + scale_x_continuous('$\\beta$ for Dispute Variables', expand = c(0, 0)) 
+tmp=tmp + scale_y_continuous('Count',expand = c(0, 0), labels=seq(0,20,5), limits=c(0,20))
+# tmp=tmp + scale_y_continuous('Density',expand = c(0, 0), limits=c(0,17))
 tmp=tmp + facet_wrap(~X2, nrow=1, scales='free_x')
 tmp = tmp + theme(
 	legend.position='none', legend.title=element_blank(),
@@ -120,8 +120,11 @@ tikz(file='corrFDI.tex',width=15,height=4.5,standAlone=F)
 tmp
 dev.off()
 
-countNeg = function(x){ return( length(x[x<0]) )  }
-summaryBy(value ~ X2, FUN=countNeg, data=ggCoef)
+countNeg = function(x, neg=TRUE){ 
+	if(neg){ return( length(x[x<0]) ) }
+	if(!neg){ return( length(x[x>0]) ) } }
+summaryBy(value ~ X2, FUN=countNeg, data=ggCoef, neg=TRUE)
+summaryBy(value ~ X2, FUN=countNeg, data=ggCoef, neg=FALSE)
 #######################################################################################
 
 #######################################################################################
