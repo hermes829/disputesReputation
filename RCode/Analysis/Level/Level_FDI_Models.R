@@ -116,7 +116,7 @@ tmp = tmp + theme(
     panel.grid.minor=element_blank() )
 tmp
 setwd(pathGraphics)
-tikz(file='corrFDI.tex',width=15,height=4.5,standAlone=F)
+tikz(file='corrFDI.tex',width=8,height=3.5,standAlone=F)
 tmp
 dev.off()
 
