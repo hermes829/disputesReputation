@@ -68,6 +68,7 @@ fullCoef = lapply(ivDisp, function(d){
 	c(X1=fullID, X2=d, value=dCoef[1], id=paste0(fullID,d), rho=rho, dCoef[2:length(dCoef)])
 	}) %>% do.call('rbind', .) %>% data.frame()
 for(v in names(fullCoef)[!names(fullCoef) %in% c('X1', 'X2', 'id')]){ fullCoef[,v] = num(fullCoef[,v]) }
+ggCoef$fixefValue = fullCoef$value[match(ggCoef$X2, fullCoef$X2)]
 ggCoef = rbind(ggCoef, fullCoef)
 
 # Adjust var names
@@ -95,10 +96,32 @@ tmp = tmp + theme(
     axis.text.x = element_text(angle=45,size=4)
 	)
 tmp
+# setwd(pathGraphics)
+# tikz(file='corrFDI.tex',width=15,height=4.5,standAlone=F)
+# tmp
+# dev.off()
+
+tmp=ggplot(ggCoef, aes(x=value))
+# tmp=tmp + geom_histogram(bins=80, fill='#bdbdbd', color='#969696')
+tmp=tmp + geom_density(fill='#bdbdbd')
+tmp=tmp + geom_vline(xintercept=0, color='red', linetype='solid')
+# tmp=tmp + geom_linerange(aes(x=fixefValue, ymin=19.33, ymax=19.67), color='#2b8cbe', size=1.3)
+tmp=tmp + scale_x_continuous('$\\beta$ for Dispute Variables', expand = c(0, 0), limits=c(-1.35,1.35)) 
+# tmp=tmp + scale_y_continuous('Count',expand = c(0, 0), labels=seq(0,20,5), limits=c(0,20))
+tmp=tmp + scale_y_continuous('Density',expand = c(0, 0))
+tmp=tmp + facet_wrap(~X2, nrow=1, scales='free_x')
+tmp = tmp + theme(
+	legend.position='none', legend.title=element_blank(),
+    axis.ticks=element_blank(), panel.grid.major=element_blank(),
+    panel.grid.minor=element_blank() )
+tmp
 setwd(pathGraphics)
 tikz(file='corrFDI.tex',width=15,height=4.5,standAlone=F)
 tmp
 dev.off()
+
+countNeg = function(x){ return( length(x[x<0]) )  }
+summaryBy(value ~ X2, FUN=countNeg, data=ggCoef)
 #######################################################################################
 
 #######################################################################################
