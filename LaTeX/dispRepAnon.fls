@@ -284,9 +284,9 @@ INPUT graphics/crossValSim.tex
 INPUT graphics/crossValSim.tex
 INPUT graphics/histICSID
 INPUT graphics/histICSID
-INPUT dispRepAnon.bbl
-INPUT dispRepAnon.bbl
 INPUT /usr/local/texlive/2015/texmf-dist/fonts/tfm/jknappen/ec/ecti1200.tfm
+INPUT dispRepAnon.bbl
+INPUT dispRepAnon.bbl
 INPUT /usr/local/texlive/2015/texmf-dist/tex/latex/base/t1cmtt.fd
 INPUT /usr/local/texlive/2015/texmf-dist/tex/latex/base/t1cmtt.fd
 INPUT /usr/local/texlive/2015/texmf-dist/fonts/tfm/jknappen/ec/ecit1200.tfm
