@@ -8,6 +8,9 @@ load(paste0(pathBin, 'analysisData.rda'))
 #######################################################################################
 # Setting up models
 dv='rfdiLog'; dvName='Ln(FDI)'; fileFE='fdiFE.rda'
+aData$fdiLog = log(aData$fdi + abs(min(aData$fdi, na.rm=TRUE)) + 1)
+aData$fdiLog2 = logNeg(aData$fdi)
+dv='fdiLog2'
 
 # disputes
 dispVars =  c( 'iDispB')
@@ -116,9 +119,9 @@ tmp = tmp + theme(
     panel.grid.minor=element_blank() )
 tmp
 setwd(pathGraphics)
-tikz(file='corrFDI.tex',width=8,height=3.5,standAlone=F)
-tmp
-dev.off()
+# tikz(file='corrFDI.tex',width=8,height=3.5,standAlone=F)
+# tmp
+# dev.off()
 
 countNeg = function(x, neg=TRUE){ 
 	if(neg){ return( length(x[x<0]) ) }
@@ -205,12 +208,12 @@ tableFinal[,2:ncol(tableFinal)]=apply(tableFinal[,2:ncol(tableFinal)], c(1,2),
 		} else { gsub('\\.', '&.', x) } })
 
 setwd(pathGraphics)
-print.xtable(xtable(tableFinal, align='llccc', caption=captionTable),
-	include.rownames=FALSE,
-	sanitize.text.function = identity,
-	hline.after=c(0,0,nrow(varDef)*2,nrow(varDef)*2+nStats,nrow(varDef)*2+nStats),
-	size="footnotesize",	
-	file=fileTable )
+# print.xtable(xtable(tableFinal, align='llccc', caption=captionTable),
+# 	include.rownames=FALSE,
+# 	sanitize.text.function = identity,
+# 	hline.after=c(0,0,nrow(varDef)*2,nrow(varDef)*2+nStats,nrow(varDef)*2+nStats),
+# 	size="footnotesize",	
+# 	file=fileTable )
 #######################################################################################
 
 #######################################################################################
@@ -221,4 +224,49 @@ modResults=lapply(modForm, function(x) FUN=lm(x, data=aData) )
 lapply(modResults, function(x){
 	c(summary(x)$'r.squared', summary(x)$'adj.r.squared')
 	})
+#######################################################################################
+
+#######################################################################################
+# Coefficient plot
+# add conf ints
+ggCoefData = lapply(modSumm, function(x){
+	hi95 = x[,1] + qnorm(.975)*x[,2]
+	lo95 = x[,1] - qnorm(.975)*x[,2]
+	hi90 = x[,1] + qnorm(.95)*x[,2]
+	lo90 = x[,1] - qnorm(.95)*x[,2]
+	x = data.frame( cbind(x, hi95, lo95, hi90, lo90) )
+	x$var = varDef[,2][match(rownames(x), varDef[,1])]
+	x$mod = x$var[1]
+	x$var[1] = 'ICSID'
+	return(x) })
+ggCoefData = do.call('rbind', ggCoefData)
+ggCoefData$var = factor(ggCoefData$var, levels=rev(c('ICSID', varDef[,2][-(1:3)])))
+ggCoefData$sig = NULL
+ggCoefData$sig[ggCoefData$lo90 > 0 & ggCoefData$lo95 < 0] = "Positive at 90"
+ggCoefData$sig[ggCoefData$lo95 > 0] = "Positive"
+ggCoefData$sig[ggCoefData$hi90 < 0 & ggCoefData$hi95 > 0] = "Negative at 90"
+ggCoefData$sig[ggCoefData$hi95 < 0] = "Negative"
+ggCoefData$sig[ggCoefData$lo90 < 0 & ggCoefData$hi90 > 0] = "Insig"
+coefp_colors = c("Positive"=rgb(54, 144, 192, maxColorValue=255), 
+                "Negative"= rgb(222, 45, 38, maxColorValue=255),
+                "Positive at 90"=rgb(158, 202, 225, maxColorValue=255), 
+                "Negative at 90"= rgb(252, 146, 114, maxColorValue=255),
+                "Insig" = rgb(150, 150, 150, maxColorValue=255))
+
+coefp = ggplot(ggCoefData, aes(x=factor(var), y=Estimate, color=sig))
+coefp = coefp + geom_linerange(aes(ymin=lo95, ymax=hi95), alpha = .3, size = 0.3)
+coefp = coefp + geom_linerange(aes(ymin=lo90, ymax=hi90),alpha = 1, size = 1)
+coefp = coefp + geom_hline(aes(yintercept=0), linetype=2, color = "black")
+coefp = coefp + geom_point(size=4, shape=20)
+coefp = coefp + geom_errorbar(aes(ymin=lo95,ymax=hi95),linetype = 1,width = 0.1)
+coefp = coefp + facet_wrap(~mod, nrow=1)
+coefp = coefp + scale_colour_manual(values = coefp_colors)
+coefp = coefp + coord_flip() + xlab('') + ylab('')
+coefp = coefp + theme(
+	legend.position='none',
+	panel.grid = element_blank(), axis.ticks=element_blank() )
+setwd(pathGraphics)
+tikz(file='coefpFDI.tex',width=8,height=6,standAlone=F)
+coefp
+dev.off()
 #######################################################################################
