@@ -197,8 +197,8 @@ coefp_colors = c("Positive"=rgb(54, 144, 192, maxColorValue=255),
                 "Negative at 90"= rgb(252, 146, 114, maxColorValue=255),
                 "Insig" = rgb(150, 150, 150, maxColorValue=255))
 
-ggCoefData = ggCoefData[grepl('Not ICSID',char(ggCoefData$mod)),] ; coefName = 'coefpRep_notICSID'
-# ggCoefData = ggCoefData[!grepl('Not ICSID',char(ggCoefData$mod)),] ; coefName = 'coefpRep_ICSID'
+# ggCoefData = ggCoefData[grepl('Not ICSID',char(ggCoefData$mod)),] ; coefName = 'coefpRep_notICSID'
+ggCoefData = ggCoefData[!grepl('Not ICSID',char(ggCoefData$mod)),] ; coefName = 'coefpRep_ICSID'
 coefp = ggplot(ggCoefData, aes(x=factor(var), y=Estimate, color=sig))
 coefp = coefp + geom_linerange(aes(ymin=lo95, ymax=hi95), alpha = .3, size = 0.3)
 coefp = coefp + geom_linerange(aes(ymin=lo90, ymax=hi90),alpha = 1, size = 1)

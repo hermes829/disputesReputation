@@ -309,6 +309,7 @@ INPUT dispRepDeck.nav
 INPUT /usr/local/texlive/2015/texmf-dist/fonts/tfm/public/cm/cmss12.tfm
 INPUT /usr/local/texlive/2015/texmf-dist/fonts/tfm/public/cm/cmss8.tfm
 INPUT /usr/local/texlive/2015/texmf-dist/fonts/tfm/public/cm/cmssi8.tfm
+INPUT /usr/local/texlive/2015/texmf-dist/fonts/tfm/public/cm/cmss9.tfm
 INPUT /Users/s7m/Research/RemmerProjects/disputesReputation/LaTeX/graphics/corrFDI.tex
 INPUT /Users/s7m/Research/RemmerProjects/disputesReputation/LaTeX/graphics/corrFDI.tex
 INPUT /usr/local/texlive/2015/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm
