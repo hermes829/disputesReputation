@@ -21,6 +21,11 @@ aData = aData[aData$year>=1987,]
 # Model setup
 # Set up models
 dv='rfdiLog'
+# aData$fdiLog2 = logNeg(aData$fdi)
+# dv='fdiLog2'
+dv='fdi'
+dv='fdiLog'
+dv='rfdi'
 
 # dispute var
 # dispVars = c( 'iDispB', 'iDispB' )
