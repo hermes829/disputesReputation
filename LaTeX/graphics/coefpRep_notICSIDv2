@@ -1,0 +1,19 @@
+% Created by tikzDevice version 0.6.1 on 2016-03-19 12:33:31
+% !TEX encoding = UTF-8 Unicode
+% Beginning tikzpicture
+\begin{tikzpicture}[x=1pt,y=1pt]
+\definecolor[named]{drawColor}{rgb}{0.00,0.00,0.00}
+\definecolor[named]{fillColor}{rgb}{1.00,1.00,1.00}
+\fill[color=fillColor,] (0,0) rectangle (578.16,433.62);
+\begin{scope}
+\path[clip] (  0.00,  0.00) rectangle (578.16,433.62);
+\path[draw=red,very thick,dashed] (  0.00,  0.00) rectangle (578.16,433.62);
+\definecolor[named]{fillColor}{rgb}{0.00,0.00,0.00}
+\end{scope}
+\begin{scope}
+\path[clip] (  0.00,  0.00) rectangle (578.16,433.62);
+\path[draw=red,very thick,dashed] (  0.00,  0.00) rectangle (578.16,433.62);
+\definecolor[named]{fillColor}{rgb}{0.00,0.00,0.00}
+\end{scope}
+\end{tikzpicture}
+% Calculated string width 0 times

@@ -309,7 +309,6 @@ INPUT dispRepDeck.nav
 INPUT /usr/local/texlive/2012/texmf-dist/fonts/tfm/public/cm/cmss12.tfm
 INPUT /usr/local/texlive/2012/texmf-dist/fonts/tfm/public/cm/cmss8.tfm
 INPUT /usr/local/texlive/2012/texmf-dist/fonts/tfm/public/cm/cmssi8.tfm
-INPUT /usr/local/texlive/2012/texmf-dist/fonts/tfm/public/cm/cmss9.tfm
 INPUT /Users/janus829/Research/RemmerProjects/disputesReputation/LaTeX/graphics/corrFDI.tex
 INPUT /Users/janus829/Research/RemmerProjects/disputesReputation/LaTeX/graphics/corrFDI.tex
 INPUT /usr/local/texlive/2012/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm
@@ -331,8 +330,9 @@ INPUT /usr/local/texlive/2012/texmf-dist/fonts/tfm/public/sansmathaccent/mathker
 INPUT /usr/local/texlive/2012/texmf-dist/fonts/tfm/public/sansmathaccent/mathkerncmssi8.tfm
 INPUT /Users/janus829/Research/RemmerProjects/disputesReputation/LaTeX/graphics/coefpFDI.tex
 INPUT /Users/janus829/Research/RemmerProjects/disputesReputation/LaTeX/graphics/coefpFDI.tex
-INPUT /Users/janus829/Research/RemmerProjects/disputesReputation/LaTeX/graphics/coefpRep_notICSID
-INPUT /Users/janus829/Research/RemmerProjects/disputesReputation/LaTeX/graphics/coefpRep_notICSID
+INPUT /usr/local/texlive/2012/texmf-dist/fonts/tfm/public/cm/cmss9.tfm
+INPUT /Users/janus829/Research/RemmerProjects/disputesReputation/LaTeX/graphics/coefpRep_notICSIDv2
+INPUT /Users/janus829/Research/RemmerProjects/disputesReputation/LaTeX/graphics/coefpRep_notICSIDv2
 INPUT /Users/janus829/Research/RemmerProjects/disputesReputation/LaTeX/graphics/coefpRep_ICSID
 INPUT /Users/janus829/Research/RemmerProjects/disputesReputation/LaTeX/graphics/coefpRep_ICSID
 INPUT /Users/janus829/Research/RemmerProjects/disputesReputation/LaTeX/graphics/simResults.tex
