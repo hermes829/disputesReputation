@@ -6,21 +6,15 @@ if(Sys.info()["user"]=="janus829" | Sys.info()["user"]=="s7m"){
 # Cross-validation
 
 ### Load data
-load(paste0(pathBin, 'analysisData.rda'))
-
-# Bring in upperincome data
-load(paste0(pathData,'/Old/modelData.rda'))
-ui = modelData[,c('cname', 'upperincome', 'oecd')] %>% unique()
-toDrop = setdiff(aData$cname, modelData$cname)
-aData = aData[which(!aData$cname %in% toDrop),]
-
-# Subset to post 1987
-aData = aData[aData$year>=1987,]
+# load(paste0(pathBin, 'analysisData.rda'))
+load(paste0(pathBin, 'analysisData_upperincIncluded.rda'))
 
 ###############################################################################
 # Model setup
 # Set up models
-dv='rfdi'
+aData$fdiLog = log(aData$fdi + abs(min(aData$fdi, na.rm=TRUE)) + 1)
+aData$fdiLog2 = logNeg(aData$fdi)
+dv='fdiLog2'
 
 # dispute var
 # dispVars = c( 'iDispB', 'iDispB' )
@@ -102,71 +96,7 @@ tmp = tmp + theme(
 tmp
 # tmp=tmp+scale_color_manual(values=brewer.pal(9,'Greys')[c(5,9,7)])
 setwd(pathGraphics)
-tikz(file='crossValLevel_FDI.tex',width=8,height=3.5,standAlone=F)
-tmp
-dev.off()
-###############################################################################
-
-###############################################################################
-# Substantive effect
-sims=1000
-yrs=2000:2014
-modelYrPreds=NULL
-for(Year in yrs){
-	slice=aData[which(aData$year %in% Year), ]
-	yrMod=lapply(modForm, function(x) lm(x, data=slice) )
-
-	# scenario
-	# Control vars same for each model
-	vars=names(coef(yrMod[[1]]))[c(-1,-2)]
-	means=apply(slice[,vars], 2, function(x) mean(x, na.rm=TRUE))
-	dispVar=lapply(yrMod, function(x) names(coef(x))[2] )
-	minMaxDisp=lapply(dispVar, function(x) quantile(slice[,x], probs=c(0,1), na.rm=TRUE) )
-	scen=lapply(minMaxDisp, function(x) rbind( c(1, x[1], means), c(1, x[2], means) ) )
-	
-	# sims
-	draws=lapply(yrMod, function(x) mvrnorm(sims, coef(x), vcov(x)) )
-	modelPreds=lapply(1:length(scen), function(x){ 
-		preds=data.frame( draws[[x]] %*% t(scen[[x]]) )
-		names(preds)=c('lodisp', 'hidisp')
-		preds$varYr=paste(dispVar[[x]], Year, sep='__')
-		preds } )
-	modelPreds=do.call('rbind', modelPreds)
-
-	# Aggregate results
-	modelYrPreds=rbind(modelYrPreds, modelPreds)
-}
-
-# Aggregate
-qSM=function(x){quantile(x, probs=c(0.025,0.975))}
-qSM=function(x){quantile(x, probs=c(0.05,0.95))}
-aggData=lapply(unique(modelYrPreds$varYr), function(x){ modelYrPreds[modelYrPreds$varYr==x,] })
-aggStats=do.call('rbind', lapply(aggData, function(x){
-	stats=t(apply(x[,1:2], 2, function(y){ c(mean(y), qSM(y)) }))
-	colnames(stats)=c('mu','qlo','qhi')
-	rownames(stats)=NULL
-	cbind(unique(x[,3]), c('Low', 'High'), stats) }) )
-aggStats=data.frame(aggStats); names(aggStats)[1:2]=c('varYr', 'Scenario')
-aggStats$mu=num(aggStats$mu); aggStats$qlo=num(aggStats$qlo); aggStats$qhi=num(aggStats$qhi)
-aggStats$dispVar=unlist(lapply(strsplit(char(aggStats$varYr), '__'), function(x) x[1]))
-aggStats$Year=num(unlist(lapply(strsplit(char(aggStats$varYr), '__'), function(x) x[2])))
-
-# Plot labeling
-aggStats$Scenario=mapVar(aggStats$Scenario, c('Low','High'), paste0(c('Zero ', 'High '), 'Disputes $\\; \\; \\;$'))
-aggStats$dispVar=mapVar(aggStats$dispVar, lagLab(ivDisp,1), lagLabName(ivDispName,FALSE) )
-
-tmp=ggplot(aggStats, aes(x=Year, color=Scenario)) + scale_color_grey(start=.6, end=0)
-tmp=tmp + geom_linerange(aes(ymax=qhi,ymin=qlo), lwd=.75) + geom_point(aes(y=mu,shape=Scenario), cex=2.5) 
-tmp=tmp + scale_x_continuous('',breaks=seq(yrs[1], 2014, 2)) + ylab('Predicted Investment Profile Rating')
-tmp=tmp + facet_wrap(~dispVar) 
-tmp=tmp + theme(
-	panel.grid=element_blank(),
-	axis.text.x=element_text(angle=45,hjust=1), 
-	axis.title.y=element_text(vjust=1),
-	axis.ticks=element_blank(),
-	legend.position='top', legend.title=element_blank())
-setwd(pathGraphics)
-# tikz(file='crossValSim.tex',width=8,height=6,standAlone=F)
-tmp
+# tikz(file='crossValLevel_FDI.tex',width=8,height=3.5,standAlone=F)
+# tmp
 # dev.off()
 ###############################################################################
