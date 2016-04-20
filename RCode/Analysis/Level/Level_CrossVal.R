@@ -20,9 +20,9 @@ aData = aData[aData$year>=1987,]
 ###############################################################################
 # Model setup
 # Set up models
-dv='invProf'; dvName='Investment Profile'; fileFE='LinvProfFE.rda' ; yrRange = 1994:2014 ; crossValFileName = 'crossValLevel.tex'; ylabBrk = seq(1990,2014,4)
+# dv='invProf'; dvName='Investment Profile'; fileFE='LinvProfFE.rda' ; yrRange = 1994:2014 ; crossValFileName = 'crossValLevel.tex'; ylabBrk = seq(1990,2014,4)
 # dv='property.rights'; dvName='Propety Rights (Heritage)'; fileFE='LpropRightsHeritageFE.rda' ; yrRange = 1996:2013; crossValFileName = 'crossValLevel_herit.tex' ; ylabBrk = seq(1996,2014,4)
-# dv='propRights_Fraser'; dvName='Property Rights (Fraser)'; fileFE='LpropRightsFraserFE.rda' ; yrRange = 2000:2010; crossValFileName = 'crossValLevel_fraser.tex'; ylabBrk = seq(2000,2010,2)
+dv='propRights_Fraser'; dvName='Property Rights (Fraser)'; fileFE='LpropRightsFraserFE.rda' ; yrRange = 2000:2010; crossValFileName = 'crossValLevel_fraser.tex'; ylabBrk = seq(2000,2010,2)
 
 # dispute var
 ivDisp = c(
@@ -46,6 +46,13 @@ ivOther=c(
 # Untrans IVs
 ivs=c(ivDisp, ivOther)
 ivAll=lapply(ivDisp, function(x) FUN= c( lagLab(x,1), lagLab(ivOther,1) ) )
+
+##########
+# Sample assessment
+dvSamp = aData[,c('ccode','year',dv, unique(unlist(ivAll)))] %>% na.omit()
+length(unique(dvSamp$ccode))
+summary(dvSamp$year)
+##########
 
 modForm=lapply(ivAll, function(x){
 	as.formula( 

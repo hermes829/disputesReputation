@@ -296,21 +296,23 @@ Similar, to our fixed effects analysis, we gauge the substantive meaning of this
 
 Looking across the results shown in this figure, we can see that pre-2007, the predicted investment profile ratings given these two scenarios tends to overlap. After 2006, however, we can clearly see a divergence in the reputation of countries that have faced disputes and those have not. Countries that have not been involved in ISDS, typically receive investment profile ratings of 8, while those that have had a high number of disputes within the past two years have predicted ratings that are almost two points less. 
 
-To ensure that 
+To ensure that the results we have presented in Figures~\ref{fig:dispEffectYear} and \ref{fig:dispEffectYearSim} are not simply the result of some changes in how the ICRG assesses the investment profile rating of countries, we buttress our analysis by using two additional datasets. First, we use the property rights measure from the Heritage Foundation's Index of Economic Freedom \citep{miles:etal:2004}. This measure is the result of a qualitative assessment of the level of property rights protection within a country, and pays particular attention to the the risk that private property will be expropriated by the state. Given what this variable seeks to capture it is a fitting test for assessing the reputational impact of state involvement in an international investor-state dispute. The Heritage Foundation variable, however, has a smaller temporal coverage than the ICRG, specifically, we only have yearly data available from 1995 to 2013 for 101 countries. To assess whether the temporal variation in the effect of disputes plays out for this alternative measure, we follow the same procedure as what was used for the ICRG investment profile analysis using the same controls. The results are shown in Figure~\ref{fig:dispEffectYear_herit}, and here again we find that results only begin to have a significant, negative effect in recent years.\footnote{As with our analysis involving the ICRG investment profile measure, we also run this analysis using the full dataset but interacting the disputes measures with a binary variable that equals one after 2007 and zero otherwise, and here again we find that the interaction and its constitutive terms have a significant negative effect. Additionally, the simulation analysis that was shown in Figure~\ref{fig:dispEffectYearSim} for the ICRG investment profile variable returns similar results for the Heritage Foundation property rights measure, for the sake of space, however, we choose to only present the coefficient estimates for the dispute variables.} 
 
 \begin{figure}[ht]
 	\centering
 	\caption{Change in Effect of Disputes Over Time for Property Rights from Heritage Foundation}
-	\label{fig:dispEffectYear}
+	\label{fig:dispEffectYear_herit}
 	\resizebox{1\textwidth}{!}{\input{graphics/crossValLevel_herit}}
 	\caption*{Note: Each point here designates the coefficient estimate for a disputes variable in that year. The thick line represents the 90\% confidence interval around that point estimate, while the longer, thin line represents the 95\% confidence interval. All the covariates used in the initial model shown in Table \ref{tab:dispRepLevel} were included in these pooled models as controls.}
 \end{figure}
 \FloatBarrier
 
+The third dataset we employ to validate our result is the property rights measure from the Fraser Institute's Economic Freedom of the World Index \citep{gwartney:lawson:2004}. This measure also captures the degree to which a country protects the property rights of investors and businesses, and is available, at a yearly level, for 91 countries from 2000 to 2010. The results using the Fraser measure as the dependent variable are shown in Figure~\ref{fig:dispEffectYear_fraser}. Using this third dataset, we again find this consistent result that a country's reputation faces significant adverse consequences from investor-state disputes only in recent years.\footnote{Here again if we were to run this model using the full panel but with an interaction effect, we find that the interaction and its constitutive terms have a significant negative effect. Additionally, a simulation based analysis assessing the effect of disputes shows similar results as what was shown in Figure~\ref{fig:dispEffectYearSim}.} 
+
 \begin{figure}[ht]
 	\centering
 	\caption{Change in Effect of Disputes Over Time for Property Rights from Fraser Institute}
-	\label{fig:dispEffectYear}
+	\label{fig:dispEffectYear_fraser}
 	\resizebox{1\textwidth}{!}{\input{graphics/crossValLevel_fraser}}
 	\caption*{Note: Each point here designates the coefficient estimate for a disputes variable in that year. The thick line represents the 90\% confidence interval around that point estimate, while the longer, thin line represents the 95\% confidence interval. All the covariates used in the initial model shown in Table \ref{tab:dispRepLevel} were included in these pooled models as controls.}
 \end{figure}
