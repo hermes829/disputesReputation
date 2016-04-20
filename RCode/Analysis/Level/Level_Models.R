@@ -11,6 +11,10 @@ aData$storyCntLog = log( aData$storyCnt + 1 )
 #######################################################################################
 # Setting up models
 dv='invProf'; dvName='Investment Profile'; fileFE='LinvProfFE.rda'
+dv='property.rights'; dvName='Propety Rights (Heritage)'; fileFE='LpropRightsHeritageFE.rda'
+dv='investment.freedom'; dvName='Investment Freedom (Heritage)'; fileFE='LinvFreeHeritageFE.rda'
+dv='propRights_Fraser'; dvName='Property Rights (Fraser)'; fileFE='LpropRightsFraserFE.rda'
+dv='propRights2_Fraser'; dvName='Property Rights (Fraser)'; fileFE='LpropRights2FraserFE.rda'
 
 # disputes
 dispVars =  c( 'iDispB', 'niDispB')

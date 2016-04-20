@@ -20,12 +20,14 @@ aData = aData[aData$year>=1987,]
 ###############################################################################
 # Model setup
 # Set up models
-dv='invProf'; dvName='Investment Profile'; fileFE='LinvProfFE.rda'
+dv='invProf'; dvName='Investment Profile'; fileFE='LinvProfFE.rda' ; yrRange = 1994:2014 ; crossValFileName = 'crossValLevel.tex'; ylabBrk = seq(1990,2014,4)
+# dv='property.rights'; dvName='Propety Rights (Heritage)'; fileFE='LpropRightsHeritageFE.rda' ; yrRange = 1996:2013; crossValFileName = 'crossValLevel_herit.tex' ; ylabBrk = seq(1996,2014,4)
+# dv='propRights_Fraser'; dvName='Property Rights (Fraser)'; fileFE='LpropRightsFraserFE.rda' ; yrRange = 2000:2010; crossValFileName = 'crossValLevel_fraser.tex'; ylabBrk = seq(2000,2010,2)
 
 # dispute var
 ivDisp = c(
-	'mvs2_iDispB', 'mvs5_iDispB','iDispBC', 
-	'mvs2_dispB', 'mvs5_dispB','dispBC'
+	'mvs2_iDispB', 'mvs5_iDispB','iDispBC'
+	# ,'mvs2_dispB', 'mvs5_dispB','dispBC'
 	)
 
 # Other covariates
@@ -55,7 +57,7 @@ modForm=lapply(ivAll, function(x){
 
 ###############################################################################
 # Run yearly models
-yrs=1994:2014
+yrs=yrRange
 coefCross=NULL
 for(ii in 1:length(yrs)){
 
@@ -85,8 +87,8 @@ for(ii in 1:length(yrs)){
 # Plotting
 VARS=unique(rownames(coefCross))
 VARSname=c(
-	'ICSID (past two years)','ICSID (past five years)','Cumulative ICSID$_{t-1}$',
-	'All (past two years)','All (past five years)','Cumulative All$_{t-1}$'	
+	'ICSID (past two years)','ICSID (past five years)','Cumulative ICSID$_{t-1}$'
+	# ,'All (past two years)','All (past five years)','Cumulative All$_{t-1}$'	
 	)
 
 tmp = ggcoefplot(coefData=coefCross, 
@@ -98,13 +100,20 @@ tmp = ggcoefplot(coefData=coefCross,
   facetLabs=yrs,  
   allBlack=FALSE
   )
-tmp=tmp + ylab('$\\beta$ for Dispute Variables') + scale_x_discrete(breaks=seq(1990,2014,4),labels=seq(1990,2014,4))
+tmp=tmp + ylab('$\\beta$ for Dispute Variables') + scale_x_discrete(breaks=ylabBrk,labels=ylabBrk)
 tmp=tmp + theme(axis.title.y=element_text(vjust=1))
+tmp = tmp + theme_bw()
+tmp = tmp + theme(
+	legend.position='none',
+	panel.border=element_blank(),
+	axis.ticks=element_blank(),
+	axis.text.x=element_text(angle=45)
+	)
 # tmp=tmp+scale_color_manual(values=brewer.pal(9,'Greys')[c(5,9,7)])
 setwd(pathGraphics)
-# tikz(file='crossValLevel.tex',width=8,height=3.5,standAlone=F)
+tikz(file=crossValFileName,width=8,height=3.5,standAlone=F)
 tmp
-# dev.off()
+dev.off()
 ###############################################################################
 
 ###############################################################################
@@ -159,11 +168,14 @@ tmp=tmp + geom_linerange(aes(ymax=qhi,ymin=qlo), lwd=.75) + geom_point(aes(y=mu,
 tmp=tmp + scale_x_continuous('',breaks=seq(yrs[1], 2014, 4)) + ylab('Predicted Investment Profile Rating')
 tmp=tmp + facet_wrap(~dispVar) 
 tmp=tmp + theme(
-	panel.grid=element_blank(),
-	axis.text.x=element_text(angle=45,hjust=1), 
-	axis.title.y=element_text(vjust=1),
+	legend.position='top',
+	legend.title=element_blank(),
+  	legend.key = element_blank(),
+	panel.border=element_blank(),
 	axis.ticks=element_blank(),
-	legend.position='top', legend.title=element_blank())
+	axis.text.x=element_text(angle=45)	
+	)
+tmp
 setwd(pathGraphics)
 tikz(file='crossValSim.tex',width=8,height=4.5,standAlone=F)
 tmp

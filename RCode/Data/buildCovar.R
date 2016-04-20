@@ -44,6 +44,43 @@ rm(list=c(substr(dvData, 1, nchar(dvData)-4),
 ###############################################################
 
 ###############################################################
+# Merge in other reputational measures
+## Heritage
+herit = read.csv(paste0(pathData, '/Old/Components/ReputationalMeasures/Heritage/data.csv'))
+herit$cname = cname(herit$name)
+herit$ccode = panel$ccode[match(herit$cname, panel$cname)]
+# Drop hong kong and macao
+herit = herit[!is.na(herit$ccode),]
+
+# Merge into aData
+herit$cyear = paste0(herit$ccode,herit$index.year)
+aData = merge(aData, herit[,-c(1,2,14,15)], by='cyear', all.x=TRUE, all.y=FALSE)
+
+# Fraser
+load(paste0(pathData, '/Old/Components/ReputationalMeasures/Fraser/fraser.rda'))
+fraser = fraser[char(2000:2010)]
+fVars = c('Countries', "X2C..Protection.of.property.rights", "X2..Legal.System...Property.Rights")
+fraser = lapply(1:length(fraser), function(ii){
+	x = fraser[[ii]]
+	x = x[,fVars]
+	names(x) = c('name', 'propRights2_Fraser', 'propRights_Fraser')
+	x$year = names(fraser)[ii]
+	return(x)
+	}) %>% do.call('rbind', .)
+
+fraser$name = char(fraser$name)
+fraser$name[fraser$name=='Unit. Arab Em.'] = 'United Arab Emirates'
+fraser$cname = cname(fraser$name)
+fraser$ccode = panel$ccode[match(fraser$cname, panel$cname)]
+# Drop hong kong
+fraser = fraser[!is.na(fraser$ccode),]
+
+# Merge into aData
+fraser$cyear = paste0(fraser$ccode,fraser$year)
+aData = merge(aData, fraser[,-c(1,4:6)], by='cyear', all.x=TRUE, all.y=FALSE)
+###############################################################
+
+###############################################################
 # Create lags
 
 # Select vars to lag

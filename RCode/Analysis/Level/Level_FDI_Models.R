@@ -114,14 +114,16 @@ tmp=tmp + scale_y_continuous('Count',expand = c(0, 0), labels=seq(0,20,5), limit
 # tmp=tmp + scale_y_continuous('Density',expand = c(0, 0), limits=c(0,17))
 tmp=tmp + facet_wrap(~X2, nrow=1, scales='free_x')
 tmp = tmp + theme(
-	legend.position='none', legend.title=element_blank(),
-    axis.ticks=element_blank(), panel.grid.major=element_blank(),
-    panel.grid.minor=element_blank() )
+	legend.position='none',
+	legend.title=element_blank(),
+    axis.ticks=element_blank(),
+    panel.border=element_blank()
+    )
 tmp
 setwd(pathGraphics)
-# tikz(file='corrFDI.tex',width=8,height=3.5,standAlone=F)
-# tmp
-# dev.off()
+tikz(file='corrFDI.tex',width=8,height=3.5,standAlone=F)
+tmp
+dev.off()
 
 countNeg = function(x, neg=TRUE){ 
 	if(neg){ return( length(x[x<0]) ) }
@@ -208,6 +210,7 @@ tableFinal[,2:ncol(tableFinal)]=apply(tableFinal[,2:ncol(tableFinal)], c(1,2),
 		} else { gsub('\\.', '&.', x) } })
 
 setwd(pathGraphics)
+setwd('~/Desktop/')
 # print.xtable(xtable(tableFinal, align='llccc', caption=captionTable),
 # 	include.rownames=FALSE,
 # 	sanitize.text.function = identity,

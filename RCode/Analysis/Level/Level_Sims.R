@@ -88,11 +88,14 @@ tmp=tmp+scale_x_discrete('',labels=c(
   'A'='Zero Disputes', 'B'='High Disputes'))  
 tmp=tmp+scale_y_continuous(breaks=seq(0,12,2),labels=seq(0,12,2))
 tmp = tmp + theme(
-  axis.ticks=element_blank(), panel.grid.major=element_blank(),
-  panel.grid.minor=element_blank(), axis.title.y=element_text(vjust=1)
+  axis.ticks=element_blank(), 
+  panel.border=element_blank()
+  # panel.grid.major=element_blank(),
+  # panel.grid.minor=element_blank(), 
+  # axis.title.y=element_text(vjust=1)
   )
-# setwd(pathGraphics)
-# tikz(file='simResults.tex',width=8,height=3.2,standAlone=F)
+setwd(pathGraphics)
+tikz(file='simResults.tex',width=8,height=3.2,standAlone=F)
 tmp
-# dev.off()
+dev.off()
 ###################################################################

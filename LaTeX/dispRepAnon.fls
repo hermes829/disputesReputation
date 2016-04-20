@@ -282,6 +282,10 @@ INPUT graphics/crossValLevel.tex
 INPUT graphics/crossValLevel.tex
 INPUT graphics/crossValSim.tex
 INPUT graphics/crossValSim.tex
+INPUT graphics/crossValLevel_herit.tex
+INPUT graphics/crossValLevel_herit.tex
+INPUT graphics/crossValLevel_fraser.tex
+INPUT graphics/crossValLevel_fraser.tex
 INPUT graphics/histICSID
 INPUT graphics/histICSID
 INPUT dispRepAnon.bbl

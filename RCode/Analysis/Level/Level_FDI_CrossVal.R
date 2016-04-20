@@ -20,24 +20,19 @@ aData = aData[aData$year>=1987,]
 ###############################################################################
 # Model setup
 # Set up models
-dv='rfdiLog'
-# aData$fdiLog2 = logNeg(aData$fdi)
-# dv='fdiLog2'
-dv='fdi'
-dv='fdiLog'
 dv='rfdi'
 
 # dispute var
 # dispVars = c( 'iDispB', 'iDispB' )
 # ivDisp=paste0(dispVars, 'C') # Cumulative
-ivDisp=paste0('mvs2_',dispVars) # Two year moving sum of disputes
+# ivDisp=paste0('mvs2_',dispVars) # Two year moving sum of disputes
 ivDisp = c('iDispBC', 'mvs2_iDispB', 'mvs5_iDispB')
 
 # Other covariates
 ivOther=c(
 	'gdpGr', 'gdpCapLog', 'popLog','inflLog',
 	'intConf', 'extConf',
-	'sbitNoDuplC', 'kaopen', 'polity', 'propRights'
+	'rbitNoDuplC', 'kaopen', 'polity', 'propRights'
 	)
 
 # Untrans IVs
@@ -53,7 +48,7 @@ modForm=lapply(ivAll, function(x){
 
 ###############################################################################
 # Run yearly models
-yrs=1990:2014
+yrs=1994:2014
 coefCross=NULL
 for(ii in 1:length(yrs)){
 
@@ -95,13 +90,21 @@ tmp = ggcoefplot(coefData=coefCross,
   facetLabs=yrs,  
   allBlack=FALSE
   )
-tmp=tmp + ylab('$\\beta$ for Dispute Variables')
+tmp=tmp + ylab('$\\beta$ for Dispute Variables') + scale_x_discrete(breaks=seq(1990,2014,4),labels=seq(1990,2014,4))
 tmp=tmp + theme(axis.title.y=element_text(vjust=1))
-# tmp=tmp+scale_color_manual(values=brewer.pal(9,'Greys')[c(5,9,7)])
-# setwd(pathGraphics)
-# tikz(file='crossValLevel.tex',width=8,height=6,standAlone=F)
+tmp = tmp + theme_bw()
+tmp = tmp + theme(
+	legend.position='none',
+	panel.border=element_blank(),
+	axis.ticks=element_blank(),
+	axis.text.x=element_text(angle=45)
+	)
 tmp
-# dev.off()
+# tmp=tmp+scale_color_manual(values=brewer.pal(9,'Greys')[c(5,9,7)])
+setwd(pathGraphics)
+tikz(file='crossValLevel_FDI.tex',width=8,height=3.5,standAlone=F)
+tmp
+dev.off()
 ###############################################################################
 
 ###############################################################################

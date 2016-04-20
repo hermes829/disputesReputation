@@ -37,10 +37,10 @@ tmp=tmp + geom_line(data=icsidYrData, aes(x=year+.5, y=iDisp), lwd=2)
 tmp=tmp + theme(
 	axis.text.x=element_text(angle=45, hjust=1),
 	axis.title.y=element_text(vjust=1),
-	panel.grid=element_blank(),
+	# panel.grid=element_blank(),
 	axis.ticks=element_blank(),
-	panel.border = element_blank(),
-	axis.line = element_line(color = 'black')
+	panel.border = element_blank()
+	# axis.line = element_line(color = 'black')
 	)
 tmp
 setwd(pathGraphics)
