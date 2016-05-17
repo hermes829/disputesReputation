@@ -104,7 +104,7 @@ varDef = varDef[c(1,nrow(varDef)-1,nrow(varDef),2:(nrow(varDef)-2)),]
 digs=3; noModels=length(modSumm)
 tableResults = matrix('', nrow=2*length(varDef[,1]), ncol=1+noModels)
 tableResults[,1] = rep(varDef[,1],2)
-colnames(tableResults) = c('Variable',paste0('Model',1:noModels))
+colnames(tableResults) = c('Variable',paste0('Model ',1:noModels))
 for(ii in 2:ncol(tableResults)){
 	temp = modSumm[[ii-1]]
 	n = modResults[[ii-1]]$df.residual

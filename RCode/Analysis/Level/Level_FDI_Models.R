@@ -36,101 +36,101 @@ ivOtherName=c(
 ivsName=lapply(1:length(ivDispName), function(x){ c(ivDispName[x], lagLabName(ivOtherName), 'World FDI') })
 #######################################################################################
 
-#######################################################################################
-# Simple mod analysis
-# By country
-getInts = function(res){ 
-	c(mu=res[1], hi95=res[1]+qnorm(.975)*res[2], lo95=res[1]-qnorm(.975)*res[2],
-		hi90=res[1]+qnorm(.95)*res[2], lo90=res[1]-qnorm(.95)*res[2] )  }
-cntries = char( unique(aData$ccode) )
-mat = matrix(NA, nrow=length(cntries), ncol=length(ivDisp), dimnames=list(cntries, ivDisp))
-csMods = list(rho=mat, mu=mat, hi95=mat, lo95=mat, hi90=mat, lo90=mat)
-for(c in cntries){
-	slice = aData[aData$ccode==c,]
-	for(d in ivDisp){
-		if( sum(slice[,d], na.rm=TRUE)>1 ){
-			dForm = paste(dv, lagLab(d, 1), sep='~') %>% formula()
-			cdCoef = lm(dForm, data=slice) %>% coeftest() %>% .[2,1:2] ; names(cdCoef) = NULL; cdCoef = getInts(cdCoef)
-			rho = cor(slice[,c(dv, d)], method='pearson')[1,2]
-			csMods[['rho']][c,d] = rho ;csMods[['mu']][c,d] = cdCoef['mu'] ; csMods[['hi95']][c,d] = cdCoef['hi95'] 
-			csMods[['lo95']][c,d] = cdCoef['lo95']; csMods[['hi90']][c,d] = cdCoef['hi90'] ; csMods[['lo90']][c,d] = cdCoef['lo90']
-		}
-	}
-}
-tmp = lapply(csMods, function(x){ melt(x) %>% mutate(., id=paste0(X1, X2)) %>% na.omit() %>% return(.) })
-ggCoef = tmp[['mu']]
-for(v in c('rho', as.vector(outer(c('hi','lo'), c('95','90'), paste0)))){
-	ggCoef$tmp = tmp[[v]][,3][match(ggCoef$id, tmp[[v]][,4] )] ; names(ggCoef)[ncol(ggCoef)] = v }
+# #######################################################################################
+# # Simple mod analysis
+# # By country
+# getInts = function(res){ 
+# 	c(mu=res[1], hi95=res[1]+qnorm(.975)*res[2], lo95=res[1]-qnorm(.975)*res[2],
+# 		hi90=res[1]+qnorm(.95)*res[2], lo90=res[1]-qnorm(.95)*res[2] )  }
+# cntries = char( unique(aData$ccode) )
+# mat = matrix(NA, nrow=length(cntries), ncol=length(ivDisp), dimnames=list(cntries, ivDisp))
+# csMods = list(rho=mat, mu=mat, hi95=mat, lo95=mat, hi90=mat, lo90=mat)
+# for(c in cntries){
+# 	slice = aData[aData$ccode==c,]
+# 	for(d in ivDisp){
+# 		if( sum(slice[,d], na.rm=TRUE)>1 ){
+# 			dForm = paste(dv, lagLab(d, 1), sep='~') %>% formula()
+# 			cdCoef = lm(dForm, data=slice) %>% coeftest() %>% .[2,1:2] ; names(cdCoef) = NULL; cdCoef = getInts(cdCoef)
+# 			rho = cor(slice[,c(dv, d)], method='pearson')[1,2]
+# 			csMods[['rho']][c,d] = rho ;csMods[['mu']][c,d] = cdCoef['mu'] ; csMods[['hi95']][c,d] = cdCoef['hi95'] 
+# 			csMods[['lo95']][c,d] = cdCoef['lo95']; csMods[['hi90']][c,d] = cdCoef['hi90'] ; csMods[['lo90']][c,d] = cdCoef['lo90']
+# 		}
+# 	}
+# }
+# tmp = lapply(csMods, function(x){ melt(x) %>% mutate(., id=paste0(X1, X2)) %>% na.omit() %>% return(.) })
+# ggCoef = tmp[['mu']]
+# for(v in c('rho', as.vector(outer(c('hi','lo'), c('95','90'), paste0)))){
+# 	ggCoef$tmp = tmp[[v]][,3][match(ggCoef$id, tmp[[v]][,4] )] ; names(ggCoef)[ncol(ggCoef)] = v }
 
-# Calculate for full sample using fixed effects & rbind
-fullID='All'
-fullCoef = lapply(ivDisp, function(d){
-	dForm = paste0(paste(dv, lagLab(d,1), sep='~'), ' + factor(ccode)-1') %>% formula()
-	dCoef = lm(dForm, data=aData) %>% coeftest() %>% .[1,1:2] ; names(dCoef) = NULL; dCoef = getInts(dCoef) ; names(dCoef)[1] = ''
-	rho = cor(aData[,c(dv,d)], method='pearson', use='complete.obs')[1,2]
-	c(X1=fullID, X2=d, value=dCoef[1], id=paste0(fullID,d), rho=rho, dCoef[2:length(dCoef)])
-	}) %>% do.call('rbind', .) %>% data.frame()
-for(v in names(fullCoef)[!names(fullCoef) %in% c('X1', 'X2', 'id')]){ fullCoef[,v] = num(fullCoef[,v]) }
-ggCoef$fixefValue = fullCoef$value[match(ggCoef$X2, fullCoef$X2)]
-ggCoef = rbind(ggCoef, fullCoef)
+# # Calculate for full sample using fixed effects & rbind
+# fullID='All'
+# fullCoef = lapply(ivDisp, function(d){
+# 	dForm = paste0(paste(dv, lagLab(d,1), sep='~'), ' + factor(ccode)-1') %>% formula()
+# 	dCoef = lm(dForm, data=aData) %>% coeftest() %>% .[1,1:2] ; names(dCoef) = NULL; dCoef = getInts(dCoef) ; names(dCoef)[1] = ''
+# 	rho = cor(aData[,c(dv,d)], method='pearson', use='complete.obs')[1,2]
+# 	c(X1=fullID, X2=d, value=dCoef[1], id=paste0(fullID,d), rho=rho, dCoef[2:length(dCoef)])
+# 	}) %>% do.call('rbind', .) %>% data.frame()
+# for(v in names(fullCoef)[!names(fullCoef) %in% c('X1', 'X2', 'id')]){ fullCoef[,v] = num(fullCoef[,v]) }
+# ggCoef$fixefValue = fullCoef$value[match(ggCoef$X2, fullCoef$X2)]
+# ggCoef = rbind(ggCoef, fullCoef)
 
-# Adjust var names
-ggCoef$X2 = mapVar(ggCoef$X2, ivDisp, ivDispName)
-ggCoef$cntry = panel$CNTRY_NAME[match(ggCoef$X1, panel$ccode)] ; ggCoef$cntry[ggCoef$X1==fullID] = fullID
-ggCoef$cAbb = countrycode(ggCoef$cntry, 'country.name', 'cowc') ; ggCoef$cAbb[ggCoef$X1==fullID] = fullID
-# ggCoef$cAbb = factor(ggCoef$cAbb, levels=unique(ggCoef$cAbb[order(ggCoef$value)]))
-ggCoef$cAbb = factor(ggCoef$cAbb, levels=c(char(sort(unique(ggCoef$cAbb[ggCoef$cAbb!=fullID]))), fullID))
-ggCoef$col = '#1a1a1a' ; ggCoef$col[ggCoef$X1==fullID] = '#3288bd'
-ggCols = unique(ggCoef$col) ; names(ggCols) = ggCoef$cAbb
+# # Adjust var names
+# ggCoef$X2 = mapVar(ggCoef$X2, ivDisp, ivDispName)
+# ggCoef$cntry = panel$CNTRY_NAME[match(ggCoef$X1, panel$ccode)] ; ggCoef$cntry[ggCoef$X1==fullID] = fullID
+# ggCoef$cAbb = countrycode(ggCoef$cntry, 'country.name', 'cowc') ; ggCoef$cAbb[ggCoef$X1==fullID] = fullID
+# # ggCoef$cAbb = factor(ggCoef$cAbb, levels=unique(ggCoef$cAbb[order(ggCoef$value)]))
+# ggCoef$cAbb = factor(ggCoef$cAbb, levels=c(char(sort(unique(ggCoef$cAbb[ggCoef$cAbb!=fullID]))), fullID))
+# ggCoef$col = '#1a1a1a' ; ggCoef$col[ggCoef$X1==fullID] = '#3288bd'
+# ggCols = unique(ggCoef$col) ; names(ggCols) = ggCoef$cAbb
 
-tmp = ggplot(ggCoef, aes(x=cAbb, y=value, ymin=lo90, ymax=hi90, color=col, pch=col, width=0.8))
-tmp = tmp + geom_hline(yintercept=0, color='red') + geom_point()
-tmp = tmp + scale_x_discrete(expand=c(0.01,0)) + scale_y_continuous(limits=c(-.2,1.4),breaks=seq(-.2,1.4,.4))
-tmp = tmp + geom_vline(xintercept=58.5, color='#3288bd', linetype='dashed')
-# tmp = tmp + geom_linerange()
-tmp = tmp + ylab('$\\beta$ for Dispute Variables') + xlab('Countries')
-# tmp = tmp + ylab('$\\rho$_{(Log(FDI), Disputes)}') + xlab('Countries') + ylim(-1,1)
-tmp = tmp + facet_wrap(~X2, nrow=1, scales='free')
-tmp = tmp + scale_color_manual(values=ggCols)
-tmp = tmp + theme(
-	legend.position='none', legend.title=element_blank(),
-    axis.ticks=element_blank(), panel.grid.major=element_blank(),
-    panel.grid.minor=element_blank(),
-    axis.text.x = element_text(angle=45,size=4)
-	)
-tmp
+# tmp = ggplot(ggCoef, aes(x=cAbb, y=value, ymin=lo90, ymax=hi90, color=col, pch=col, width=0.8))
+# tmp = tmp + geom_hline(yintercept=0, color='red') + geom_point()
+# tmp = tmp + scale_x_discrete(expand=c(0.01,0)) + scale_y_continuous(limits=c(-.2,1.4),breaks=seq(-.2,1.4,.4))
+# tmp = tmp + geom_vline(xintercept=58.5, color='#3288bd', linetype='dashed')
+# # tmp = tmp + geom_linerange()
+# tmp = tmp + ylab('$\\beta$ for Dispute Variables') + xlab('Countries')
+# # tmp = tmp + ylab('$\\rho$_{(Log(FDI), Disputes)}') + xlab('Countries') + ylim(-1,1)
+# tmp = tmp + facet_wrap(~X2, nrow=1, scales='free')
+# tmp = tmp + scale_color_manual(values=ggCols)
+# tmp = tmp + theme(
+# 	legend.position='none', legend.title=element_blank(),
+#     axis.ticks=element_blank(), panel.grid.major=element_blank(),
+#     panel.grid.minor=element_blank(),
+#     axis.text.x = element_text(angle=45,size=4)
+# 	)
+# tmp
+# # setwd(pathGraphics)
+# # tikz(file='corrFDI.tex',width=15,height=4.5,standAlone=F)
+# # tmp
+# # dev.off()
+
+# tmp=ggplot(ggCoef, aes(x=value))
+# tmp=tmp + geom_histogram(bins=80, fill='#bdbdbd', color='#969696')
+# # tmp=tmp + geom_density(fill='#bdbdbd')
+# tmp=tmp + geom_vline(xintercept=0, color='red', linetype='solid')
+# # tmp=tmp + geom_linerange(aes(x=fixefValue, ymin=19.33, ymax=19.67), color='#2b8cbe', size=1.3)
+# tmp=tmp + scale_x_continuous('$\\beta$ for Dispute Variables', expand = c(0, 0)) 
+# tmp=tmp + scale_y_continuous('Count',expand = c(0, 0), labels=seq(0,20,5), limits=c(0,20))
+# # tmp=tmp + scale_y_continuous('Density',expand = c(0, 0), limits=c(0,17))
+# tmp=tmp + facet_wrap(~X2, nrow=1, scales='free_x')
+# tmp = tmp + theme(
+# 	legend.position='none',
+# 	legend.title=element_blank(),
+#     axis.ticks=element_blank(),
+#     panel.border=element_blank()
+#     )
+# tmp
 # setwd(pathGraphics)
-# tikz(file='corrFDI.tex',width=15,height=4.5,standAlone=F)
+# tikz(file='corrFDI.tex',width=8,height=3.5,standAlone=F)
 # tmp
 # dev.off()
 
-tmp=ggplot(ggCoef, aes(x=value))
-tmp=tmp + geom_histogram(bins=80, fill='#bdbdbd', color='#969696')
-# tmp=tmp + geom_density(fill='#bdbdbd')
-tmp=tmp + geom_vline(xintercept=0, color='red', linetype='solid')
-# tmp=tmp + geom_linerange(aes(x=fixefValue, ymin=19.33, ymax=19.67), color='#2b8cbe', size=1.3)
-tmp=tmp + scale_x_continuous('$\\beta$ for Dispute Variables', expand = c(0, 0)) 
-tmp=tmp + scale_y_continuous('Count',expand = c(0, 0), labels=seq(0,20,5), limits=c(0,20))
-# tmp=tmp + scale_y_continuous('Density',expand = c(0, 0), limits=c(0,17))
-tmp=tmp + facet_wrap(~X2, nrow=1, scales='free_x')
-tmp = tmp + theme(
-	legend.position='none',
-	legend.title=element_blank(),
-    axis.ticks=element_blank(),
-    panel.border=element_blank()
-    )
-tmp
-setwd(pathGraphics)
-tikz(file='corrFDI.tex',width=8,height=3.5,standAlone=F)
-tmp
-dev.off()
-
-countNeg = function(x, neg=TRUE){ 
-	if(neg){ return( length(x[x<0]) ) }
-	if(!neg){ return( length(x[x>0]) ) } }
-summaryBy(value ~ X2, FUN=countNeg, data=ggCoef, neg=TRUE)
-summaryBy(value ~ X2, FUN=countNeg, data=ggCoef, neg=FALSE)
-#######################################################################################
+# countNeg = function(x, neg=TRUE){ 
+# 	if(neg){ return( length(x[x<0]) ) }
+# 	if(!neg){ return( length(x[x>0]) ) } }
+# summaryBy(value ~ X2, FUN=countNeg, data=ggCoef, neg=TRUE)
+# summaryBy(value ~ X2, FUN=countNeg, data=ggCoef, neg=FALSE)
+# #######################################################################################
 
 #######################################################################################
 # Running fixed effect models with plm
