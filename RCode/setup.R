@@ -4,14 +4,14 @@ rm(list=ls())
 # Setting working directory
 if(
 Sys.info()["user"]=="janus829" | Sys.info()["user"]=="s7m"
-){pathMain="~/Dropbox/Research/RemmerProjects/disputesReputation";
-  pathGraphics='~/Research/RemmerProjects/disputesReputation/Latex/graphics'
-  pathData="~/Dropbox/Research/RemmerProjects/disputesReputation/Data";
-  pathRaw="~/Dropbox/Research/RemmerProjects/disputesReputation/Data/components/";
-  pathBin="~/Dropbox/Research/RemmerProjects/disputesReputation/Data/binaries/";
-  pathResults="~/Dropbox/Research/RemmerProjects/disputesReputation/Results";
-  pathCode="~/Research/RemmerProjects/disputesReputation/RCode";
-  pathLatex="~/Research/RemmerProjects/disputesReputation/Latex"
+){pathMain="~/Dropbox/Research/disputesReputation";
+  pathGraphics='~/Research/disputesReputation/Latex/graphics'
+  pathData="~/Dropbox/Research/disputesReputation/Data";
+  pathRaw="~/Dropbox/Research/disputesReputation/Data/components/";
+  pathBin="~/Dropbox/Research/disputesReputation/Data/binaries/";
+  pathResults="~/Dropbox/Research/disputesReputation/Results";
+  pathCode="~/Research/disputesReputation/RCode";
+  pathLatex="~/Research/disputesReputation/Latex"
   pathFunctions="~/Prog Notes/R Functions"
   load('~/Research/BuildingPanelData/panel.rda')
 }
