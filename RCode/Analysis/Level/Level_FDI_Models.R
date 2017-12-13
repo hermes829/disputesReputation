@@ -1,6 +1,6 @@
 ####
 if(Sys.info()["user"]=="janus829" | Sys.info()["user"]=="s7m"){
-	source('~/Research/RemmerProjects/disputesReputation/RCode/setup.R') }
+	source('~/Research/disputesReputation/RCode/setup.R') }
 ####
 
 ### Load data
@@ -8,9 +8,9 @@ load(paste0(pathBin, 'analysisData.rda'))
 #######################################################################################
 # Setting up models
 dv='rfdiLog'; dvName='Ln(FDI)'; fileFE='fdiFE.rda'
-aData$fdiLog = log(aData$fdi + abs(min(aData$fdi, na.rm=TRUE)) + 1)
-aData$fdiLog2 = logNeg(aData$fdi)
-dv='fdiLog2'
+# aData$fdiLog = log(aData$fdi + abs(min(aData$fdi, na.rm=TRUE)) + 1)
+# aData$fdiLog2 = logNeg(aData$fdi)
+# dv='fdiLog2'
 
 # disputes
 dispVars =  c( 'iDispB')
@@ -22,7 +22,7 @@ ivDispName = c( dName(dispLabs,2), dName(dispLabs,5), dName(dispLabs) )
 ivOther=c(
 	'gdpGr', 'gdpCapLog', 'popLog','inflLog',
 	'intConf', 'extConf',
-	'sbitNoDuplC', 'kaopen', 'polity', 'propRights'
+	'rbitNoDuplC', 'kaopen', 'polity', 'propRights'
 	)
 ivs=c(ivDisp, ivOther)
 ivAll=lapply(ivDisp, function(x) FUN= c( lagLab(x,1), lagLab(ivOther,1), 'globSumRFDI' ) )
@@ -137,7 +137,7 @@ ivsName=lapply(1:length(ivDispName), function(x){ c(ivDispName[x], lagLabName(iv
 plmData=pdata.frame( aData[,c(dv, unique(unlist(ivAll)), 'ccode', 'year') ], index=c('ccode','year') )
 
 modForm=lapply(ivAll, function(x){
-	as.formula( paste(dv,  paste(x, collapse=' + '), sep=' ~ ')) })
+	as.formula( paste0(paste(dv,  paste(x, collapse=' + '), sep=' ~ '), '+factor(ccode)-1')) })
 
 modResults=lapply(modForm, function(x) FUN=plm(x, data=plmData, model='within') )
 modSumm=lapply(modResults, function(x){

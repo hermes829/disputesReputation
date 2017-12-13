@@ -1,6 +1,6 @@
 ####
 if(Sys.info()["user"]=="janus829" | Sys.info()["user"]=="s7m"){
-	source('~/Research/RemmerProjects/disputesReputation/RCode/setup.R') }
+	source('~/Research/disputesReputation/RCode/setup.R') }
 ####
 
 ### Load data
@@ -11,10 +11,10 @@ aData$storyCntLog = log( aData$storyCnt + 1 )
 #######################################################################################
 # Setting up models
 dv='invProf'; dvName='Investment Profile'; fileFE='LinvProfFE.rda'
-dv='property.rights'; dvName='Propety Rights (Heritage)'; fileFE='LpropRightsHeritageFE.rda'
-dv='investment.freedom'; dvName='Investment Freedom (Heritage)'; fileFE='LinvFreeHeritageFE.rda'
-dv='propRights_Fraser'; dvName='Property Rights (Fraser)'; fileFE='LpropRightsFraserFE.rda'
-dv='propRights2_Fraser'; dvName='Property Rights (Fraser)'; fileFE='LpropRights2FraserFE.rda'
+# dv='property.rights'; dvName='Propety Rights (Heritage)'; fileFE='LpropRightsHeritageFE.rda'
+# dv='investment.freedom'; dvName='Investment Freedom (Heritage)'; fileFE='LinvFreeHeritageFE.rda'
+# dv='propRights_Fraser'; dvName='Property Rights (Fraser)'; fileFE='LpropRightsFraserFE.rda'
+# dv='propRights2_Fraser'; dvName='Property Rights (Fraser)'; fileFE='LpropRights2FraserFE.rda'
 
 # disputes
 dispVars =  c( 'iDispB', 'niDispB')
@@ -201,7 +201,9 @@ coefp_colors = c("Positive"=rgb(54, 144, 192, maxColorValue=255),
                 "Negative at 90"= rgb(252, 146, 114, maxColorValue=255),
                 "Insig" = rgb(150, 150, 150, maxColorValue=255))
 
-ggCoefData = ggCoefData[grepl('Not ICSID',char(ggCoefData$mod)),] ; coefName = 'coefpRep_notICSIDv2'; ggCoefData$var = char(ggCoefData$var) ; ggCoefData$var[ggCoefData$var=='ICSID'] = 'Not ICSID' ; ggCoefData$var = factor(ggCoefData$var, levels=rev(c('Not ICSID', varDef[,2][-(1:3)])))
+ggCoefData = ggCoefData[grepl('Not ICSID',char(ggCoefData$mod)),] ; coefName = 'coefpRep_notICSIDv2';
+ggCoefData$var = char(ggCoefData$var) ; ggCoefData$var[ggCoefData$var=='ICSID'] = 'Not ICSID' ;
+ggCoefData$var = factor(ggCoefData$var, levels=rev(c('Not ICSID', varDef[,2][-(1:3)])))
 # ggCoefData = ggCoefData[!grepl('Not ICSID',char(ggCoefData$mod)),] ; coefName = 'coefpRep_ICSID'
 coefp = ggplot(ggCoefData, aes(x=factor(var), y=Estimate, color=sig))
 coefp = coefp + geom_linerange(aes(ymin=lo95, ymax=hi95), alpha = .3, size = 0.3)
