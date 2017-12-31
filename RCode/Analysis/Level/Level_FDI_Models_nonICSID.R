@@ -125,9 +125,9 @@ tmp = tmp + theme(
     )
 tmp
 setwd(pathGraphics)
-tikz(file='corrFDI_nICSID.tex',width=8,height=3.5,standAlone=F)
-tmp
-dev.off()
+# tikz(file='corrFDI_nICSID.tex',width=8,height=3.5,standAlone=F)
+# tmp
+# dev.off()
 
 countNeg = function(x, neg=TRUE){ 
 	if(neg){ return( length(x[x<0]) ) }
