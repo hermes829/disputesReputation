@@ -1,7 +1,7 @@
 # Creating tables
 
 ### Load setup
-source('~/Research/RemmerProjects/disputesReputation/RCode/setup.R')
+source('~/Research/disputesReputation/RCode/setup.R')
 
 ##########################################################################################
 # Loading model results
@@ -98,7 +98,7 @@ tableFinal[,2:ncol(tableFinal)]=apply(tableFinal[,2:ncol(tableFinal)], c(1,2),
 		if( grepl('\\$', x) ){ gsub('\\$*\\.', '$&$.', x)
 		} else { gsub('\\.', '&.', x) } })
 
-setwd(pathGraphics)
+setwd(pathLatex)
 print.xtable(xtable(tableFinal, align='llcccc', caption=captionTable),
 	include.rownames=FALSE,
 	# sanitize.text.function = function(x) x,

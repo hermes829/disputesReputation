@@ -1,5 +1,5 @@
 if(Sys.info()["user"]=="janus829" | Sys.info()["user"]=="s7m"){
-	source('~/Research/Ruthenium/R/setup.R') }
+	source('~/Research/disputesReputation/RCode/setup.R') }
 
 ###############################################################
 # Get distance matrices in parallel

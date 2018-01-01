@@ -1,14 +1,13 @@
-####
+#######################################################################################
 if(Sys.info()["user"]=="janus829" | Sys.info()["user"]=="s7m"){
 	source('~/Research/disputesReputation/RCode/setup.R') }
-####
 
 ### Load data
 load(paste0(pathBin, 'analysisData.rda'))
 #######################################################################################
+
+#######################################################################################
 # Setting up models
-# dv='rfdiLog'; dvName='Ln(FDI)'; fileFE='fdiFE.rda'
-# aData$fdiLog = log(aData$fdi + abs(min(aData$fdi, na.rm=TRUE)) + 1) ; dv='fdiLog'
 aData$fdiLog2 = logNeg(aData$fdi) ; dv='fdiLog2'
 
 # disputes
@@ -71,33 +70,14 @@ fullCoef = lapply(ivDisp, function(d){
 	}) %>% do.call('rbind', .) %>% data.frame()
 for(v in names(fullCoef)[!names(fullCoef) %in% c('X1', 'X2', 'id')]){ fullCoef[,v] = num(fullCoef[,v]) }
 ggCoef$fixefValue = fullCoef$value[match(ggCoef$X2, fullCoef$X2)]
-ggCoef = rbind(ggCoef, fullCoef)
 
 # Adjust var names
 ggCoef$X2 = mapVar(ggCoef$X2, ivDisp, ivDispName)
 ggCoef$cntry = panel$CNTRY_NAME[match(ggCoef$X1, panel$ccode)] ; ggCoef$cntry[ggCoef$X1==fullID] = fullID
 ggCoef$cAbb = countrycode(ggCoef$cntry, 'country.name', 'cowc') ; ggCoef$cAbb[ggCoef$X1==fullID] = fullID
-# ggCoef$cAbb = factor(ggCoef$cAbb, levels=unique(ggCoef$cAbb[order(ggCoef$value)]))
 ggCoef$cAbb = factor(ggCoef$cAbb, levels=c(char(sort(unique(ggCoef$cAbb[ggCoef$cAbb!=fullID]))), fullID))
-ggCoef$col = '#1a1a1a' ; ggCoef$col[ggCoef$X1==fullID] = '#3288bd'
-ggCols = unique(ggCoef$col) ; names(ggCols) = ggCoef$cAbb
 
-tmp = ggplot(ggCoef, aes(x=cAbb, y=value, ymin=lo90, ymax=hi90, color=col, pch=col, width=0.8)) +
-	geom_hline(yintercept=0, color='red') + geom_point() +
-	scale_x_discrete(expand=c(0.01,0)) + scale_y_continuous(limits=c(-.2,1.4),breaks=seq(-.2,1.4,.4)) +
-	geom_vline(xintercept=58.5, color='#3288bd', linetype='dashed') +
-	ylab('$\\beta$ for Dispute Variables') + xlab('Countries') +
-	facet_wrap(~X2, nrow=1, scales='free') + scale_color_manual(values=ggCols) +
-	theme(
-		legend.position='none', legend.title=element_blank(),
-	    axis.ticks=element_blank(), panel.grid.major=element_blank(),
-	    panel.grid.minor=element_blank(),
-	    axis.text.x = element_text(angle=45,size=4)
-	)
-tikz(file='corrFDI.tex',width=15,height=4.5,standAlone=F)
-tmp
-dev.off()
-
+# viz
 tmp=ggplot(ggCoef, aes(x=value)) +
 	geom_histogram(bins=80, fill='#bdbdbd', color='#969696') +
 	geom_vline(xintercept=0, color='red', linetype='solid') +
@@ -110,10 +90,9 @@ tmp=ggplot(ggCoef, aes(x=value)) +
 		    axis.ticks=element_blank(),
 		    panel.border=element_blank()
     )
-setwd(pathGraphics)
-# tikz(file='corrFDI.tex',width=8,height=3.5,standAlone=F)
-# tmp
-# dev.off()
+tikz(file=paste0(pathLatex, '/corrFDI.tex'),width=8,height=3.5,standAlone=F)
+tmp
+dev.off()
 
 countNeg = function(x, neg=TRUE){ 
 	if(neg){ return( length(x[x<0]) ) }
@@ -125,19 +104,11 @@ summaryBy(value ~ X2, FUN=countNeg, data=ggCoef, neg=FALSE)
 #######################################################################################
 # Running fixed effect models with plm
 plmData=pdata.frame( aData[,c(dv, unique(unlist(ivAll)), 'ccode', 'year') ], index=c('ccode','year') )
-
 modForm=lapply(ivAll, function(x){
 	as.formula( paste(dv,  paste(x, collapse=' + '), sep=' ~ ')) })
-
 modResults=lapply(modForm, function(x) FUN=plm(x, data=plmData, model='within') )
 modSumm=lapply(modResults, function(x){
 	coeftest(x)[,c('Estimate','Std. Error', 't value', 'Pr(>|t|)')] })
-
-# Peak at dispute var results
-sub = data.frame( do.call('rbind',lapply(modSumm, function(x) x[1,,drop=FALSE])) )
-sub
-
-round(modSumm[[1]], 3)
 #######################################################################################
 
 #######################################################################################
@@ -201,14 +172,12 @@ tableFinal[,2:ncol(tableFinal)]=apply(tableFinal[,2:ncol(tableFinal)], c(1,2),
 		if( grepl('\\$', x) ){ gsub('\\$*\\.', '$&$.', x)
 		} else { gsub('\\.', '&.', x) } })
 
-setwd(pathGraphics)
-setwd('~/Desktop/')
-# print.xtable(xtable(tableFinal, align='llccc', caption=captionTable),
-# 	include.rownames=FALSE,
-# 	sanitize.text.function = identity,
-# 	hline.after=c(0,0,nrow(varDef)*2,nrow(varDef)*2+nStats,nrow(varDef)*2+nStats),
-# 	size="footnotesize",	
-# 	file=fileTable )
+print.xtable(xtable(tableFinal, align='llccc', caption=captionTable),
+	include.rownames=FALSE,
+	sanitize.text.function = identity,
+	hline.after=c(0,0,nrow(varDef)*2,nrow(varDef)*2+nStats,nrow(varDef)*2+nStats),
+	size="footnotesize",	
+	file=paste0(pathLatex, '/', fileTable) )
 #######################################################################################
 
 #######################################################################################
@@ -217,8 +186,7 @@ modForm=lapply(ivAll, function(x){
 	as.formula( paste0(paste(dv,  paste(x, collapse=' + '), sep=' ~ '), ' + factor(ccode) - 1')) })
 modResults=lapply(modForm, function(x) FUN=lm(x, data=aData) )
 lapply(modResults, function(x){
-	c(summary(x)$'r.squared', summary(x)$'adj.r.squared')
-	})
+	c(summary(x)$'r.squared', summary(x)$'adj.r.squared') })
 #######################################################################################
 
 #######################################################################################
@@ -234,6 +202,7 @@ ggCoefData = lapply(modSumm, function(x){
 	x$mod = x$var[1]
 	x$var[1] = 'ICSID'
 	return(x) })
+
 ggCoefData = do.call('rbind', ggCoefData)
 ggCoefData$var = factor(ggCoefData$var, levels=rev(c('ICSID', varDef[,2][-(1:3)])))
 ggCoefData$sig = NULL
@@ -248,20 +217,20 @@ coefp_colors = c("Positive"=rgb(54, 144, 192, maxColorValue=255),
                 "Negative at 90"= rgb(252, 146, 114, maxColorValue=255),
                 "Insig" = rgb(150, 150, 150, maxColorValue=255))
 
-coefp = ggplot(ggCoefData, aes(x=factor(var), y=Estimate, color=sig))
-coefp = coefp + geom_linerange(aes(ymin=lo95, ymax=hi95), alpha = .3, size = 0.3)
-coefp = coefp + geom_linerange(aes(ymin=lo90, ymax=hi90),alpha = 1, size = 1)
-coefp = coefp + geom_hline(aes(yintercept=0), linetype=2, color = "black")
-coefp = coefp + geom_point(size=4, shape=20)
-coefp = coefp + geom_errorbar(aes(ymin=lo95,ymax=hi95),linetype = 1,width = 0.1)
-coefp = coefp + facet_wrap(~mod, nrow=1)
-coefp = coefp + scale_colour_manual(values = coefp_colors)
-coefp = coefp + coord_flip() + xlab('') + ylab('')
-coefp = coefp + theme(
-	legend.position='none',
-	panel.grid = element_blank(), axis.ticks=element_blank() )
-setwd(pathGraphics)
-tikz(file='coefpFDI.tex',width=8,height=6,standAlone=F)
+coefp = ggplot(ggCoefData, aes(x=factor(var), y=Estimate, color=sig)) +
+	geom_linerange(aes(ymin=lo95, ymax=hi95), alpha = .3, size = 0.3) +
+	geom_linerange(aes(ymin=lo90, ymax=hi90),alpha = 1, size = 1) +
+	geom_hline(aes(yintercept=0), linetype=2, color = "black") +
+	geom_point(size=4, shape=20) +
+	geom_errorbar(aes(ymin=lo95,ymax=hi95),linetype = 1,width = 0.1) +
+	facet_wrap(~mod, nrow=1) +
+	scale_colour_manual(values = coefp_colors) +
+	coord_flip() + xlab('') + ylab('') +
+	theme(
+		legend.position='none',
+		panel.grid = element_blank(), axis.ticks=element_blank()
+		)
+tikz(file=paste0(pathLatex, '/coefpFDI.tex'),width=8,height=6,standAlone=F)
 coefp
 dev.off()
 #######################################################################################

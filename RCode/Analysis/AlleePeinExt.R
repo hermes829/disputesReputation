@@ -1,5 +1,5 @@
 # Setting workspace
-source('~/Research/RemmerProjects/disputesReputation/RCode/setup.R')
+source('~/Research/disputesReputation/RCode/setup.R')
 
 # Load remmer/minhas data
 load(paste0(pathData, '/apExt.rda'))

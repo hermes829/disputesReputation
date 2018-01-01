@@ -1,5 +1,5 @@
 ### Load setup
-source('~/Research/RemmerProjects/disputesReputation/RCode/setup.R')
+source('~/Research/disputesReputation/RCode/setup.R')
 
 ###############################################################################
 # Directly loading in Karen's data
@@ -166,7 +166,7 @@ temp = ggcoefplot(coefData=coefCross,
   facetBreaks=1:6, facetLabs=1:6, allBlack=TRUE
   )
 temp=temp + theme(axis.text.x=element_text(angle=0))
-setwd(pathGraphics)
+setwd(pathLatex)
 tikz(file='crossValECM.tex',width=8,height=6,standAlone=F)
 temp
 dev.off()

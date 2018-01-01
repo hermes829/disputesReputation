@@ -1,10 +1,10 @@
 if(Sys.info()["user"]=="janus829" | Sys.info()["user"]=="s7m"){
-	source('~/Research/RemmerProjects/disputesReputation/RCode/setup.R') }
+	source('~/Research/disputesReputation/RCode/setup.R') }
 
 ###############################################################
 # Load in data
 # disp = read.dta(paste0(pathRaw, 'UNCTAD_ISDS_LAC_2.dta'))
-disp = read.dta('~/Dropbox/Research/RemmerProjects/disputesBook/Data/mergedDispute.dta')
+disp = read.dta('~/Dropbox/Research/disputesBook/Data/mergedDispute.dta')
 ###############################################################	
 
 ###############################################################	

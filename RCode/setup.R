@@ -11,7 +11,7 @@ Sys.info()["user"]=="janus829" | Sys.info()["user"]=="s7m"
   pathBin="~/Dropbox/Research/disputesReputation/Data/binaries/";
   pathResults="~/Dropbox/Research/disputesReputation/Results";
   pathCode="~/Research/disputesReputation/RCode";
-  pathLatex="~/Research/disputesReputation/Latex"
+  pathLatex="~/Research/disputesReputation/LaTeX/graphics"
   pathFunctions="~/Prog Notes/R Functions"
   load('~/Research/BuildingPanelData/panel.rda')
 }

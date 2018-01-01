@@ -1,6 +1,6 @@
 ####
 if(Sys.info()["user"]=="janus829" | Sys.info()["user"]=="s7m"){
-	source('~/Research/RemmerProjects/disputesReputation/RCode/setup.R') }
+	source('~/Research/disputesReputation/RCode/setup.R') }
 ####
 
 # Cross-validation
@@ -117,7 +117,7 @@ tmp = tmp + theme(
 	axis.text.x=element_text(angle=45)
 	)
 # tmp=tmp+scale_color_manual(values=brewer.pal(9,'Greys')[c(5,9,7)])
-setwd(pathGraphics)
+setwd(pathLatex)
 tikz(file=crossValFileName,width=8,height=3.5,standAlone=F)
 tmp
 dev.off()
@@ -183,7 +183,7 @@ tmp=tmp + theme(
 	axis.text.x=element_text(angle=45)	
 	)
 tmp
-setwd(pathGraphics)
+setwd(pathLatex)
 tikz(file='crossValSim.tex',width=8,height=4.5,standAlone=F)
 tmp
 dev.off()

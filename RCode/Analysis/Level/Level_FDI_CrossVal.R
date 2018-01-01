@@ -95,7 +95,7 @@ tmp = tmp + theme(
 	)
 tmp
 # tmp=tmp+scale_color_manual(values=brewer.pal(9,'Greys')[c(5,9,7)])
-setwd(pathGraphics)
+setwd(pathLatex)
 # tikz(file='crossValLevel_FDI.tex',width=8,height=3.5,standAlone=F)
 # tmp
 # dev.off()

@@ -1,7 +1,7 @@
 # Running simulations for sub effects
 
 ### Load setup
-source('~/Research/RemmerProjects/disputesReputation/RCode/setup.R')
+source('~/Research/disputesReputation/RCode/setup.R')
 setwd(pathData)
 load(paste0(pathBin, 'analysisData.rda'))
 modelData=aData
@@ -94,7 +94,7 @@ tmp = tmp + theme(
   # panel.grid.minor=element_blank(), 
   # axis.title.y=element_text(vjust=1)
   )
-setwd(pathGraphics)
+setwd(pathLatex)
 tikz(file='simResults.tex',width=8,height=3.2,standAlone=F)
 tmp
 dev.off()

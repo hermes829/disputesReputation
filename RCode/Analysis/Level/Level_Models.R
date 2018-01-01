@@ -155,7 +155,7 @@ tableFinal[,2:ncol(tableFinal)]=apply(tableFinal[,2:ncol(tableFinal)], c(1,2),
 		if( grepl('\\$', x) ){ gsub('\\$*\\.', '$&$.', x)
 		} else { gsub('\\.', '&.', x) } })
 
-# setwd(pathGraphics)
+# setwd(pathLatex)
 # print.xtable(xtable(tableFinal, align='llcccccc', caption=captionTable),
 # 	include.rownames=FALSE,
 # 	sanitize.text.function = identity,
@@ -217,7 +217,7 @@ coefp = coefp + coord_flip() + xlab('') + ylab('')
 coefp = coefp + theme(
 	legend.position='none',
 	panel.grid = element_blank(), axis.ticks=element_blank() )
-setwd(pathGraphics)
+setwd(pathLatex)
 coefp
 tikz(file=coefName,width=8,height=6,standAlone=F)
 coefp

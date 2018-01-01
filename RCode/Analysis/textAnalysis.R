@@ -1,6 +1,6 @@
 ####
 if(Sys.info()["user"]=="janus829" | Sys.info()["user"]=="s7m"){
-	source('~/Research/RemmerProjects/disputesReputation/RCode/setup.R') }
+	source('~/Research/disputesReputation/RCode/setup.R') }
 ####
 
 ###################################################################
@@ -29,21 +29,21 @@ textData=na.omit(textData)
 textData = textData[textData$year<=2014,]
 cbind(table(textData$year))
 
-tmp=ggplot(textData, aes(x=year))
-tmp=tmp + geom_histogram(stat='bin', binwidth=1, fill='grey', color='darkgrey')
-tmp=tmp + scale_y_continuous('Frequency', expand=c(0,0))
-tmp=tmp + scale_x_continuous('', expand=c(0,0), labels=seq(1970, 2014, 4), breaks=seq(1970, 2014, 4))
-tmp=tmp + geom_line(data=icsidYrData, aes(x=year+.5, y=iDisp), lwd=2)
-tmp=tmp + theme(
-	axis.text.x=element_text(angle=45, hjust=1),
-	axis.title.y=element_text(vjust=1),
-	# panel.grid=element_blank(),
-	axis.ticks=element_blank(),
-	panel.border = element_blank()
-	# axis.line = element_line(color = 'black')
+tmp=ggplot(textData, aes(x=year)) + 
+	geom_histogram(stat='bin', binwidth=1, fill='grey', color='darkgrey') + 
+	scale_y_continuous('Frequency', expand=c(0,0)) + 
+	scale_x_continuous('', expand=c(0,0), labels=seq(1970, 2014, 4), breaks=seq(1970, 2014, 4)) + 
+	geom_line(data=icsidYrData, aes(x=year+.5, y=iDisp), lwd=2) + 
+	theme(
+		axis.text.x=element_text(angle=45, hjust=1),
+		axis.title.y=element_text(vjust=1),
+		# panel.grid=element_blank(),
+		axis.ticks=element_blank(),
+		panel.border = element_blank()
+		# axis.line = element_line(color = 'black')
 	)
 tmp
-setwd(pathGraphics)
+setwd(pathLatex)
 tikz(file='histICSID', width=8, height=4, standAlone=F)
 tmp
 dev.off()
