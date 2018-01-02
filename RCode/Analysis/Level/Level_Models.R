@@ -87,11 +87,6 @@ sdEffect = function(var, coef, data){
 
 sub$eff = lapply(rownames(sub), function(x){ sdEffect(x,sub,aData) }) %>% unlist()
 sub[order(sub$eff),c(1,3,5)]
-
-# # Saving results for further analysis
-# setwd(pathResults)
-# fileFE2 = strsplit(fileFE, '\\.') %>% unlist() %>% paste(.,collapse='v2.')
-# save(modResults, modSumm, ivAll, dv, ivs, ivsName, dvName, file=fileFE2)
 #######################################################################################
 
 #######################################################################################
@@ -204,22 +199,21 @@ coefp_colors = c("Positive"=rgb(54, 144, 192, maxColorValue=255),
 ggCoefData = ggCoefData[grepl('Not ICSID',char(ggCoefData$mod)),] ; coefName = 'coefpRep_notICSIDv2';
 ggCoefData$var = char(ggCoefData$var) ; ggCoefData$var[ggCoefData$var=='ICSID'] = 'Not ICSID' ;
 ggCoefData$var = factor(ggCoefData$var, levels=rev(c('Not ICSID', varDef[,2][-(1:3)])))
-# ggCoefData = ggCoefData[!grepl('Not ICSID',char(ggCoefData$mod)),] ; coefName = 'coefpRep_ICSID'
-coefp = ggplot(ggCoefData, aes(x=factor(var), y=Estimate, color=sig))
-coefp = coefp + geom_linerange(aes(ymin=lo95, ymax=hi95), alpha = .3, size = 0.3)
-coefp = coefp + geom_linerange(aes(ymin=lo90, ymax=hi90),alpha = 1, size = 1)
-coefp = coefp + geom_hline(aes(yintercept=0), linetype=2, color = "black")
-coefp = coefp + geom_point(size=4, shape=20)
-coefp = coefp + geom_errorbar(aes(ymin=lo95,ymax=hi95),linetype = 1,width = 0.1)
-coefp = coefp + facet_wrap(~mod, nrow=1)
-coefp = coefp + scale_colour_manual(values = coefp_colors)
-coefp = coefp + coord_flip() + xlab('') + ylab('')
-coefp = coefp + theme(
-	legend.position='none',
-	panel.grid = element_blank(), axis.ticks=element_blank() )
-setwd(pathLatex)
-coefp
-tikz(file=coefName,width=8,height=6,standAlone=F)
+
+coefp = ggplot(ggCoefData, aes(x=factor(var), y=Estimate, color=sig)) + 
+	geom_linerange(aes(ymin=lo95, ymax=hi95), alpha = .3, size = 0.3) + 
+	geom_linerange(aes(ymin=lo90, ymax=hi90),alpha = 1, size = 1) + 
+	geom_hline(aes(yintercept=0), linetype=2, color = "black") + 
+	geom_point(size=4, shape=20) + 
+	geom_errorbar(aes(ymin=lo95,ymax=hi95),linetype = 1,width = 0.1) + 
+	facet_wrap(~mod, nrow=1) + 
+	scale_colour_manual(values = coefp_colors) + 
+	coord_flip() + xlab('') + ylab('') + 
+	theme(
+		legend.position='none',
+		panel.grid = element_blank(), axis.ticks=element_blank()
+		)
+tikz(file=paste0(pathLatex, '/', coefName), width=8,height=6,standAlone=F)
 coefp
 dev.off()
 #######################################################################################
