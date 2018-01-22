@@ -11,23 +11,21 @@ aData$storyCntLog = log( aData$storyCnt + 1 )
 #######################################################################################
 # Setting up models
 dv='invProf'; dvName='Investment Profile'; fileFE='LinvProfFE.rda'
-# dv='property.rights'; dvName='Propety Rights (Heritage)'; fileFE='LpropRightsHeritageFE.rda'
-# dv='investment.freedom'; dvName='Investment Freedom (Heritage)'; fileFE='LinvFreeHeritageFE.rda'
-# dv='propRights_Fraser'; dvName='Property Rights (Fraser)'; fileFE='LpropRightsFraserFE.rda'
-# dv='propRights2_Fraser'; dvName='Property Rights (Fraser)'; fileFE='LpropRights2FraserFE.rda'
 
 # disputes
 dispVars =  c( 'iDispB', 'niDispB')
 dispLabs = c('ICSID', 'Not ICSID' )
-ivDisp=c( paste0('mvs2_',dispVars), paste0('mvs5_',dispVars), paste0(dispVars, 'C') )
+ivDisp=c( paste0('mvs2_',dispVars), paste0('mvs5_',dispVars) )
 lagLabName = function(x,mvs=TRUE,y=NULL){
 	if(mvs){ return( paste0(x, ' (past ', y, ' years)') ) }
 	if(!mvs){ return( paste0(x, '$_{t-1}$') ) }
 }
-ivDispName = c( lagLabName(dispLabs,T,2), lagLabName(dispLabs,T,5), paste0('Cumulative ', lagLabName(dispLabs,F) ))
+ivDispName = c( lagLabName(dispLabs,T,2), lagLabName(dispLabs,T,5) )
 
 # Other covariates
 ivOther=c(
+	'iDispBC',
+	'niDispBC',
 	'gdpGr'
 	,'gdpCapLog'
 	,'popLog'
@@ -45,6 +43,8 @@ ivAll=lapply(ivDisp, function(x) FUN= c( lagLab(x,1), lagLab(ivOther,1) ) )
 
 # Setting up variables names for display
 ivOtherName=c(
+	'Cumulative ICSID',
+	'Cumulative Not ICSID',
 	'\\%$\\Delta$ GDP'
 	,'Ln(GDP per capita)'
 	, 'Ln(Pop.)'
@@ -70,28 +70,11 @@ modForm=lapply(ivAll, function(x)
 modResults=lapply(modForm, function(x) FUN=plm(x, data=plmData, model='within') )
 modSumm=lapply(modResults, function(x) FUN=coeftest(x, 
 	vcov=vcovHC(x,method='arellano',cluster="group")))
-
-# Peak at dispute var results
-do.call('rbind',lapply(modSumm, function(x) x[1,,drop=FALSE]))
-
-sub = res = data.frame( do.call('rbind',lapply(modSumm, function(x) x[1,,drop=FALSE])) )
-
-# Calculate sd effects
-sdEffect = function(var, coef, data){
-	beta = coef[var,1]
-	sdX = sd(data[,var],na.rm=T)
-	sdY = sd(data[,'invProf'],na.rm=T)
-	eff = beta*(sdX/sdY)
-	return(eff)
-}
-
-sub$eff = lapply(rownames(sub), function(x){ sdEffect(x,sub,aData) }) %>% unlist()
-sub[order(sub$eff),c(1,3,5)]
 #######################################################################################
 
 #######################################################################################
 # Creating APSR like tables
-fileTable='LfeResultsInvProfile.tex'
+fileTable='LcumulativeIncludedResultsInvProfile.tex'
 captionTable='Regression on investment profile using country fixed effects, robust standard errors in parentheses. $^{**}$ and $^{*}$ indicate significance at $p< 0.05 $ and $p< 0.10 $, respectively.'
 varDef = cbind( unique(unlist(ivAll)),  unique(unlist(ivsName)) )
 varDef = varDef[c(1,nrow(varDef)-1,nrow(varDef),2:(nrow(varDef)-2)),]
@@ -150,13 +133,13 @@ tableFinal[,2:ncol(tableFinal)]=apply(tableFinal[,2:ncol(tableFinal)], c(1,2),
 		if( grepl('\\$', x) ){ gsub('\\$*\\.', '$&$.', x)
 		} else { gsub('\\.', '&.', x) } })
 
-# setwd(pathLatex)
-# print.xtable(xtable(tableFinal, align='llcccccc', caption=captionTable),
-# 	include.rownames=FALSE,
-# 	sanitize.text.function = identity,
-# 	hline.after=c(0,0,nrow(varDef)*2,nrow(varDef)*2+nStats,nrow(varDef)*2+nStats),
-# 	size="footnotesize",	
-# 	file=fileTable )
+setwd(pathLatex)
+print.xtable(xtable(tableFinal, align='llcccc', caption=captionTable),
+	include.rownames=FALSE,
+	sanitize.text.function = identity,
+	hline.after=c(0,0,nrow(varDef)*2,nrow(varDef)*2+nStats,nrow(varDef)*2+nStats),
+	size="footnotesize",	
+	file=fileTable )
 #######################################################################################
 
 #######################################################################################

@@ -11,8 +11,8 @@ load(paste0(pathBin, 'analysisData.rda'))
 aData$fdiLog2 = logNeg(aData$fdi) ; dv='fdiLog2'
 
 # disputes
-dispVars =  c( 'iDispB', 'niDispB')
-dispLabs = c('ICSID', 'Non-ICSID' )
+dispVars =  c( 'niDispB')
+dispLabs = c('Non-ICSID' )
 ivDisp=c( paste0('mvs2_',dispVars), paste0('mvs5_',dispVars), paste0(dispVars, 'C') )
 lagLabName = function(x,mvs=TRUE,y=NULL){
 	if(mvs){ return( paste0(x, ' (past ', y, ' years)') ) }
@@ -24,7 +24,7 @@ ivDispName = c( lagLabName(dispLabs,T,2), lagLabName(dispLabs,T,5), paste0('Cumu
 ivOther=c(
 	'gdpGr', 'gdpCapLog', 'popLog','inflLog',
 	'intConf', 'extConf',
-	'sbitNoDuplC', 'kaopen', 'polity', 'propRights'
+	'rbitNoDuplC', 'kaopen', 'polity', 'propRights'
 	)
 ivs=c(ivDisp, ivOther)
 ivAll=lapply(ivDisp, function(x) FUN= c( lagLab(x,1), lagLab(ivOther,1), 'globSumRFDI' ) )
@@ -44,15 +44,15 @@ plmData=pdata.frame( aData[,c(dv, unique(unlist(ivAll)), 'ccode', 'year') ], ind
 modForm=lapply(ivAll, function(x){
 	as.formula( paste(dv,  paste(x, collapse=' + '), sep=' ~ ')) })
 
-modResults=lapply(modForm, function(x) FUN=plm(x, data=plmData, model='within') )
+modResults=lapply(modForm, function(x) FUN=plm(x, data=plmData, model='pooling') )
 modSumm=lapply(modResults, function(x){
 	coeftest(x)[,c('Estimate','Std. Error', 't value', 'Pr(>|t|)')] })
 #######################################################################################
 
 #######################################################################################
 # Creating APSR like tables
-fileTable='LfeResultsFDI_nICSID.tex'
-captionTable='Regression of non-ICSID disputes on Ln(FDI flows) with standard errors in parentheses. $^{**}$ and $^{*}$ indicate significance at $p< 0.05 $ and $p< 0.10 $, respectively.'
+fileTable='LpoolResultsFDI_nICSID.tex'
+captionTable='Pooled regression of non-ICSID disputes on Ln(FDI flows) with standard errors in parentheses. $^{**}$ and $^{*}$ indicate significance at $p< 0.05 $ and $p< 0.10 $, respectively.'
 varDef = cbind( unique(unlist(ivAll)),  unique(unlist(ivsName)) )
 varDef = varDef[c(1,nrow(varDef)-1,nrow(varDef),2:(nrow(varDef)-2)),]
 
@@ -110,20 +110,9 @@ tableFinal[,2:ncol(tableFinal)]=apply(tableFinal[,2:ncol(tableFinal)], c(1,2),
 		if( grepl('\\$', x) ){ gsub('\\$*\\.', '$&$.', x)
 		} else { gsub('\\.', '&.', x) } })
 
-print.xtable(xtable(tableFinal, align='llcccccc', caption=captionTable),
+print.xtable(xtable(tableFinal, align='llccc', caption=captionTable),
 	include.rownames=FALSE,
 	sanitize.text.function = identity,
 	hline.after=c(0,0,nrow(varDef)*2,nrow(varDef)*2+nStats,nrow(varDef)*2+nStats),
 	size="footnotesize",	
 	file=paste0(pathLatex, '/', fileTable) )
-#######################################################################################
-
-#######################################################################################
-# fix up r squared
-modForm=lapply(ivAll, function(x){
-	as.formula( paste0(paste(dv,  paste(x, collapse=' + '), sep=' ~ '), ' + factor(ccode) - 1')) })
-modResults=lapply(modForm, function(x) FUN=lm(x, data=aData) )
-lapply(modResults, function(x){
-	c(summary(x)$'r.squared', summary(x)$'adj.r.squared')
-	})
-#######################################################################################

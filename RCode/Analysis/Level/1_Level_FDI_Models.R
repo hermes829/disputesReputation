@@ -90,9 +90,9 @@ tmp=ggplot(ggCoef, aes(x=value)) +
 		    axis.ticks=element_blank(),
 		    panel.border=element_blank()
     )
-tikz(file=paste0(pathLatex, '/corrFDI.tex'),width=8,height=3.5,standAlone=F)
-tmp
-dev.off()
+# tikz(file=paste0(pathLatex, '/corrFDI.tex'),width=8,height=3.5,standAlone=F)
+# tmp
+# dev.off()
 
 countNeg = function(x, neg=TRUE){ 
 	if(neg){ return( length(x[x<0]) ) }
