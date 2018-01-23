@@ -10,30 +10,28 @@ load(paste0(pathBin, 'analysisData.rda'))
 # Setting up models
 aData$fdiLog2 = logNeg(aData$fdi) ; dv='fdiLog2'
 
-# disputes
-dispVars =  c( 'iDispB')
-dispLabs = c('ICSID' )
-ivDisp=c( paste0('mvs2_',dispVars), paste0('mvs5_',dispVars) )
-ivDispName = c( dName(dispLabs,2), dName(dispLabs,5) )
-
 # Other covariates
 ivOther=c(
 	'iDispBC',
+	'niDispBC',
 	'gdpGr', 'gdpCapLog', 'popLog','inflLog',
 	'intConf', 'extConf',
 	'rbitNoDuplC', 'kaopen', 'polity', 'propRights'
 	)
-ivs=c(ivDisp, ivOther)
-ivAll=lapply(ivDisp, function(x) FUN= c( lagLab(x,1), lagLab(ivOther,1), 'globSumRFDI' ) )
+
+# Untrans IVs
+ivs=c(ivOther)
+ivAll=list(c(lagLab(ivOther,1), 'globSumRFDI'))
 
 # Setting up variables names for display
 ivOtherName=c(
 	'Cumulative ICSID',
+	'Cumulative Not ICSID',
 	'\\%$\\Delta$ GDP', 'Ln(GDP per capita)', 'Ln(Pop.)', 'Ln(Inflation)', 
 	'Internal Stability','External Stability',
 	'Ratified BITs','Capital Openness','Polity', 'Property Rights'
 	)
-ivsName=lapply(1:length(ivDispName), function(x){ c(ivDispName[x], lagLabName(ivOtherName), 'World FDI') })
+ivsName=list(c(lagLabName(ivOtherName), 'World FDI'))
 #######################################################################################
 
 #######################################################################################
@@ -48,10 +46,9 @@ modSumm=lapply(modResults, function(x){
 
 #######################################################################################
 # Creating APSR like tables
-fileTable='LcumulativeIncludedResultsFDI.tex'
+fileTable='LallDisputesResultsFDI.tex'
 captionTable='Fixed effects regression on Ln(FDI flows) with standard errors in parentheses. $^{**}$ and $^{*}$ indicate significance at $p< 0.05 $ and $p< 0.10 $, respectively.'
 varDef = cbind( unique(unlist(ivAll)),  unique(unlist(ivsName)) )
-varDef = varDef[c(1,nrow(varDef)-1,nrow(varDef),2:(nrow(varDef)-2)),]
 
 digs=3; noModels=length(modSumm)
 tableResults = matrix('', nrow=2*length(varDef[,1]), ncol=1+noModels)
@@ -102,12 +99,12 @@ temp[which(is.na(temp))]=tableFinal[,'Variable'][which(is.na(temp))]
 tableFinal[,'Variable']=temp
 
 # Add & before every period
-tableFinal[,2:ncol(tableFinal)]=apply(tableFinal[,2:ncol(tableFinal)], c(1,2), 
+tableFinal[,2:ncol(tableFinal)]=apply(tableFinal[,2:ncol(tableFinal),drop=FALSE], c(1,2), 
 	function(x){ 
 		if( grepl('\\$', x) ){ gsub('\\$*\\.', '$&$.', x)
 		} else { gsub('\\.', '&.', x) } })
 
-print.xtable(xtable(tableFinal, align='llcc', caption=captionTable),
+print.xtable(xtable(tableFinal, align='llc', caption=captionTable),
 	include.rownames=FALSE,
 	sanitize.text.function = identity,
 	hline.after=c(0,0,nrow(varDef)*2,nrow(varDef)*2+nStats,nrow(varDef)*2+nStats),

@@ -67,6 +67,7 @@
 			\caption{Pooled regression on Ln(FDI flows) with standard errors in parentheses. $^{**}$ and $^{*}$ indicate significance at $p< 0.05 $ and $p< 0.10 $, respectively.} 
 			\end{table}
 			\FloatBarrier
+			\clearpage
 
 		\item \textcolor{blue}{ \emph{ Table 3 pooled results. }}
 
@@ -114,6 +115,7 @@
 			\caption{Pooled regression of non-ICSID disputes on Ln(FDI flows) with standard errors in parentheses. $^{**}$ and $^{*}$ indicate significance at $p< 0.05 $ and $p< 0.10 $, respectively.} 
 			\end{table}
 			\FloatBarrier
+			\clearpage
 
 		\item \textcolor{blue}{ \emph{ Table 4 pooled results. }}
 
@@ -165,6 +167,7 @@
 			\FloatBarrier
 
 	\end{itemize}
+	\clearpage
 	\item What if you include cumulative ICSID (t-1) in the Models 1,2,(3,4) in Tables 2, 3, and 4? Recent counts of claims matter but you still need to control for the past history of claims in the model. And what about the potential endogeneity? It is possible that states with lower ICRG ratings tend to have more number of investment disputes.		
 	\begin{itemize}
 		\item \textcolor{blue}{ \emph{ Table 2 with cumulative included in all models. }}
@@ -217,6 +220,7 @@
 			\end{table}
 			\FloatBarrier
 
+		\clearpage
 		\item \textcolor{blue}{ \emph{ Table 3 with cumulative included in all models. }}
 
 			\begin{table}[ht]
@@ -265,7 +269,8 @@
 			\end{table}			
 			\FloatBarrier
 
-		\item \textcolor{blue}{ \emph{ Table 4 with cumulative included in all models. }}
+		\clearpage
+		\item \textcolor{blue}{ \emph{ Table 4 with cumulative included in all models. Since ICSID disputes have only recently become popular the five year moving sum and cumulative count are highly correlated at a level of 0.82, so estimating their effect jointly is difficult due to multicollinearity.}}
 
 			\begin{table}[ht]
 			\centering
@@ -320,13 +325,105 @@
 	\begin{itemize}
 		\item \textcolor{blue}{ \emph{ We have added additional descriptive information about the ICRG ratings. }}
 	\end{itemize}
+	
+	\clearpage
 	\item What happens if you include ICSID and Non-ICSID in the same model so that you test their effects simultaneously?		
 	\begin{itemize}
-		\item \textcolor{blue}{ \emph{ hi world . }}
+		\item \textcolor{blue}{ \emph{ Table 2 \& 3: cumulative icsid and non-icsid disputes on FDI flows}}
+
+			% latex table generated in R 3.4.1 by xtable 1.8-2 package
+			% Mon Jan 22 22:01:11 2018
+			\begin{table}[ht]
+			\centering
+			\begingroup\footnotesize
+			\begin{tabular}{lr@{}lr@{}}
+			 Variable && Model 1 \\ 
+			  \hline
+			\hline
+			Cumulative ICSID$_{t-1}$ & -0&.036 \\ 
+			   & (0&.069) \\ 
+			  Cumulative Not ICSID$_{t-1}$ & -0&.19 \\ 
+			   & (0&.159) \\ 
+			  \%$\Delta$ GDP$_{t-1}$ & 0&.051 \\ 
+			   & (0&.027) \\ 
+			  Ln(GDP per capita)$_{t-1}$ & $-3$&$.32^{\ast\ast}$ \\ 
+			   & (1&.02) \\ 
+			  Ln(Pop.)$_{t-1}$ & $3$&$.667^{\ast}$ \\ 
+			   & (1&.52) \\ 
+			  Ln(Inflation)$_{t-1}$ & -0&.393 \\ 
+			   & (0&.357) \\ 
+			  Internal Stability$_{t-1}$ & $0$&$.315^{\ast}$ \\ 
+			   & (0&.125) \\ 
+			  External Stability$_{t-1}$ & $0$&$.418^{\ast\ast}$ \\ 
+			   & (0&.131) \\ 
+			  Ratified BITs$_{t-1}$ & 0&.02 \\ 
+			   & (0&.025) \\ 
+			  Capital Openness$_{t-1}$ & -0&.215 \\ 
+			   & (0&.196) \\ 
+			  Polity$_{t-1}$ & 0&.003 \\ 
+			   & (0&.013) \\ 
+			  Property Rights$_{t-1}$ & $0$&$.132^{\ast}$ \\ 
+			   & (0&.06) \\ 
+			  World FDI & $0$&$.000^{\ast\ast}$ \\ 
+			   & (0&.000) \\ 
+			   \hline
+			n & 2572 \\ 
+			  N & 101 \\ 
+			   \hline
+			\hline
+			\end{tabular}
+			\endgroup
+			\caption{Fixed effects regression on Ln(FDI flows) with standard errors in parentheses. $^{**}$ and $^{*}$ indicate significance at $p< 0.05 $ and $p< 0.10 $, respectively.} 
+			\end{table}
+			\FloatBarrier
+			\clearpage
+
+		\item \textcolor{blue}{ \emph{ Table 4: models 5 and 6 }}
+
+			\begin{table}[ht]
+			\centering
+			\begingroup\footnotesize
+			\begin{tabular}{lr@{}lr@{}}
+			 Variable && Model 1 \\ 
+			  \hline
+			\hline
+			Cumulative ICSID$_{t-1}$ & $-0$&$.063^{\ast}$ \\ 
+			   & (0&.027) \\ 
+			  Cumulative Not ICSID$_{t-1}$ & -0&.029 \\ 
+			   & (0&.072) \\ 
+			  \%$\Delta$ GDP$_{t-1}$ & $0$&$.016^{\ast}$ \\ 
+			   & (0&.006) \\ 
+			  Ln(GDP per capita)$_{t-1}$ & 0&.734 \\ 
+			   & (0&.395) \\ 
+			  Ln(Pop.)$_{t-1}$ & $2$&$.642^{\ast\ast}$ \\ 
+			   & (0&.384) \\ 
+			  Ln(Inflation)$_{t-1}$ & $-0$&$.293^{\ast\ast}$ \\ 
+			   & (0&.076) \\ 
+			  Internal Stability$_{t-1}$ & $0$&$.199^{\ast\ast}$ \\ 
+			   & (0&.034) \\ 
+			  External Stability$_{t-1}$ & -0&.01 \\ 
+			   & (0&.037) \\ 
+			  Ratif. BITs$_{t-1}$ & $0$&$.03^{\ast\ast}$ \\ 
+			   & (0&.011) \\ 
+			  Capital Openness$_{t-1}$ & $0$&$.18^{\ast\ast}$ \\ 
+			   & (0&.067) \\ 
+			  Polity$_{t-1}$ & $0$&$.012^{\ast\ast}$ \\ 
+			   & (0&.003) \\ 
+			   \hline
+			n && 2603 \\ 
+			  N && 101 \\ 
+			   \hline
+			\hline
+			\end{tabular}
+			\endgroup
+			\caption{Regression on investment profile using country fixed effects, robust standard errors in parentheses. $^{**}$ and $^{*}$ indicate significance at $p< 0.05 $ and $p< 0.10 $, respectively.} 
+			\end{table}		
+			\FloatBarrier
+
 	\end{itemize}
 	\item Why one point estimate is in blue? If this is an error, please correct it in Figure 4.	
 	\begin{itemize}
-		\item \textcolor{blue}{ \emph{ hi world . }}
+		\item \textcolor{blue}{ \emph{ Because the parameter is significant and positive at a 95\% CI... }}
 	\end{itemize}
 	\item Please rewrite the Introduction to clearly present what motivates your research, in what aspects you challenge the previous studies both theoretically and empirically, and what your arguments are and how you are going to prove them. The current format is not a very effective introduction for the readers.
 	\begin{itemize}
