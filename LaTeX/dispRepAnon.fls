@@ -318,8 +318,8 @@ INPUT /usr/local/texlive/2017/texmf-dist/fonts/tfm/public/opensans/OpenSans-Ital
 INPUT /usr/local/texlive/2017/texmf-dist/fonts/tfm/public/opensans/OpenSans-Italic-02.tfm
 INPUT /usr/local/texlive/2017/texmf-dist/fonts/tfm/public/opensans/OpenSans-Italic-03.tfm
 INPUT /usr/local/texlive/2017/texmf-dist/fonts/tfm/public/opensans/OpenSans-Italic-04.tfm
-INPUT /Users/s7m/Research/disputesReputation/LaTeX/graphics/histICSID
-INPUT /Users/s7m/Research/disputesReputation/LaTeX/graphics/histICSID
+INPUT /Users/s7m/Research/disputesReputation/LaTeX/graphics/corrFDI.tex
+INPUT /Users/s7m/Research/disputesReputation/LaTeX/graphics/corrFDI.tex
 INPUT /usr/local/texlive/2017/texmf-dist/fonts/tfm/public/cm/cmr8.tfm
 INPUT /usr/local/texlive/2017/texmf-dist/fonts/tfm/public/cm/cmr6.tfm
 INPUT /usr/local/texlive/2017/texmf-dist/fonts/tfm/public/cm/cmmi12.tfm
@@ -343,8 +343,8 @@ INPUT /usr/local/texlive/2017/texmf-dist/fonts/tfm/public/opensans/OpenSans-Regu
 INPUT /usr/local/texlive/2017/texmf-dist/fonts/tfm/public/opensans/OpenSans-Regular-02.tfm
 INPUT /usr/local/texlive/2017/texmf-dist/fonts/tfm/public/opensans/OpenSans-Regular-03.tfm
 INPUT /usr/local/texlive/2017/texmf-dist/fonts/tfm/public/opensans/OpenSans-Regular-04.tfm
-INPUT /Users/s7m/Research/disputesReputation/LaTeX/graphics/corrFDI.tex
-INPUT /Users/s7m/Research/disputesReputation/LaTeX/graphics/corrFDI.tex
+INPUT /Users/s7m/Research/disputesReputation/LaTeX/graphics/histICSID
+INPUT /Users/s7m/Research/disputesReputation/LaTeX/graphics/histICSID
 INPUT /Users/s7m/Research/disputesReputation/LaTeX/graphics/simResults.tex
 INPUT /Users/s7m/Research/disputesReputation/LaTeX/graphics/simResults.tex
 INPUT /Users/s7m/Research/disputesReputation/LaTeX/graphics/crossValLevel.tex
