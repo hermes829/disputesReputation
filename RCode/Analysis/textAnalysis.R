@@ -31,7 +31,7 @@ cbind(table(textData$year))
 
 tmp=ggplot(textData, aes(x=year)) + 
 	geom_histogram(stat='bin', binwidth=1, fill='grey', color='darkgrey') + 
-	scale_y_continuous('Frequency', expand=c(0,0)) + 
+	scale_y_continuous('Occurrences', expand=c(0,0)) + 
 	scale_x_continuous('', expand=c(0,0), labels=seq(1970, 2014, 4), breaks=seq(1970, 2014, 4)) + 
 	geom_line(data=icsidYrData, aes(x=year+.5, y=iDisp), lwd=2) + 
 	theme(
