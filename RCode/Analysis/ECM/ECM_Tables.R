@@ -98,6 +98,7 @@ tableFinal[,2:ncol(tableFinal)]=apply(tableFinal[,2:ncol(tableFinal)], c(1,2),
 		if( grepl('\\$', x) ){ gsub('\\$*\\.', '$&$.', x)
 		} else { gsub('\\.', '&.', x) } })
 
+fileTable='~/Desktop/tmp.tex'
 setwd(pathLatex)
 print.xtable(xtable(tableFinal, align='llcccc', caption=captionTable),
 	include.rownames=FALSE,

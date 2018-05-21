@@ -58,7 +58,7 @@ substrRight <- function(x, n){
 
 chLab=function(s='diff',x){ paste0(s,'_',x) }
 lagLab=function(x,n){ paste0('lag',n,'_',x) }
-chLabName=function(x){ paste0('\\%$\\Delta$ ',x) }
+pchLabName=function(x){ paste0('\\%$\\Delta$ ',x) }
 lagLabName=function(x,mvs=FALSE, mvsNum=NULL){ 
   if(!mvs){ return(paste0(x, '$_{t-1}$')) }
   if(mvs){ return(paste0(x, '$_{(t-1) + (t-',mvsNum,')}$')) } }
