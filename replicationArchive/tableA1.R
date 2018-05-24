@@ -1,109 +1,95 @@
-###
-# REPLICATION OF ALLEE AND PEINHARDT
-# RERUNNING MODEL 4.2 IN TABLE 4 AND CONDUCTING ROBUSTNESS CHECKS
-###
-
 #######################################################################################
 ### source in the setup.R script using the path on your computer
 source('~/Research/disputesReputation/replicationArchive/setup.R')
 
 ### Load data
-load('analysisData.rda')
+fdi = read.dta("Allee and Peinhardt IO 2011 data.dta")
 #######################################################################################
 
+# stata like robust clustered standard errors
+# code from:
+# https://thetarzan.wordpress.com/2011/05/28/heteroskedasticity-robust-and-clustered-standard-errors-in-r/
+cl   <- function(dat,fm, cluster){
+  attach(dat, warn.conflicts = F)
+  loadPkg('sandwich')
+  M <- length(unique(cluster))
+  N <- length(cluster)
+  K <- fm$rank
+  dfc <- (M/(M-1))*((N-1)/(N-K))
+  uj  <- apply(estfun(fm),2, function(x) tapply(x, cluster, sum));
+  vcovCL <- dfc*sandwich(fm, meat=crossprod(uj)/N)
+  coeftest(fm, vcovCL) }
 
-####
-#Loading Allee Peinhardt Data
-####
-fdi = read.dta("Allee and Peinhardt IO 2011 data.dta")
-setwd(pathData)
-load('forAnalysis.rda')
+# remove OECD countries
+fdi = fdi[fdi$oecd!=1,]
 
-fdi$cname=countrycode(fdi$country, 'country.name', 'country.name')
-# fdi$rbitcount=allData$ratifiedbits[match(fdi$cname,allData$cname)]
+# push forward fdi measure and add correctly logged fdi measure
+tmp = fdi[,c('ifscode','year','lnfdi', 'worldfdi', 'fdi_inflows')]
+tmp$lnfdi_correct = log( tmp$fdi_inflows+abs(min(tmp$fdi_inflows,na.rm=T))+1 )
+tmp$year = tmp$year - 1
+tmp$id = with(tmp, paste(ifscode, year, sep='_'))
+fdi$id = with(fdi, paste(ifscode, year, sep='_'))
+for(v in names(tmp)[c(3:ncol(tmp))]){
+  fdi$tmp = tmp[match(fdi$id, tmp$id),v]
+  names(fdi)[ncol(fdi)] = paste0('F.', v) }
 
-###
-# CORRECTING MISTAKE IN HOW fdi_inflows WAS LOGGED
-###
-# fdi$lnfdiSM = logNeg(fdi$fdi_inflows) # Log abs value of neg and then mult neg 1 before recombining
-fdi$lnfdiSM = log( fdi$fdi_inflows+abs(min(fdi$fdi_inflows,na.rm=T))+.0001 ) # add constant to make neg >0 and then log
-# fdi$lnfdiSM = fdi$fdi_inflows # No log
 
-# Lead DV forward one year
-fdi$cyear = numSM(paste0(fdi$ifscode, fdi$year))
-tmp=fdi[,c('ifscode', 'year','lnfdiSM', 'lnfdi', 'worldfdi')]
-names(tmp)[3:5]=paste0('lead1_', names(tmp)[3:5])
-tmp$year=tmp$year-1
-tmp$cyear = numSM(paste0(tmp$ifscode, tmp$year))
-fdi=merge(fdi, tmp[,3:ncol(tmp)], by='cyear', all.x=TRUE)
+# A & P: (1)
+ivs = c(
+  'bitcount', 'pending','cbdcrisis', 'domestic1_8', 'external_conflict', 'polity2',
+  'proprights', 'lnpop_total', 'lngdppc', 'gdp_grow', 'offxrate_lcudif',
+  'kaopen', 'F.worldfdi' )
+apForm1 = formula(paste0(
+  'F.lnfdi ~', paste(ivs, collapse = ' + '), '+ factor(ifscode) - 1' ))
+regData = na.omit(fdi[,c('ifscode','year','F.lnfdi',ivs)])
+apMod1 = lm(apForm1, data=regData)
+apRobustMod1 = cl(regData, apMod1, regData$ifscode)
+round(apRobustMod1, 3)[1:length(ivs),]
 
-# Specifying DV
-# fdi$DV = fdi[,'lead1_lnfdi'] # Allee and Peinhardt Approach
-fdi$DV = fdi[,'lead1_lnfdiSM'] # Corrected
-fdi$Fworldfdi=fdi[,'lead1_worldfdi']
+# A & P: (2)
+ivs[2] = 'numreg2'
+apForm2 = formula(paste0(
+  'F.lnfdi ~', paste(ivs, collapse = ' + '), '+ factor(ifscode) - 1' ))
+regData = na.omit(fdi[,c('ifscode','year','F.lnfdi',ivs)])
+apMod2 = lm(apForm2, data=regData)
+apRobustMod2 = cl(regData, apMod2, regData$ifscode)
+round(apRobustMod2, 3)[1:length(ivs),]
 
-### 
-# Checking on footnote 72
-###
-f72=fdi[which(fdi$cname %in% c('Gambia', 'Peru')),]
-setwd(pathGraphics)
-pdf(file='gambiaPeruFDI.pdf', width=12, height=10)
-ggplot(f72, aes(x=year, y=fdi_inflows))+geom_line()+facet_wrap(~cname, ncol=1,scales='free_y')
-dev.off()
+# A & P: (3)
+ivs[2] = 'numreg5'
+apForm3 = formula(paste0(
+  'F.lnfdi ~', paste(ivs, collapse = ' + '), '+ factor(ifscode) - 1' ))
+regData = na.omit(fdi[,c('ifscode','year','F.lnfdi',ivs)])
+apMod3 = lm(apForm3, data=regData)
+apRobustMod3 = cl(regData, apMod3, regData$ifscode)
+round(apRobustMod3, 3)[1:length(ivs),]
 
-pdf(file='gambiaPeruLnFDI.pdf', width=12, height=10)
-ggplot(f72, aes(x=year, y=lnfdi))+geom_line()+facet_wrap(~cname, ncol=1,scales='free_y')
-dev.off()
+# Corrected: (1)
+ivs = c(
+  'bitcount', 'pending','cbdcrisis', 'domestic1_8', 'external_conflict', 'polity2',
+  'proprights', 'lnpop_total', 'lngdppc', 'gdp_grow', 'offxrate_lcudif',
+  'kaopen', 'F.worldfdi' )
+corrForm1 = formula(paste0(
+  'F.lnfdi_correct ~', paste(ivs, collapse = ' + '), '+ factor(ifscode) - 1' ))
+regData = na.omit(fdi[,c('ifscode','year','F.lnfdi_correct',ivs)])
+corrMod1 = lm(corrForm1, data=regData)
+corrRobustMod1 = cl(regData, corrMod1, regData$ifscode)
+round(corrRobustMod1, 3)[1:length(ivs),]
 
-####
-# RUNNING MODELS
-#####
-mNames=c('Lose/Settle (2 years)', 'Lose/Settle (5 years)', 
-  'Lost (2 years)', 'Lost (5 years)' )
-# kivs=c('lose_settle2', 'lose_settle5', 'losticsid2', 'losticsid5')
-kivs=c('losticsid2')
-coefsRobustList=list()
-resultsList=list()
-fdi=fdi[fdi$year>1983,]
-for(ii in 1:length(kivs)){
-  #Note: variables for analysis
-  regVars = c( 'DV',
-    'bitcount', 
-    kivs[ii], 
-    'cbdcrisis', 
-    'domestic1_8', 'external_conflict', 'polity2', 'proprights',
-    'lnpop_total', 'lngdppc', 'gdp_grow', 'offxrate_lcudif', 'kaopen',
-    'Fworldfdi',
-    'oecd', 'ifscode', 'country', 'year')
-  regData = na.omit(fdi[,c(regVars, 'fdi_inflows')])
-  regData = regData[regData$oecd!=1,]
+# Corrected: (2)
+ivs[2] = 'numreg2'
+corrForm2 = formula(paste0(
+  'F.lnfdi_correct ~', paste(ivs, collapse = ' + '), '+ factor(ifscode) - 1' ))
+regData = na.omit(fdi[,c('ifscode','year','F.lnfdi_correct',ivs)])
+corrMod2 = lm(corrForm2, data=regData)
+corrRobustMod2 = cl(regData, corrMod2, regData$ifscode)
+round(corrRobustMod2, 3)[1:length(ivs),]
 
-# xtreg F.lnfdi bitcount losticsid2 cbdcrisis domestic1_8 external_conflict polity2
-# proprights lnpop_total lngdppc gdp_grow offxrate_lcudif kaopen F.worldfdi if oecd~=1,
-# fe robust cluster (ifscode)
-
-  ####
-  # Setting up model
-  #####
-  ap_model = formula(paste('DV ~ bitcount +', kivs[ii],
-      ' + cbdcrisis + domestic1_8 + 
-            external_conflict + polity2 + proprights + 
-            lnpop_total + lngdppc + gdp_grow + offxrate_lcudif +
-            kaopen + Fworldfdi +
-            factor(ifscode)-1'))
-  ap_modelVars = 13
-
-  regModel = lm(ap_model, data = regData)
-  robustRegModel = clx(regModel, regData$date, regData$country)
-  regModelSE = robustRegModel[[2]]
-  vcovCL = robustRegModel[[1]]
-  error = summary(regModel)$sigma
-
-  resultsList[[ii]]=regModel
-	coefsRobustList[[ii]]=regModelSE
-}
-
-Acoefs=c(kivs, regVars[c(2,4:14)])
-apTables = lmtableSM(coefs=Acoefs, vnames=Acoefs,
- modelResults=resultsList, modelSumm=coefsRobustList, modelNames=mNames)
-apTables
+# Corrected: (3)
+ivs[2] = 'numreg5'
+corrForm3 = formula(paste0(
+  'F.lnfdi_correct ~', paste(ivs, collapse = ' + '), '+ factor(ifscode) - 1' ))
+regData = na.omit(fdi[,c('ifscode','year','F.lnfdi_correct',ivs)])
+corrMod3 = lm(corrForm3, data=regData)
+corrRobustMod3 = cl(regData, corrMod3, regData$ifscode)
+round(corrRobustMod3, 3)[1:length(ivs),]
