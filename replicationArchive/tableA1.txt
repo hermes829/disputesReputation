@@ -1,0 +1,90 @@
+[1] "A & P Original Model 1"
+                  Estimate Std. Error t value Pr(>|t|)
+bitcount             0.015      0.010   1.528    0.127
+pending             -0.036      0.012  -3.058    0.002
+cbdcrisis           -0.032      0.068  -0.481    0.631
+domestic1_8         -0.011      0.011  -1.077    0.281
+external_conflict    0.046      0.027   1.719    0.086
+polity2              0.015      0.018   0.820    0.413
+proprights           0.039      0.022   1.746    0.081
+lnpop_total          1.299      0.541   2.402    0.016
+lngdppc              1.061      0.273   3.889    0.000
+gdp_grow             0.018      0.007   2.720    0.007
+offxrate_lcudif     -0.001      0.000  -4.243    0.000
+kaopen               0.126      0.060   2.080    0.038
+F.worldfdi           0.000      0.000   5.834    0.000
+[1] "A & P Original Model 2"
+                  Estimate Std. Error t value Pr(>|t|)
+bitcount             0.015      0.010   1.563    0.118
+numreg2             -0.057      0.019  -2.990    0.003
+cbdcrisis           -0.031      0.067  -0.458    0.647
+domestic1_8         -0.011      0.011  -1.079    0.281
+external_conflict    0.047      0.027   1.734    0.083
+polity2              0.015      0.018   0.813    0.416
+proprights           0.039      0.022   1.746    0.081
+lnpop_total          1.316      0.540   2.436    0.015
+lngdppc              1.053      0.271   3.881    0.000
+gdp_grow             0.018      0.007   2.720    0.007
+offxrate_lcudif     -0.001      0.000  -4.249    0.000
+kaopen               0.127      0.060   2.105    0.035
+F.worldfdi           0.000      0.000   5.676    0.000
+[1] "A & P Original Model 3"
+                  Estimate Std. Error t value Pr(>|t|)
+bitcount             0.016      0.010   1.600    0.110
+numreg5             -0.040      0.012  -3.436    0.001
+cbdcrisis           -0.031      0.067  -0.467    0.641
+domestic1_8         -0.011      0.011  -1.068    0.285
+external_conflict    0.047      0.027   1.732    0.083
+polity2              0.015      0.018   0.798    0.425
+proprights           0.039      0.022   1.721    0.085
+lnpop_total          1.306      0.541   2.412    0.016
+lngdppc              1.055      0.272   3.882    0.000
+gdp_grow             0.018      0.007   2.716    0.007
+offxrate_lcudif     -0.001      0.000  -4.249    0.000
+kaopen               0.125      0.060   2.086    0.037
+F.worldfdi           0.000      0.000   5.778    0.000
+[1] "Corrected Model 1"
+                  Estimate Std. Error t value Pr(>|t|)
+bitcount             0.003      0.001   2.934    0.003
+pending              0.001      0.007   0.092    0.926
+cbdcrisis           -0.012      0.010  -1.137    0.256
+domestic1_8         -0.002      0.002  -0.843    0.399
+external_conflict   -0.007      0.004  -1.917    0.055
+polity2             -0.001      0.002  -0.265    0.791
+proprights          -0.003      0.004  -0.810    0.418
+lnpop_total         -0.069      0.093  -0.743    0.457
+lngdppc              0.138      0.053   2.596    0.009
+gdp_grow             0.000      0.001   0.220    0.826
+offxrate_lcudif      0.000      0.000   1.265    0.206
+kaopen               0.014      0.010   1.423    0.155
+F.worldfdi           0.000      0.000   2.624    0.009
+[1] "Corrected Original Model 2"
+                  Estimate Std. Error t value Pr(>|t|)
+bitcount             0.003      0.001   2.992    0.003
+numreg2             -0.002      0.007  -0.295    0.768
+cbdcrisis           -0.012      0.010  -1.150    0.250
+domestic1_8         -0.002      0.002  -0.838    0.402
+external_conflict   -0.007      0.004  -1.914    0.056
+polity2             -0.001      0.002  -0.272    0.786
+proprights          -0.003      0.004  -0.828    0.408
+lnpop_total         -0.069      0.093  -0.746    0.456
+lngdppc              0.137      0.053   2.588    0.010
+gdp_grow             0.000      0.001   0.261    0.794
+offxrate_lcudif      0.000      0.000   1.272    0.204
+kaopen               0.014      0.010   1.426    0.154
+F.worldfdi           0.000      0.000   2.670    0.008
+[1] "Corrected Original Model 3"
+                  Estimate Std. Error t value Pr(>|t|)
+bitcount             0.003      0.001   2.895    0.004
+numreg5              0.000      0.006  -0.056    0.955
+cbdcrisis           -0.012      0.010  -1.147    0.252
+domestic1_8         -0.002      0.002  -0.840    0.401
+external_conflict   -0.007      0.004  -1.911    0.056
+polity2             -0.001      0.002  -0.268    0.789
+proprights          -0.003      0.004  -0.814    0.416
+lnpop_total         -0.069      0.093  -0.746    0.456
+lngdppc              0.137      0.053   2.596    0.010
+gdp_grow             0.000      0.001   0.241    0.810
+offxrate_lcudif      0.000      0.000   1.265    0.206
+kaopen               0.014      0.010   1.427    0.154
+F.worldfdi           0.000      0.000   2.637    0.008

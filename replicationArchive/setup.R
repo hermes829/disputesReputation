@@ -1,11 +1,6 @@
 # Clearing workspace objects
 rm(list=ls())
 
-# Set path to replicationArchive on your system
-path="~/Research/disputesReputation/replicationArchive/"
-setwd(path)
-load('panel.rda')
-
 # Loading libraries and functions
 loadPkg=function(toLoad){
   for(lib in toLoad){
@@ -25,6 +20,7 @@ loadPkg(toLoad)
 theme_set(theme_bw())
 
 # sourcing helpers
+load('panel.rda')
 source('textFunctions.R')
 source('tscsHelpers.R')
 source('relDataHelpers.R')

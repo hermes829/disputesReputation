@@ -1,6 +1,6 @@
 #######################################################################################
 ### source in the setup.R script using the path on your computer
-source('~/Research/disputesReputation/replicationArchive/setup.R')
+source('setup.R')
 
 ### Load data
 load('textData.rda')
