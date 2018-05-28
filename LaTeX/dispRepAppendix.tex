@@ -1,0 +1,132 @@
+\PassOptionsToPackage{table}{xcolor}
+\documentclass[12pt,onesided]{amsart} 
+\usepackage{natbib}
+\usepackage{amsmath}
+\usepackage{pifont}
+\usepackage[multiple]{footmisc}
+\usepackage{subfigure}
+\usepackage[T1]{fontenc}
+\usepackage{xcolor}
+\usepackage{multirow,multicol}
+\usepackage{caption}
+\usepackage{booktabs}
+\usepackage{color}
+\usepackage{setspace}
+\usepackage{colortbl}
+\usepackage{changebar}
+\usepackage{dcolumn}
+\usepackage{graphicx}
+\usepackage{tikz}
+\usepackage[section]{placeins}
+\setkeys{Gin}{width=\linewidth,totalheight=\textheight,keepaspectratio}
+\graphicspath{{graphics/}{../graphics/}}
+
+\usepackage{hyperref}
+
+\usepackage{geometry}
+\geometry{verbose,tmargin=1in,bmargin=1in,lmargin=1in,rmargin=1in}
+\usepackage{booktabs}
+\usepackage{units}
+\usepackage{fancyvrb}
+\fvset{fontsize=\normalsize}
+\usepackage{lipsum}
+
+\usepackage{footnote}
+\usepackage{url} 
+% \usepackage[nolists,tablesfirst]{endfloat} % places floats at end
+\usepackage{nameref}
+
+% Fonts
+\usepackage[default,osfigures,scale=0.95]{opensans}
+\usepackage[T1]{fontenc}
+\usepackage{ae}
+
+\begin{document}
+
+%\maketitle
+\thispagestyle{empty}
+
+\begin{center}
+{\sc \large Online Appendix for ``The Reputational Impact of Investor-State Disputes''}
+\end{center}
+
+\vspace{10mm}
+
+\begin{center}
+{\sc Shahryar Minhas}\footnote{Shahryar Minhas, Department of Political Science, Michigan State University, East Lansing, MI 48824 (shahryar.minhas@duke.edu, karen.remmer@duke.edu).}
+{\sc Karen Remmer}\footnote{Karen Remmer, Department of Political Science, Duke University, Durham, NC 27708 (karen.remmer@duke.edu).}
+\end{center}
+
+\newpage
+
+\setcounter{page}{1}
+\doublespacing
+
+\section*{Appendix}
+\label{appendix}
+
+\appendix
+\setcounter{figure}{0} \renewcommand{\thefigure}{A.\arabic{figure}}
+\setcounter{table}{0} \renewcommand{\thetable}{A.\arabic{table}}
+
+\subsection*{Allee \& Peinhardt 2011 Analysis}
+
+The difference between our results and those of Allee and Peinhardt's (2011) result from the way in which they logged the FDI variable. In doing so, they disregard the fact that logarithms of zero and negative numbers are not defined and therefore registered as missing in most statistical programs. As a result, they mistakenly exclude a notable number of country-year observations with negative or zero flows. Given their argument about the adverse reputational ramifications of ICSID disputes involvement on FDI flows, one could argue that the observations with negative flows are the most relevant portion of their dataset. In our replication of their analysis, we correct for this error by following the simple procedure suggested by \citeauthor{li:2009}, which calls for adding a constant so that each value is greater than zero before logging.\footnote{\citet{li:2009}} 
+
+The impact of Allee and Peinhardt's error is readily apparent in Table \ref{tab:allee}. Using their data and statistical approach, the first column of the table exactly replicates their base model that assesses the impact of pending ICSID disputes over the 1984-2007 period. In column two, we follow the exact same procedure except we add a constant to negative and zero FDI values before logging the data. Comparing the results of columns one and two, it becomes evident that after including zero and negative FDI observations, ICSID dispute involvement does not significantly affect FDI flows. The results presented in other columns of the table are consistent with this finding. Columns three and four compare the results for the effect of disputes filed in the past two years, and columns five and six use disputes filed in the past five years. In each case we see that Allee and Peinhardt's original findings do not hold after including observations with negative or zero FDI in the analysis. For reasons of space, we do not report our findings with respect to other sets of Allee and Peinhardt's results, which address the impact of ICSID disputes lost or settled over the past two and five years as well as the impact of disputes lost over the past two years controlling for pending disputes. The results for these additional estimations, however, follow the same pattern as those reported in Table \ref{tab:allee}. Estimates using unlogged FDI data are very similar. 
+
+% \newpage
+
+\begin{table}[ht]
+\vspace{1cm}
+\centering
+{\footnotesize
+\caption{The Impact of ICSID Arbitration on FDI Inflows}
+\label{tab:allee}
+\begin{tabular}{lr@{} lr@{}lr@{}lr@{}lr@{}lr@{}lr@{} }
+	\hline\hline
+	~ & \multicolumn{4}{c}{(1)} & \multicolumn{4}{c}{(2)} & \multicolumn{4}{c}{(3)} \\	
+	~ & \multicolumn{2}{c}{A \& P} & \multicolumn{2}{c}{Corrected} & \multicolumn{2}{c}{A \& P} & \multicolumn{2}{c}{Corrected} & \multicolumn{2}{c}{A \& P} & \multicolumn{2}{c}{Corrected}
+	 \\ \hline
+	\multirow{2}{*}{Signed BITs} & 0&.015 & 0&.003 & 0&.015 & 0&.003 & 0&.016 & 0&.003 \\
+	~ & (0&.010) & (0&.001) & (0&.010) & (0&.001) & (0&.010) & (0&.001) \\
+	Pending &-0&.036 &0&.001 && && && \\
+	$\;\;$Claims &(0&.012) &(0&.007) && && && \\
+	Disputes filed && && &-0&.057 &-0&.002 && && \\
+	$\;\;$(past 2 years) && && &(0&.019) &(0&.007) && && \\
+	Disputes filed && && && && &-0&.040 &0&.000 \\
+	$\;\;$(past 5 years) && && && && &(0&.012) &(0&.006) \\
+	Economic & -0&.032 & -0&.012 & -0&.031 & -0&.012 & -0&.031 & -0&.012 \\
+	$\;\;$Shocks & (0&.068) & (0&.010) & (0&.067) & (0&.010) & (0&.067) & (0&.010) \\
+	Political & -0&.011 & -0&.002 & -0&.011 & -0&.002 & -0&.011 & -0&.002 \\
+	$\;\;$Shocks & (0&.011) & (0&.002) & (0&.011) & (0&.002) & (0&.011) &(0&.002) \\
+	External & 0&.046 & -0&.007 & 0&.047 & -0&.007 & 0&.047 & -0&.007 \\
+	$\;\;$Threat & (0&.027) & (0&.004) & (0&.027) & (0&.004) & (0&.027) & (0&.004) \\
+	\multirow{2}{*}{Polity} & 0&.015 & -0&.001 & 0&.015 & -0&.001 & 0&.015 & -0&.001 \\
+	~ & (0&.018) & (0&.002) & (0&.018) & (0&.002) & (0&.018) &(0&.002) \\
+	Property & 0&.039 & -0&.003 &  0&.039 & -0&.003 &  0&.039 & -0&.003 \\
+	$\;\;$Rights & (0&.022) & (0&.004) & (0&.022) & (0&.004) & (0&.022) & (0&.004) \\
+	\multirow{2}{*}{Log(Population)} & 1&.30 & -0&.069 & 1&.32 & -0&.069 & 1&.31 & -0&.069 \\
+	& (0&.541) & (0&.093) & (0&.540) & (0&.093) & (0&.541) & (0&.093) \\
+	\multirow{2}{*}{GDP per capita} & 1&.06 & 0&.138 & 1&.05 & 0&.137 & 1&.06 & 0&.137 \\
+	& (0&.273) & (0&.053) & (0&.271) & (0&.053) & (0&.272) & (0&.053) \\
+	\multirow{2}{*}{GDP growth} & 0&.018 & 0&.000 & 0&.018 & 0&.000 & 0&.018 & 0&.000 \\
+	& (0&.007) & (0&.001) & (0&.007) & (0&.001) & (0&.007) &(0&.001) \\
+	\multirow{2}{*}{Exchange rate} & -0&.001 & 0&.000 & -0&.001 & 0&.000 & -0&.001 & 0&.000 \\
+	& (0&.000) & (0&.000) & (0&.000) & (0&.000) & (0&.000) &(0&.000) \\
+	Financial & 0&.126 & 0&.014 & 0&.127 & 0&.014 & 0&.125 & 0&.014 \\
+	$\;\;$Openness & (0&.060) & (0&.010) & (0&.060) & (0&.010) & (0&.060) &(0&.010) \\		
+	\multirow{2}{*}{World FDI} & 0&.000 & 0&.000 & 0&.000 & 0&.000 & 0&.000 & 0&.000 \\
+	& (0&.000) & (0&.000) & (0&.000) & (0&.000) & (0&.000) &(0&.000) \\ \hline
+	$n$ & 1,&796 & 1,&956 & 1,&796 & 1,&956 & 1,&796 & 1,&956 \\
+	$N$ & 1&02 & 1&02 & 1&02 & 1&02 & 1&02 & 1&02 \\
+	\hline\hline
+\end{tabular}
+\caption*{Note: All variables (except World FDI) lagged one year. Fixed-effects estimation with standard errors clustered on country. Standard errors in parentheses. }
+}
+\end{table}
+\FloatBarrier
+
+\newpage
+
+\end{document}
