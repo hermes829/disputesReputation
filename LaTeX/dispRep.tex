@@ -41,6 +41,24 @@
 \usepackage[T1]{fontenc}
 \usepackage{ae}
 
+% flush section headings to left
+\let\centeredsection\section% Copy original centered definition of \section
+
+\usepackage{etoolbox}
+% \patchcmd{<cmd>}{<search>}{<replace>}{<success>}{<failure>}
+\patchcmd{\section}{\centering}{}{}{}
+
+\let\flushleftsection\section% Copy updated non-centered definition of \section
+\newcommand{\sectionscenter}{\let\section\centeredsection}% Switch to centered \section
+\newcommand{\sectionsleft}{\let\section\flushleftsection}% Switch to flush left \section
+
+
+% bold section headings
+\patchcmd{\section}{\scshape}{\bfseries}{}{}
+\makeatletter
+\renewcommand{\@secnumfont}{\bfseries}
+\makeatother
+
 \begin{document}
 
 %\maketitle
@@ -76,9 +94,9 @@ Word Count: 8,541
 \setcounter{page}{1}
 \doublespacing
 
-\section*{Introduction}
+% \section*{Introduction}
 
-Research on the compliance of states with international commitments emphasizes the deterrent effect of reputational damage. The underlying assumption is that reneging on a formal commitment damages a state's reputation and jeopardizes future opportunities for international cooperation. Agreements that institutionalize state commitments are consequently expected to constrain state actors from engaging in uncooperative behavior as well as to induce other sets of actors to monitor and punish defections. The idea has gained particular traction in the study of international economic instruments, including debt contracts, investment treaties, and free trade agreements,\footnote{See, for example, \citet{simmons:2000}; \citet{tomz:2007}; \citet{buthe:milner:2014}; \citet{buthe:milner:2008}; \citet{allee:peinhardt:2011}; \citet{elkins:etal:2006}.} but it has also been applied to a broader range of international issues.\footnote{See, for example, \citet{fearon:1997} and \citet{simmons:danner:2010}.} Somewhat surprisingly, however, the argument linking reputation to compliance with formal agreements remains largely unexamined. Reputational damage has been inferred from evidence of shifting patterns of foreign lending or investment flows.\footnote{See \citet{tomz:2007} and \citet{allee:peinhardt:2011}.} But prior research has not systematically explored the consequences of reneging on commitments for state reputation. This paper fills this gap by exploring the  impact of investor-state disputes arising under international treaties on FDI flows as well as investment reputation. 
+Research on the compliance of states with international commitments emphasizes the deterrent effect of reputational damage. The underlying assumption is that reneging on a formal commitment damages a state's reputation and jeopardizes future opportunities for international cooperation. Agreements that institutionalize state commitments are consequently expected to constrain state actors from engaging in uncooperative behavior as well as to induce other sets of actors to monitor and punish defections. The idea has gained particular traction in the study of international economic instruments, including debt contracts, investment treaties, and free trade agreements,\footnote{See, for example, \citet{allee:peinhardt:2011}; \citet{buthe:milner:2014}; \citet{buthe:milner:2008}; \citet{elkins:etal:2006}; \citet{simmons:2000}; \citet{tomz:2007}.} but it has also been applied to a broader range of international issues.\footnote{See, for example, \citet{fearon:1997} and \citet{simmons:danner:2010}.} Somewhat surprisingly, however, the argument linking reputation to compliance with formal agreements remains largely unexamined. Reputational damage has been inferred from evidence of shifting patterns of foreign lending or investment flows.\footnote{See \citet{tomz:2007} and \citet{allee:peinhardt:2011}.} But prior research has not systematically explored the consequences of reneging on commitments for state reputation. This paper fills this gap by exploring the  impact of investor-state disputes arising under international treaties on FDI flows as well as investment reputation. 
 
 Bilateral investment treaties (BITs) and other international investment agreements (IIAs), which are designed to attract foreign direct investment (FDI) by offering credible property rights protection to private sector actors, have become an increasingly important part of the international legal architecture. As of the end of 2014, the overwhelming majority of world states had ratified one or more of these agreements, with the total IIA universe exceeding 2,500, including 2,276 BITS and 280 other agreements with investment provisions.\footnote{\citet{unctad:2015}} In most cases these IIAs not only formalize commitments to treat foreign investors fairly and equitably, but also include provisions giving investors the right to take investor-state disputes to international arbitration, out of range of the host country's legal system. According to a recent survey, 93 percent of BITs include such provisions, which are intended to guarantee investors that their claims will be adjudicated in an independent, impartial, and timely manner.\footnote{\citet[p. 8]{gaukordger:gordon:2012}} Over the past two decades these provisions have led to a significant proliferation of investor-state dispute settlement (ISDS) cases.
 
@@ -96,12 +114,12 @@ The existing literature thus suggests that by raising ex post reputational costs
 
 Prior research focused specifically on investment treaties draws on the same logic to argue that the registration of investor claims against states at an international arbitral tribunal in response to alleged violations of treaty commitments generates reputational costs, regardless of the findings of international arbitral tribunals. According to \citeauthor{schwenzer:hachem:2011}, for example, ``the reputation of a State may be damaged by wrongfully initiated investment treaty arbitration against the State. Such harm to reputation may have quite severe financial consequences for the entire economy of the State concerned.''\footnote{\citet[p. 426]{schwenzer:hachem:2011}} Similarly, in their research on the ICSID, \citeauthor{allee:peinhardt:2011} claim that, ``The filing of a case before ICSID immediately brands the respondent country as an actor that is hostile to investors''\footnote{\citet[p. 414]{allee:peinhardt:2011}} and leads to ``substantial losses in FDI.''\footnote{Ibid: 429} A recent analysis of investment arbitration, likewise argues that ``when an investor commences an ICSID arbitration against a respondent state and the investor ultimately loses, the state may have a credible argument that its `investment reputation' has been unfairly tarnished.''\footnote{\citet[p. 236]{parish2011awarding}} State actors share this view as evidenced by Turkey's request in Europe Cement \& Trade S.A. v. Turkey for ``an award of monetary compensation for the moral damage it has suffered to its reputation and international standing through the bringing of a claim that is baseless and founded on fabricated documents.''\footnote{Europe Cement Investment \& Trade S.A. v. Republic of Turkey. 2009. ICSID Case No. ARB(AF)/07/02: 177} 
 
-The difficulty is that these arguments fail to take into account the importance of variations among international institutions. As emphasized both by the literature on international law\footnote{\citet{staton2011judicial}; \citet{cavallaro2008reevaluating}; \citet{guzman2008reputation}; \citet{guzman2008international}} and institutional theory\footnote{\citet[p. 59]{knight1992institutions}; \citet[p. 54--60]{north1990institutions}}, effective reputational sanctioning is heavily dependent upon institutional design, particularly as it relates to issues of transparency and information. On this basis we challenge the findings of prior research, emphasizing instead characteristics of the prevailing international investment regime that signficantly limit the impact of alleged investment treaty violations on state reputation. 
+The difficulty is that these arguments fail to take into account the importance of variations among international institutions. As emphasized both by the literature on international law\footnote{\citet{cavallaro2008reevaluating}; \citet{guzman2008reputation}; \citet{guzman2008international}; \citet{staton2011judicial}} and institutional theory\footnote{\citet[p. 59]{knight1992institutions}; \citet[p. 54--60]{north1990institutions}}, effective reputational sanctioning is heavily dependent upon institutional design, particularly as it relates to issues of transparency and information. On this basis we challenge the findings of prior research, emphasizing instead characteristics of the prevailing international investment regime that signficantly limit the impact of alleged investment treaty violations on state reputation. 
 
-First, unlike the WTO, where governments press complaints before an independent international forum, the current ISDS process externalizes monitoring costs to individual private firms and sanctioning to ad hoc arbitral panels enjoying considerable independence from state actors. Arbitral deliberations are also constrained to the facts of an individual case and do not establish clear legal precedents for other investment disputes. For this reason investor-state dispute arbitration has not only produced inconsistent results,\footnote{\citet{franck:2005}} but even opposing ones in parallel cases involving identical sets of facts and parties but different treaties and arbitral tribunals.\footnote{For example, see \citet{franck:2005}; \citet{kim2011annulment}; \citet{egli2006don}. For an example of a specific case compare the rulings issued in CME Czech Republic B.V. v Czech Republic and Lauder v Czech Republic: ``Final Award in the Matter of an UNCITRAL Arbitration'' 2001; ``UNCITRAL Arbitration Proceedings CME Czech Republic B.V. (The Netherlands) vs. The Czech: Final Award'' 2003.} The outcome of dispute arbitration is therefore rather uncertain and the meaning and significance of arbitral awards, whether positive, negative, or inconclusive with respect to a government charged with treaty violations, limited to the specifics of a particular dispute. Given the narrow, decentralized, and unpredictable nature of the monitoring and sanctioning processes, the assumption that alleged investment treaty violations generate significant reputational costs is very questionable. We expect instead that a state's alleged failure to comply with a particular investment treaty in its dealing with a single private firm will not entail significant reputational costs.
+First, unlike the WTO, where governments press complaints before an independent international forum, the current ISDS process externalizes monitoring costs to individual private firms and sanctioning to ad hoc arbitral panels enjoying considerable independence from state actors. Arbitral deliberations are also constrained to the facts of an individual case and do not establish clear legal precedents for other investment disputes. For this reason investor-state dispute arbitration has not only produced inconsistent results,\footnote{\citet{franck:2005}} but even opposing ones in parallel cases involving identical sets of facts and parties but different treaties and arbitral tribunals.\footnote{For example, see \citet{egli2006don}; \citet{franck:2005}; \citet{kim2011annulment}. For an example of a specific case compare the rulings issued in CME Czech Republic B.V. v Czech Republic and Lauder v Czech Republic: ``Final Award in the Matter of an UNCITRAL Arbitration'' 2001; ``UNCITRAL Arbitration Proceedings CME Czech Republic B.V. (The Netherlands) vs. The Czech: Final Award'' 2003.} The outcome of dispute arbitration is therefore rather uncertain and the meaning and significance of arbitral awards, whether positive, negative, or inconclusive with respect to a government charged with treaty violations, limited to the specifics of a particular dispute. Given the narrow, decentralized, and unpredictable nature of the monitoring and sanctioning processes, the assumption that alleged investment treaty violations generate significant reputational costs is very questionable. We expect instead that a state's alleged failure to comply with a particular investment treaty in its dealing with a single private firm will not entail significant reputational costs.
 % , particularly since reputations are presumably not only rather sticky but also constructed around multiple observations and varied types of state-business interactions.
 
-Second, prior research has demonstrated that both firms and states have been slow to grasp the implications of investment treaty protections \citep{yackee2010much,poulsen2013claim,poulsen2015bounded}, undercutting claims that investment treaty disputes tarnish a state's reputation. When the first investor claim was filed in 1987, participants had virtually no information to guide their strategies or assess their risks. The main legal precursor to investor-state arbitration was commercial arbitration, which tends to follow the rules of the legal system prevailing at the seat of arbitration rather than the provisions of bilateral and multilateral international treaties. As experience with investment dispute settlement mounted in the 1990s and early 2000s, leaders of less industrialized countries became more aware of the legal obligations they had incurred by signing investment agreements and the potential costs of violating them. Concomitantly, investor awareness of the advantages of investment treaties and ISDS also grew, leading to a major upsurge in arbitral claims. 
+Second, prior research has demonstrated that both firms and states have been slow to grasp the implications of investment treaty protections \citep{poulsen2013claim,poulsen2015bounded,yackee2010much}, undercutting claims that investment treaty disputes tarnish a state's reputation. When the first investor claim was filed in 1987, participants had virtually no information to guide their strategies or assess their risks. The main legal precursor to investor-state arbitration was commercial arbitration, which tends to follow the rules of the legal system prevailing at the seat of arbitration rather than the provisions of bilateral and multilateral international treaties. As experience with investment dispute settlement mounted in the 1990s and early 2000s, leaders of less industrialized countries became more aware of the legal obligations they had incurred by signing investment agreements and the potential costs of violating them. Concomitantly, investor awareness of the advantages of investment treaties and ISDS also grew, leading to a major upsurge in arbitral claims. 
 
 Compounding the lack of awareness of investment dispute settlement is a third characteristic of ISDS institutions: namely, information about particular disputes remains too limited to allow the investment community to gauge the extent to which treaty violations have occurred, especially for cases arbitrated confidentially. Even for claims involving the ICSID, which unlike other international arbitration bodies maintains a public record of registered arbitral claims, information regarding the specifics of a case may remain restricted if both parties do not consent to the publication of the award rendered by an arbitral tribunal.\footnote{Amendments to the ICSID's arbitration rules in 2006, however, mandate the Centre to publish excerpts of the legal reasoning applied by arbitration tribunals in reaching their decisions in specific cases \citep{antonietti:2006}. UNCITRAL has also adopted new rules on transparency effective 1 April 2014, but they only apply to treaties concluded prior to that date at the agreement of the disputing parties. For UNCITRAL disputes brought under treaties concluded at a subsequent date, exceptions to the new rules require the agreement of both disputing parties (\citealp[p. 33--40]{uncitral:2013}).} To add to the lack of transparency, between 1987 and 2014, 40.4 percent of disputes were settled or discontinued before being formally arbitrated, preventing the facts of a dispute from being publicly disclosed. Such limitations on transparency come at the cost of effective reputational sanctions. In the succinct formulation of North, ``By making available the relevant information, institutions make possible the policing of defections.''\footnote{\citet[p. 57]{north1990institutions}} 
 
@@ -148,33 +166,33 @@ Our sample includes all lower and middle-income nations for which data are avail
   \hline
 \hline
 ICSID  (past 2 years) & 0&.04 &&  &&  \\ 
-   & (0&.183) &&  &&  \\ 
-  ICSID  (past 5 years) &&  & 0&.025 &&  \\ 
-   &&  & (0&.109) &&  \\ 
-  Cumulative ICSID$_{t-1}$ &&  &&  & -0&.055 \\ 
-   &&  &&  & (0&.067) \\ 
-  \%$\Delta$ GDP$_{t-1}$ & 0&.05 & 0&.05 & 0&.051 \\ 
-   & (0&.027) & (0&.027) & (0&.027) \\ 
-  Ln(GDP per capita)$_{t-1}$ & $-3$&$.237^{\ast\ast}$ & $-3$&$.233^{\ast\ast}$ & $-3$&$.343^{\ast\ast}$ \\ 
-   & (1&.019) & (1&.022) & (1&.02) \\ 
-  Ln(Pop.)$_{t-1}$ & $3$&$.994^{\ast\ast}$ & $4$&$.016^{\ast\ast}$ & $3$&$.879^{\ast}$ \\ 
-   & (1&.504) & (1&.507) & (1&.509) \\ 
-  Ln(Inflation)$_{t-1}$ & -0&.374 & -0&.374 & -0&.396 \\ 
-   & (0&.357) & (0&.357) & (0&.357) \\ 
-  Internal Stability$_{t-1}$ & $0$&$.325^{\ast\ast}$ & $0$&$.325^{\ast\ast}$ & $0$&$.324^{\ast\ast}$ \\ 
-   & (0&.124) & (0&.125) & (0&.124) \\ 
-  External Stability$_{t-1}$ & $0$&$.414^{\ast\ast}$ & $0$&$.415^{\ast\ast}$ & $0$&$.412^{\ast\ast}$ \\ 
-   & (0&.131) & (0&.131) & (0&.131) \\ 
-  Ratified BITs$_{t-1}$ & 0&.008 & 0&.008 & 0&.015 \\ 
-   & (0&.024) & (0&.025) & (0&.025) \\ 
-  Capital Openness$_{t-1}$ & -0&.192 & -0&.193 & -0&.208 \\ 
-   & (0&.195) & (0&.195) & (0&.196) \\ 
-  Polity$_{t-1}$ & 0&.003 & 0&.003 & 0&.003 \\ 
-   & (0&.013) & (0&.013) & (0&.013) \\ 
-  Property Rights$_{t-1}$ & $0$&$.136^{\ast}$ & $0$&$.136^{\ast}$ & $0$&$.131^{\ast}$ \\ 
+   & (0&.18) &&  &&  \\ 
+  ICSID  (past 5 years) &&  & 0&.03 &&  \\ 
+   &&  & (0&.11) &&  \\ 
+  Cumulative ICSID$_{t-1}$ &&  &&  & -0&.06 \\ 
+   &&  &&  & (0&.07) \\ 
+  \%$\Delta$ GDP$_{t-1}$ & 0&.05 & 0&.05 & 0&.05 \\ 
+   & (0&.03) & (0&.03) & (0&.03) \\ 
+  Ln(GDP per capita)$_{t-1}$ & $-3$&$.24^{\ast\ast}$ & $-3$&$.23^{\ast\ast}$ & $-3$&$.34^{\ast\ast}$ \\ 
+   & (1&.02) & (1&.02) & (1&.02) \\ 
+  Ln(Pop.)$_{t-1}$ & $3$&$.99^{\ast\ast}$ & $4$&$.02^{\ast\ast}$ & $3$&$.88^{\ast}$ \\ 
+   & (1&.50) & (1&.51) & (1&.51) \\ 
+  Ln(Inflation)$_{t-1}$ & -0&.37 & -0&.37 & -0&.40 \\ 
+   & (0&.36) & (0&.36) & (0&.36) \\ 
+  Internal Stability$_{t-1}$ & $0$&$.33^{\ast\ast}$ & $0$&$.33^{\ast\ast}$ & $0$&$.32^{\ast\ast}$ \\ 
+   & (0&.12) & (0&.13) & (0&.12) \\ 
+  External Stability$_{t-1}$ & $0$&$.41^{\ast\ast}$ & $0$&$.42^{\ast\ast}$ & $0$&$.41^{\ast\ast}$ \\ 
+   & (0&.13) & (0&.13) & (0&.13) \\ 
+  Ratified BITs$_{t-1}$ & 0&.01 & 0&.01 & 0&.02 \\ 
+   & (0&.02) & (0&.03) & (0&.03) \\ 
+  Capital Openness$_{t-1}$ & -0&.19 & -0&.19 & -0&.21 \\ 
+   & (0&.20) & (0&.20) & (0&.20) \\ 
+  Polity$_{t-1}$ & 0&.00 & 0&.00 & 0&.00 \\ 
+   & (0&.01) & (0&.01) & (0&.01) \\ 
+  Property Rights$_{t-1}$ & $0$&$.14^{\ast}$ & $0$&$.14^{\ast}$ & $0$&$.13^{\ast}$ \\ 
    & (0&.06) & (0&.06) & (0&.06) \\ 
-  World FDI & $0$&$.000^{\ast\ast}$ & $0$&$.000^{\ast\ast}$ & $0$&$.000^{\ast\ast}$ \\ 
-   & (0&.000) & (0&.000) & (0&.000) \\ 
+  World FDI & $0$&$.00^{\ast\ast}$ & $0$&$.00^{\ast\ast}$ & $0$&$.00^{\ast\ast}$ \\ 
+   & (0&.00) & (0&.00) & (0&.00) \\ 
    \hline
 n & 25&72 & 25&72 & 25&72 \\ 
   N && 101 && 101 && 101 \\ 
@@ -185,7 +203,7 @@ n & 25&72 & 25&72 & 25&72 \\
 }
 \end{table}
 
-As expected, the results for our parameterizations of ICSID disputes consistently show that simply facing a dispute at the ICSID is not associated with a meaningful change in FDI flows. Table~\ref{tab:nDispFDI} utilizes a dataset of non-ICSID investment disputes and offers very similar results.\footnote{The documentation of codings for treaty-based ICSID disputes is available on request to the authors.} Our measure of non-ICSID disputes contains a variety of different arbitral institutions, such as the International Chamber of Commerce, the International Centre for Dispute Resolution, the London Court of International Arbitration, the Permanent Court of Arbitration, and the Arbitration Institute of the Stockholm Chamber of Commerce, which operate under the procedures established by the United Nations Commission on International Trade Law (UNCITRAL)  or other set of rules. Taken together, these findings directly contradict prior research claiming that involvement in investment treaty arbitration negatively affects FDI flows.\footnote{Given the contrast between our findings and those reported by prior research, we conducted a replication of the study of \citet{allee:peinhardt:2011}, which to our knowledge is the most prominent work on this subject. We find that the significant negative effects of ICSID disputes on FDI flows reported in their work are a result of a coding error. A full discussion of this issue and its effect on their results are presented in the Appendix to this paper.} More importantly, however, our findings raise questions about the causal mechanism assumed to be linking disputes to FDI flows. That mechanism is presumed to be reputational change, but this is an assumption that has not been tested directly and which might well not be reflected in investment flows. Although surveys of MNC executives show that political risk is considered the major constraint on investments in emerging markets, many other factors also drive investment decisions, including access to financing and market opportunities.\footnote{For example, see \citet{miga:2011}.} For this reason, we next turn to a more direct test of the proposition that becoming a respondent in an investor-state dispute carries significant reputational costs.\footnote{Additionally, scholars such as \citet{lipsey2005impact,kerner2014we} have noted that FDI data as commonly used does not always accord well with the theories that political scientists are interested in testing. The specific critique that put forward by Kerner on the use of investment flow data is that foreign capital investment takes different forms and the level of political risk varies accordingly. In this paper, we are interested in foreign investor confidence, however, not  vulnerability to political risk. Fixed capital may be more vulnerable than more volatile forms of investment to political risk, but that is not the focus of our work here. All kinds of investment flows, whether they end up in the stock market or investment in land, are indicators of business confidence.}
+As expected, the results for our parameterizations of ICSID disputes consistently show that simply facing a dispute at the ICSID is not associated with a meaningful change in FDI flows. Table~\ref{tab:nDispFDI} utilizes a dataset of non-ICSID investment disputes and offers very similar results.\footnote{The documentation of codings for treaty-based ICSID disputes is available on request to the authors.} Our measure of non-ICSID disputes contains a variety of different arbitral institutions, such as the International Chamber of Commerce, the International Centre for Dispute Resolution, the London Court of International Arbitration, the Permanent Court of Arbitration, and the Arbitration Institute of the Stockholm Chamber of Commerce, which operate under the procedures established by the United Nations Commission on International Trade Law (UNCITRAL)  or other set of rules. Taken together, these findings directly contradict prior research claiming that involvement in investment treaty arbitration negatively affects FDI flows.\footnote{Given the contrast between our findings and those reported by prior research, we conducted a replication of the study of \citet{allee:peinhardt:2011}, which to our knowledge is the most prominent work on this subject. We find that the significant negative effects of ICSID disputes on FDI flows reported in their work are a result of a coding error. A full discussion of this issue and its effect on their results are presented in the Appendix to this paper.} More importantly, however, our findings raise questions about the causal mechanism assumed to be linking disputes to FDI flows. That mechanism is presumed to be reputational change, but this is an assumption that has not been tested directly and which might well not be reflected in investment flows. Although surveys of MNC executives show that political risk is considered the major constraint on investments in emerging markets, many other factors also drive investment decisions, including access to financing and market opportunities.\footnote{For example, see \citet{miga:2011}.} For this reason, we next turn to a more direct test of the proposition that becoming a respondent in an investor-state dispute carries significant reputational costs.\footnote{Additionally, scholars such as \citet{kerner2014we,lipsey2005impact} have noted that FDI data as commonly used does not always accord well with the theories that political scientists are interested in testing. The specific critique that put forward by Kerner on the use of investment flow data is that foreign capital investment takes different forms and the level of political risk varies accordingly. In this paper, we are interested in foreign investor confidence, however, not  vulnerability to political risk. Fixed capital may be more vulnerable than more volatile forms of investment to political risk, but that is not the focus of our work here. All kinds of investment flows, whether they end up in the stock market or investment in land, are indicators of business confidence.}
 
 \vspace{-10mm}
 % latex table generated in R 3.2.2 by xtable 1.7-4 package
@@ -199,34 +217,34 @@ As expected, the results for our parameterizations of ICSID disputes consistentl
  Variable && Model 1 && Model 2 && Model 3 \\ 
   \hline
 \hline
-Non-ICSID (past 2 years) & -0&.329 &&  &&  \\ 
-   & (0&.366) &&  &&  \\ 
-  Non-ICSID (past 5 years) &&  & -0&.204 &&  \\ 
-   &  && (0&.227) &&  \\ 
-  Cumulative Non-ICSID$_{t-1}$ &&  &&  & -0&.209 \\ 
-   &&  &&  & (0&.155) \\ 
-  \%$\Delta$ GDP (past  years) & 0&.051 & 0&.051 & 0&.05 \\ 
-   & (0&.027) & (0&.027) & (0&.027) \\ 
-  Ln(GDP per capita) (past  years) & $-3$&$.242^{\ast\ast}$ & $-3$&$.245^{\ast\ast}$ & $-3$&$.264^{\ast\ast}$ \\ 
-   & (1&.015) & (1&.015) & (1&.014) \\ 
-  Ln(Pop.) (past  years) & $3$&$.94^{\ast\ast}$ & $3$&$.883^{\ast}$ & $3$&$.712^{\ast}$ \\ 
-   & (1&.505) & (1&.509) & (1&.517) \\ 
-  Ln(Inflation) (past  years) & -0&.371 & -0&.375 & -0&.38 \\ 
-   & (0&.356) & (0&.357) & (0&.356) \\ 
-  Internal Stability (past  years) & $0$&$.325^{\ast\ast}$ & $0$&$.324^{\ast\ast}$ & $0$&$.315^{\ast}$ \\ 
-   & (0&.124) & (0&.124) & (0&.125) \\ 
-  External Stability (past  years) & $0$&$.413^{\ast\ast}$ & $0$&$.414^{\ast\ast}$ & $0$&$.42^{\ast\ast}$ \\ 
-   & (0&.131) & (0&.131) & (0&.131) \\ 
-  Ratified BITs (past  years) & 0&.012 & 0&.013 & 0&.017 \\ 
-   & (0&.024) & (0&.024) & (0&.024) \\ 
-  Capital Openness (past  years) & -0&.191 & -0&.197 & -0&.206 \\ 
-   & (0&.195) & (0&.195) & (0&.195) \\ 
-  Polity (past  years) & 0&.003 & 0&.003 & 0&.003 \\ 
-   & (0&.013) & (0&.013) & (0&.013) \\ 
-  Property Rights (past  years) & $0$&$.134^{\ast}$ & $0$&$.134^{\ast}$ & $0$&$.134^{\ast}$ \\ 
+Non-ICSID (past 2 years) & -0&.33 &&  &&  \\ 
+   & (0&.37) &&  &&  \\ 
+  Non-ICSID (past 5 years) &&  & -0&.20 &&  \\ 
+   &  && (0&.23) &&  \\ 
+  Cumulative Non-ICSID$_{t-1}$ &&  &&  & -0&.21 \\ 
+   &&  &&  & (0&.16) \\ 
+  \%$\Delta$ GDP (past  years) & 0&.05 & 0&.05 & 0&.05 \\ 
+   & (0&.03) & (0&.03) & (0&.03) \\ 
+  Ln(GDP per capita) (past  years) & $-3$&$.24^{\ast\ast}$ & $-3$&$.25^{\ast\ast}$ & $-3$&$.26^{\ast\ast}$ \\ 
+   & (1&.02) & (1&.02) & (1&.01) \\ 
+  Ln(Pop.) (past  years) & $3$&$.94^{\ast\ast}$ & $3$&$.88^{\ast}$ & $3$&$.71^{\ast}$ \\ 
+   & (1&.51) & (1&.51) & (1&.52) \\ 
+  Ln(Inflation) (past  years) & -0&.37 & -0&.38 & -0&.38 \\ 
+   & (0&.36) & (0&.36) & (0&.36) \\ 
+  Internal Stability (past  years) & $0$&$.33^{\ast\ast}$ & $0$&$.32^{\ast\ast}$ & $0$&$.32^{\ast}$ \\ 
+   & (0&.12) & (0&.12) & (0&.13) \\ 
+  External Stability (past  years) & $0$&$.41^{\ast\ast}$ & $0$&$.41^{\ast\ast}$ & $0$&$.42^{\ast\ast}$ \\ 
+   & (0&.13) & (0&.13) & (0&.13) \\ 
+  Ratified BITs (past  years) & 0&.01 & 0&.01 & 0&.02 \\ 
+   & (0&.02) & (0&.02) & (0&.02) \\ 
+  Capital Openness (past  years) & -0&.19 & -0&.20 & -0&.21 \\ 
+   & (0&.20) & (0&.20) & (0&.20) \\ 
+  Polity (past  years) & 0&.00 & 0&.00 & 0&.00 \\ 
+   & (0&.01) & (0&.01) & (0&.01) \\ 
+  Property Rights (past  years) & $0$&$.13^{\ast}$ & $0$&$.13^{\ast}$ & $0$&$.13^{\ast}$ \\ 
    & (0&.06) & (0&.06) & (0&.06) \\ 
-  World FDI & $0$&$.000^{\ast\ast}$ & $0$&$.000^{\ast\ast}$ & $0$&$.000^{\ast\ast}$ \\ 
-   & (0&.000) & (0&.000) & (0&.000) \\ 
+  World FDI & $0$&$.00^{\ast\ast}$ & $0$&$.00^{\ast\ast}$ & $0$&$.00^{\ast\ast}$ \\ 
+   & (0&.00) & (0&.00) & (0&.00) \\ 
    \hline
 n & 25&72 & 25&72 & 25&72 \\ 
   N && 101 && 101 && 101 \\ 
@@ -281,7 +299,7 @@ An additional significant change since the early 2000s is the dramatic expansion
 \end{table}
 \FloatBarrier
 
-Last, since 2006 the ICSID has adopted new rules regarding transparency. Of particular importance are amendments to the ICSID's arbitration rules introduced in 2006, which provided for the opening of hearings to the public and mandated the Centre to publish excerpts of the legal reasoning applied by arbitration tribunals in reaching their decisions in specific cases.\footnote{\citet{yackee20112006,antonietti:2006}} The consent of both parties to a dispute is still required for the ICSID itself to publish decisions in the entirety, but either party can make an award public. These changes combined with other pressures for enhanced transparency have had a significant effect. Of the 19 disputes registered in 2010 and concluded on the basis of an arbitral award prior to November 15, 2016, for example, 18 resulted in published tribunal decisions. The allegedly high level of ``secrecy'' surrounding ICSID decisions is also questionable. Information on dispute outcomes (whether discontinuance, settlement, or victory for one of the parties) is available for 99.2 percent of pre-2015 disputes on the basis of published information. Accordingly, we expect that as information about ISDS has accumulated over time the likelihood of reputational damage has tended to mount. Thus our second major hypothesis addresses the passage of time. 
+Last, since 2006 the ICSID has adopted new rules regarding transparency. Of particular importance are amendments to the ICSID's arbitration rules introduced in 2006, which provided for the opening of hearings to the public and mandated the Centre to publish excerpts of the legal reasoning applied by arbitration tribunals in reaching their decisions in specific cases.\footnote{\citet{antonietti:2006,yackee20112006}} The consent of both parties to a dispute is still required for the ICSID itself to publish decisions in the entirety, but either party can make an award public. These changes combined with other pressures for enhanced transparency have had a significant effect. Of the 19 disputes registered in 2010 and concluded on the basis of an arbitral award prior to November 15, 2016, for example, 18 resulted in published tribunal decisions. The allegedly high level of ``secrecy'' surrounding ICSID decisions is also questionable. Information on dispute outcomes (whether discontinuance, settlement, or victory for one of the parties) is available for 99.2 percent of pre-2015 disputes on the basis of published information. Accordingly, we expect that as information about ISDS has accumulated over time the likelihood of reputational damage has tended to mount. Thus our second major hypothesis addresses the passage of time. 
 
 \begin{quote}
 H2: The reputational costs of involvement in investment treaty arbitration increase with the passage of time.
@@ -307,35 +325,35 @@ We begin the analysis of the effects of dispute involvement on perceptions of in
   \hline
 \hline
 ICSID (past two years) & $-0$&$.13^{\ast\ast}$ &&  &&  &&  &&  &&  \\ 
-   & (0&.049) &&  &&  &&  &&  &&  \\ 
-  Non-ICSID (past two years) &&  & -0&.049 &&  &&  &&  &&  \\ 
-   &&  & (0&.131) &&  &&  &&  &&  \\ 
+   & (0&.05) &&  &&  &&  &&  &&  \\ 
+  Non-ICSID (past two years) &&  & -0&.05 &&  &&  &&  &&  \\ 
+   &&  & (0&.13) &&  &&  &&  &&  \\ 
   ICSID (past five years) &&  &&  & $-0$&$.09^{\ast}$ &&  &&  &&  \\ 
-   && &&  & (0&.039) &&  &&  &&  \\ 
-  Non-ICSID (past five years) &&  &&  &&  & -0&.046 &&  &&  \\ 
-   &&  &&  &&  & (0&.107) &&  &&  \\    
-  Cumulative ICSID$_{t-1}$ &&  &&  &&  &&  & $-0$&$.066^{\ast}$ &&  \\ 
-   &&  &&  &&  &&  & (0&.027) &&  \\ 
-  Cumulative Non-ICSID$_{t-1}$ &&  &&  &&  &&  &&  & -0&.066 \\ 
-   && &&  &&  &&  &&  & (0&.078) \\    
-  \%$\Delta$ GDP$_{t-1}$ & $0$&$.016^{\ast}$ & $0$&$.015^{\ast}$ & $0$&$.016^{\ast}$ & $0$&$.015^{\ast}$ & $0$&$.016^{\ast}$ & $0$&$.015^{\ast}$ \\ 
-   & (0&.006) & (0&.006) & (0&.006) & (0&.006) & (0&.006) & (0&.006) \\ 
-  Ln(GDP per capita)$_{t-1}$ & 0&.701 & 0&.763 & 0&.687 & 0&.768 & 0&.72 & 0&.786 \\ 
-   & (0&.391) & (0&.397) & (0&.389) & (0&.399) & (0&.391) & (0&.402) \\ 
-  Ln(Pop.)$_{t-1}$ & $2$&$.608^{\ast\ast}$ & $2$&$.599^{\ast\ast}$ & $2$&$.617^{\ast\ast}$ & $2$&$.601^{\ast\ast}$ & $2$&$.647^{\ast\ast}$ & $2$&$.593^{\ast\ast}$ \\ 
-   & (0&.382) & (0&.385) & (0&.382) & (0&.385) & (0&.382) & (0&.386) \\ 
-  Ln(Inflation)$_{t-1}$ & $-0$&$.277^{\ast\ast}$ & $-0$&$.27^{\ast\ast}$ & $-0$&$.283^{\ast\ast}$ & $-0$&$.271^{\ast\ast}$ & $-0$&$.294^{\ast\ast}$ & $-0$&$.273^{\ast\ast}$ \\ 
-   & (0&.077) & (0&.079) & (0&.076) & (0&.079) & (0&.076) & (0&.078) \\ 
-  Internal Stability$_{t-1}$ & $0$&$.202^{\ast\ast}$ & $0$&$.203^{\ast\ast}$ & $0$&$.202^{\ast\ast}$ & $0$&$.203^{\ast\ast}$ & $0$&$.201^{\ast\ast}$ & $0$&$.201^{\ast\ast}$ \\ 
-   & (0&.034) & (0&.034) & (0&.034) & (0&.034) & (0&.034) & (0&.034) \\ 
-  External Stability$_{t-1}$ & -0&.006 & -0&.004 & -0&.008 & -0&.004 & -0&.011 & -0&.003 \\ 
-   & (0&.037) & (0&.037) & (0&.037) & (0&.037) & (0&.037) & (0&.037) \\ 
-  Ratif. BITs$_{t-1}$ & $0$&$.025^{\ast}$ & $0$&$.022^{\ast}$ & $0$&$.027^{\ast\ast}$ & $0$&$.022^{\ast}$ & $0$&$.029^{\ast\ast}$ & $0$&$.024^{\ast}$ \\ 
-   & (0&.01) & (0&.01) & (0&.01) & (0&.01) & (0&.01) & (0&.011) \\ 
-  Capital Openness$_{t-1}$ & $0$&$.195^{\ast\ast}$ & $0$&$.198^{\ast\ast}$ & $0$&$.192^{\ast\ast}$ & $0$&$.196^{\ast\ast}$ & $0$&$.181^{\ast\ast}$ & $0$&$.195^{\ast\ast}$ \\ 
-   & (0&.067) & (0&.067) & (0&.066) & (0&.067) & (0&.067) & (0&.067) \\ 
-  Polity$_{t-1}$ & $0$&$.012^{\ast\ast}$ & $0$&$.012^{\ast\ast}$ & $0$&$.012^{\ast\ast}$ & $0$&$.012^{\ast\ast}$ & $0$&$.012^{\ast\ast}$ & $0$&$.012^{\ast\ast}$ \\ 
-   & (0&.003) & (0&.003) & (0&.003) & (0&.003) & (0&.003) & (0&.003) \\ 
+   && &&  & (0&.04) &&  &&  &&  \\ 
+  Non-ICSID (past five years) &&  &&  &&  & -0&.05 &&  &&  \\ 
+   &&  &&  &&  & (0&.11) &&  &&  \\    
+  Cumulative ICSID$_{t-1}$ &&  &&  &&  &&  & $-0$&$.07^{\ast}$ &&  \\ 
+   &&  &&  &&  &&  & (0&.03) &&  \\ 
+  Cumulative Non-ICSID$_{t-1}$ &&  &&  &&  &&  &&  & -0&.07 \\ 
+   && &&  &&  &&  &&  & (0&.08) \\    
+  \%$\Delta$ GDP$_{t-1}$ & $0$&$.02^{\ast}$ & $0$&$.02^{\ast}$ & $0$&$.02^{\ast}$ & $0$&$.02^{\ast}$ & $0$&$.02^{\ast}$ & $0$&$.02^{\ast}$ \\ 
+   & (0&.01) & (0&.01) & (0&.01) & (0&.01) & (0&.01) & (0&.01) \\ 
+  Ln(GDP per capita)$_{t-1}$ & 0&.70 & 0&.76 & 0&.69 & 0&.77 & 0&.72 & 0&.79 \\ 
+   & (0&.39) & (0&.40) & (0&.39) & (0&.40) & (0&.39) & (0&.40) \\ 
+  Ln(Pop.)$_{t-1}$ & $2$&$.61^{\ast\ast}$ & $2$&$.60^{\ast\ast}$ & $2$&$.62^{\ast\ast}$ & $2$&$.60^{\ast\ast}$ & $2$&$.65^{\ast\ast}$ & $2$&$.59^{\ast\ast}$ \\ 
+   & (0&.38) & (0&.39) & (0&.38) & (0&.39) & (0&.38) & (0&.39) \\ 
+  Ln(Inflation)$_{t-1}$ & $-0$&$.28^{\ast\ast}$ & $-0$&$.27^{\ast\ast}$ & $-0$&$.28^{\ast\ast}$ & $-0$&$.27^{\ast\ast}$ & $-0$&$.30^{\ast\ast}$ & $-0$&$.27^{\ast\ast}$ \\ 
+   & (0&.08) & (0&.08) & (0&.08) & (0&.08) & (0&.08) & (0&.08) \\ 
+  Internal Stability$_{t-1}$ & $0$&$.20^{\ast\ast}$ & $0$&$.20^{\ast\ast}$ & $0$&$.20^{\ast\ast}$ & $0$&$.20^{\ast\ast}$ & $0$&$.20^{\ast\ast}$ & $0$&$.20^{\ast\ast}$ \\ 
+   & (0&.03) & (0&.03) & (0&.03) & (0&.03) & (0&.03) & (0&.03) \\ 
+  External Stability$_{t-1}$ & -0&.01 & -0&.00 & -0&.01 & -0&.00 & -0&.01 & -0&.00 \\ 
+   & (0&.04) & (0&.04) & (0&.04) & (0&.04) & (0&.04) & (0&.04) \\ 
+  Ratif. BITs$_{t-1}$ & $0$&$.03^{\ast}$ & $0$&$.02^{\ast}$ & $0$&$.03^{\ast\ast}$ & $0$&$.02^{\ast}$ & $0$&$.03^{\ast\ast}$ & $0$&$.02^{\ast}$ \\ 
+   & (0&.01) & (0&.01) & (0&.01) & (0&.01) & (0&.01) & (0&.01) \\ 
+  Capital Openness$_{t-1}$ & $0$&$.20^{\ast\ast}$ & $0$&$.20^{\ast\ast}$ & $0$&$.19^{\ast\ast}$ & $0$&$.20^{\ast\ast}$ & $0$&$.18^{\ast\ast}$ & $0$&$.20^{\ast\ast}$ \\ 
+   & (0&.07) & (0&.07) & (0&.07) & (0&.07) & (0&.07) & (0&.07) \\ 
+  Polity$_{t-1}$ & $0$&$.01^{\ast\ast}$ & $0$&$.01^{\ast\ast}$ & $0$&$.01^{\ast\ast}$ & $0$&$.01^{\ast\ast}$ & $0$&$.01^{\ast\ast}$ & $0$&$.01^{\ast\ast}$ \\ 
+   & (0&.00) & (0&.00) & (0&.00) & (0&.00) & (0&.00) & (0&.00) \\ 
    \hline
 n & 26&03 & 26&03 & 26&03 & 26&03 & 26&03 & 26&03 \\ 
   N & 10&1 & 10&1 & 10&1 & 10&1 & 10&1 & 10&1 \\ 
@@ -453,44 +471,44 @@ For the variables of central theoretical interest, changes in dispute involvemen
 	~ & \multicolumn{4}{c}{ICSID} & \multicolumn{4}{c}{All Treaty Based Disputes} \\
 	~ & \multicolumn{2}{c}{1987-2006} & \multicolumn{2}{c}{1987-2014} & \multicolumn{2}{c}{1987-2006} & \multicolumn{2}{c}{1987-2014} \\
 	\hline
-  $\Delta$Disputes & -0&.016 & -0&.011 & -0&.004 & -0&.004 \\
-~ & (0&.026) & (0&.015) & (0&.014) & (0&.009) \\
-  Disputes$_{t-1}$ & -0&.004 & -0&.003$^{\ast}$ & -0&.002 & -0&.001 \\
-  ~ & (0&.003) &  (0&.001) & (0&.002) & (0&.001) \\
-  \multirow{2}{*}{$\Delta$Log(GDP)} & 6&.692$^{\ast}$ & 5&.140$^{\ast}$ & 6&.585$^{\ast}$ & 5&.060$^{\ast}$ \\
-  & (3&.187) & (2&.259) & (3&.185) & (2&.258) \\
-  \multirow{2}{*}{Log(GDP)$_{t-1}$} & -0&.059 & -0&.022 & -0&.055 & -0&.020\\
-  & (0&.075) & (0&.049) & (0&.076) & (0&.049) \\
-  \multirow{2}{*}{$\Delta$Log(Population)} & 67&.285$^{\ast\ast}$ & 53&.966$^{\ast\ast}$ & 67&.924$^{\ast\ast}$ & 54&.273$^{\ast\ast}$ \\
-  & (20&.765) & (12&.915) & (20&.804) & (12&.935)\\
-  \multirow{2}{*}{Log(Population)$_{t-1}$} & -0&.019 & -0&.026 & -0&.024 & -0&.027 \\
-  & (0&.181) & (0&.073) & (0&.182) & (0&.073) \\
-  \multirow{2}{*}{$\Delta$Log(Inflation)} & -0&.049 &  -0&.055 &  -0&.049 &  -0&.055 \\
-  & (0&.058) &  (0&.039) &  (0&.058) &  (0&.039) \\
-  \multirow{2}{*}{Log(Inflation)$_{t-1}$} & 0&.031 &  0&.031 &  0&.031 &  0&.031$^{\ast}$ \\
-  & (0&.020) &  (0&.016) &  (0&.020) &  (0&.016) \\
-  \multirow{2}{*}{$\Delta$Internal Stability} & 0&.014 & 0&.015 &  0&.014 &  0&.016 \\
-  & (0&.020) &  (0&.017) &  (0&.020) &  (0&.017) \\
-  \multirow{2}{*}{Internal Stability$_{t-1}$} & 0&.015$^{\ast\ast}$ &  0&.011$^{\ast\ast}$ &  0&.015$^{\ast\ast}$ &  0&.011$^{\ast\ast}$ \\
-  & (0&.006) &  (0&.004) &  (0&.006) &  (0&.004) \\
-  \multirow{2}{*}{$\Delta$External Stability} & 0&.084$^{\ast\ast}$ & 0&.088$^{\ast\ast}$ &  0&.084$^{\ast\ast}$ &  0&.088$^{\ast\ast}$ \\
-  & (0&.026) &  (0&.024) &  (0&.026) &  (0&.024) \\
-  \multirow{2}{*}{External Stability$_{t-1}$} & -0&.002 &  0&.000 &  -0&.002 &  0&.000 \\
-  & (0&.005) &  (0&.004) &  (0&.005) &  (0&.004) \\
-  \multirow{2}{*}{$\Delta$Ratified BITs} & 0&.002 &  0&.000 &  0&.003 &  0&.000 \\
-  & (0&.008) &  (0&.008) &  (0&.008) &  (0&.008) \\
-  \multirow{2}{*}{Ratified BITs$_{t-1}$} & -0&.000 & -0&.000 &  -0&.000 & -0&.000 \\
-  & (0&.001) & (0&.001) &  (0&.001) &  (0&.001) \\
-  \multirow{2}{*}{$\Delta$Capital Openness} & 0&.000 & 0&.000 &  0&.000 &  0&.000 \\
-  & (0&.002) &  (0&.002) &  (0&.002) &  (0&.002) \\
-  \multirow{2}{*}{Capital Openness$_{t-1}$} & 0&.004 & -0&.001 &  0&.004 &  -0&.001 \\
-  & (0&.010) & (0&.007) & (0&.010) & (0&.007) \\
-  \multirow{2}{*}{$\Delta$Polity} & -0&.003 & -0&.002 &  -0&.003 & - 0&.002  \\
-  & (0&.002) & (0&.002) &  (0&.002) &  (0&.002) \\
-  \multirow{2}{*}{Polity$_{t-1}$} & 0&.001 & 0&.001 &  0&.001 &  0&.001 \\
-  & (0&.001) & (0&.000) &  (0&.001) &  (0&.000) \\
-    Investment & -0&.095$^{\ast\ast}$ & -0&.079$^{\ast\ast}$ & -0&.094$^{\ast\ast}$ & -0&.079$^{\ast\ast}$ \\
-  $\;\;$Profile$_{t-1}$ & (0&.012) & (0&.008) & (0&.012) & (0&.008) \\
+  $\Delta$Disputes & -0&.02 & -0&.01 & -0&.00 & -0&.00 \\
+~ & (0&.03) & (0&.02) & (0&.01) & (0&.01) \\
+  Disputes$_{t-1}$ & -0&.00 & -0&.00$^{\ast}$ & -0&.00 & -0&.00 \\
+  ~ & (0&.00) &  (0&.00) & (0&.00) & (0&.00) \\
+  \multirow{2}{*}{$\Delta$Log(GDP)} & 6&.69$^{\ast}$ & 5&.14$^{\ast}$ & 6&.59$^{\ast}$ & 5&.06$^{\ast}$ \\
+  & (3&.19) & (2&.26) & (3&.19) & (2&.26) \\
+  \multirow{2}{*}{Log(GDP)$_{t-1}$} & -0&.06 & -0&.02 & -0&.06 & -0&.02\\
+  & (0&.08) & (0&.05) & (0&.08) & (0&.05) \\
+  \multirow{2}{*}{$\Delta$Log(Population)} & 67&.29$^{\ast\ast}$ & 53&.97$^{\ast\ast}$ & 67&.92$^{\ast\ast}$ & 54&.27$^{\ast\ast}$ \\
+  & (20&.77) & (12&.92) & (20&.80) & (12&.94)\\
+  \multirow{2}{*}{Log(Population)$_{t-1}$} & -0&.02 & -0&.03 & -0&.02 & -0&.03 \\
+  & (0&.18) & (0&.07) & (0&.18) & (0&.07) \\
+  \multirow{2}{*}{$\Delta$Log(Inflation)} & -0&.05 &  -0&.06 &  -0&.05 &  -0&.06 \\
+  & (0&.06) &  (0&.04) &  (0&.06) &  (0&.04) \\
+  \multirow{2}{*}{Log(Inflation)$_{t-1}$} & 0&.03 &  0&.03 &  0&.03 &  0&.03$^{\ast}$ \\
+  & (0&.02) &  (0&.02) &  (0&.02) &  (0&.02) \\
+  \multirow{2}{*}{$\Delta$Internal Stability} & 0&.01 & 0&.02 &  0&.01 &  0&.02 \\
+  & (0&.02) &  (0&.02) &  (0&.02) &  (0&.02) \\
+  \multirow{2}{*}{Internal Stability$_{t-1}$} & 0&.02$^{\ast\ast}$ &  0&.01$^{\ast\ast}$ &  0&.02$^{\ast\ast}$ &  0&.01$^{\ast\ast}$ \\
+  & (0&.01) &  (0&.00) &  (0&.01) &  (0&.00) \\
+  \multirow{2}{*}{$\Delta$External Stability} & 0&.08$^{\ast\ast}$ & 0&.09$^{\ast\ast}$ &  0&.08$^{\ast\ast}$ &  0&.09$^{\ast\ast}$ \\
+  & (0&.03) &  (0&.02) &  (0&.03) &  (0&.02) \\
+  \multirow{2}{*}{External Stability$_{t-1}$} & -0&.00 &  0&.00 &  -0&.00 &  0&.00 \\
+  & (0&.01) &  (0&.00) &  (0&.01) &  (0&.00) \\
+  \multirow{2}{*}{$\Delta$Ratified BITs} & 0&.00 &  0&.00 &  0&.00 &  0&.00 \\
+  & (0&.01) &  (0&.01) &  (0&.01) &  (0&.01) \\
+  \multirow{2}{*}{Ratified BITs$_{t-1}$} & -0&.00 & -0&.00 &  -0&.00 & -0&.00 \\
+  & (0&.00) & (0&.00) &  (0&.00) &  (0&.00) \\
+  \multirow{2}{*}{$\Delta$Capital Openness} & 0&.00 & 0&.00 &  0&.00 &  0&.00 \\
+  & (0&.00) &  (0&.00) &  (0&.00) &  (0&.00) \\
+  \multirow{2}{*}{Capital Openness$_{t-1}$} & 0&.00 & -0&.00 &  0&.00 &  -0&.00 \\
+  & (0&.01) & (0&.01) & (0&.01) & (0&.01) \\
+  \multirow{2}{*}{$\Delta$Polity} & -0&.00 & -0&.00 &  -0&.00 & - 0&.00  \\
+  & (0&.00) & (0&.00) &  (0&.00) &  (0&.00) \\
+  \multirow{2}{*}{Polity$_{t-1}$} & 0&.00 & 0&.00 &  0&.00 &  0&.00 \\
+  & (0&.00) & (0&.00) &  (0&.00) &  (0&.00) \\
+    Investment & -0&.10$^{\ast\ast}$ & -0&.08$^{\ast\ast}$ & -0&.09$^{\ast\ast}$ & -0&.08$^{\ast\ast}$ \\
+  $\;\;$Profile$_{t-1}$ & (0&.01) & (0&.01) & (0&.01) & (0&.01) \\
 	\hline
 	$n$ & 1,&708 & 2,&499 & 1,&708 & 2,&499 \\
 	$N$ & 1&01 & 1&01 & 1&01 & 1&01 \\
