@@ -1,3 +1,9 @@
+# Contingent Institutions: The Reputational Impact of Investor-State Disputes
+
+Authors
+---
+[Shahryar Minhas](http://s7minhas.com/) & [Karen Remmer](https://polisci.duke.edu/people/karen-l-remmer)
+
 Abstract
 ====
 
